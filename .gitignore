@@ -1,0 +1,5 @@
+*.log
+.#*
+auto
+*.pdf
+*.aux
