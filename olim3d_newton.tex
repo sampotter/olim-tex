@@ -1,0 +1,102 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+\newcommand{\m}[1]{\boldsymbol{#1}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\norm}[1]{\left|\left|#1\right|\right|}
+\newcommand{\parens}[1]{\left(#1\right)}
+\newcommand{\set}[1]{\left\{#1\right\}}
+
+\newtheorem{lemma}{Lemma}
+
+\DeclareMathOperator{\argmax}{argmax}
+\DeclareMathOperator{\argmin}{argmin}
+
+\begin{document}
+
+\section{Newton's Method with Exact Line Search for Tetrahedral Updates}
+
+\subsection{Righthand Rule and Modified Midpoint}
+
+The righthand rule and modified midpoint tetrahedral updates can be
+written in terms of a conic function. Letting
+$\Delta^2 = \set{(\lambda_1, \lambda_2) \in \R : \lambda_1 \geq 0,
+  \lambda_2 \geq 0, \lambda_1 + \lambda_2 \leq 1}$, the minimization
+problem associated with the tetrahedral update is:
+\begin{align*}
+  \hat{u} = \min_{\lambda \in \Delta^2} F(\lambda) := \min_{\lambda \in \Delta^2} \set{u_\lambda + \int_{[\hat{p}, p_\lambda]} s d\sigma} = \mbox{error} + u_\lambda + \hat{s} \norm{\hat{p} - p_\lambda}_2.
+\end{align*}
+Then, if we factor the grid resolution out of the length
+$\norm{\hat{p} - p_\lambda}$, we have:
+\begin{align*}
+  \norm{\hat{p} - p_\lambda} = h \sqrt{Q(\lambda)},
+\end{align*}
+where
+$Q(\lambda) = A\lambda_1^2 + B\lambda_1\lambda_2 + C\lambda_2^2 +
+D\lambda_1 + E\lambda_2 + F$ is a conic function.
+
+Since working directly with this conic function will facilitate our
+calculations, we present a few basic properties of conic
+functions. First, define:
+\begin{align*}
+  M = \begin{bmatrix} A & B/2 \\ B/2 & C \end{bmatrix}, \qquad \epsilon = \begin{bmatrix} D/2 \\ E/2 \end{bmatrix}.
+\end{align*}
+Then, evaluating the conic $Q$ can be written in terms of a quadratic
+form in homogeneous coordinates:
+\begin{align*}
+  Q(\lambda) = \begin{bmatrix} \lambda \\ 1 \end{bmatrix}^\top \begin{bmatrix}
+    M & \epsilon \\ \epsilon^\top & F \end{bmatrix} \begin{bmatrix} \lambda \\ 1 \end{bmatrix}.
+\end{align*}
+Using this form for $Q$ and expanding
+$Q(\lambda) = \langle \lambda, \lambda \rangle_M + 2 \langle \epsilon,
+\lambda \rangle + F$, the gradient and Hessian of $Q$ with respect to
+$\lambda$ are:
+\begin{align*}
+  \nabla_\lambda Q = \nabla_\lambda Q(\lambda) = 2M\lambda + 2\epsilon, \qquad \nabla_\lambda^2 Q = 2M.
+\end{align*}
+
+Our goal is to derive the relaxed Newton's iteration for minimizing
+$F(\lambda)$, where the step size is taken to be the exact minimizer
+in the line search. That is, letting $p$ denote the direction for a
+given step, and defining $G(\alpha) = \lambda + \alpha p$, we would
+like to compute:
+\begin{align*}
+  \alpha^* = \argmin_{\alpha \leq 0} F(G(\alpha)).
+\end{align*}
+Since we are working with Newton's method, we take
+$p = {(\nabla_\lambda^2F(\lambda))}^{-1} \nabla_\lambda F(\lambda)$,
+where $\lambda$ is the current iterate.
+
+\begin{lemma}
+  The gradient and Hessian of $F$ with respect to $\lambda$ are given
+  by:
+  \begin{align*}
+    \nabla_\lambda F(\lambda) &= \delta u + \frac{\hat{s} h}{\sqrt{Q(\lambda)}} {(M\lambda + \epsilon)}, \\
+    \nabla_\lambda^2 F(\lambda) &= \frac{\hat{s}h}{Q(\lambda)^{3/2}} \parens{Q(\lambda) M - {(M\lambda + \epsilon)}{(M\lambda + \epsilon)}^\top}.
+  \end{align*}
+\end{lemma}
+
+\begin{proof}
+  First, compute:
+  \begin{align*}
+    \nabla_\lambda \sqrt{Q(\lambda)} = \frac{1}{2 \sqrt{Q(\lambda)}} \nabla_\lambda Q(\lambda) = \frac{1}{\sqrt{Q(\lambda)}}\parens{M\lambda + \epsilon}.
+  \end{align*}
+  From this, it is easy to see that $\nabla_\lambda F(\lambda)$ has
+  the desired form. For the Hessian, we write:
+  \begin{align*}
+    \nabla_\lambda^2 F(\lambda)
+    &= \hat{s}h \nabla_\lambda \frac{1}{\sqrt{Q(\lambda)}}{(M\lambda + \epsilon)} = \hat{s}h \parens{\parens{\nabla_\lambda \frac{1}{\sqrt{Q(\lambda)}}} {(M\lambda + \epsilon)}^\top + \frac{1}{\sqrt{Q(\lambda)}} {(M\lambda + \epsilon)}},
+  \end{align*}
+  from which the result readily follows.
+\end{proof}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
