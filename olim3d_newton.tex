@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 
+\newcommand{\curlyb}[1]{\left\{#1\right\}}
 \newcommand{\m}[1]{\boldsymbol{#1}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\norm}[1]{\left|\left|#1\right|\right|}
@@ -20,7 +21,7 @@
 
 \section{Newton's Method with Exact Line Search for Tetrahedral Updates}
 
-\subsection{Righthand Rule and Modified Midpoint}
+\subsection{Righthand Rule and ``Modified Midpoint'' Rule}
 
 The righthand rule and modified midpoint tetrahedral updates can be
 written in terms of a conic function. Letting
@@ -28,7 +29,7 @@ $\Delta^2 = \set{(\lambda_1, \lambda_2) \in \R : \lambda_1 \geq 0,
   \lambda_2 \geq 0, \lambda_1 + \lambda_2 \leq 1}$, the minimization
 problem associated with the tetrahedral update is:
 \begin{align*}
-  \hat{u} = \min_{\lambda \in \Delta^2} F(\lambda) := \min_{\lambda \in \Delta^2} \set{u_\lambda + \int_{[\hat{p}, p_\lambda]} s d\sigma} = \mbox{error} + u_\lambda + \hat{s} \norm{\hat{p} - p_\lambda}_2.
+  \hat{u} = \min_{\lambda \in \Delta^2} F_0(\lambda) := \min_{\lambda \in \Delta^2} \curlyb{u_\lambda + \int_{[\hat{p}, p_\lambda]} s d\sigma} = \mbox{error} + \min_{\lambda \in \Delta_2} \curlyb{u_\lambda + \hat{s} \norm{\hat{p} - p_\lambda}_2}.
 \end{align*}
 Then, if we factor the grid resolution out of the length
 $\norm{\hat{p} - p_\lambda}$, we have:
@@ -60,23 +61,23 @@ $\lambda$ are:
 \end{align*}
 
 Our goal is to derive the relaxed Newton's iteration for minimizing
-$F(\lambda)$, where the step size is taken to be the exact minimizer
+$F_0(\lambda)$, where the step size is taken to be the exact minimizer
 in the line search. That is, letting $p$ denote the direction for a
 given step, and defining $G(\alpha) = \lambda + \alpha p$, we would
 like to compute:
 \begin{align*}
-  \alpha^* = \argmin_{\alpha \leq 0} F(G(\alpha)).
+  \alpha^* = \argmin_{\alpha \leq 0} F_0(G(\alpha)).
 \end{align*}
 Since we are working with Newton's method, we take
-$p = {(\nabla_\lambda^2F(\lambda))}^{-1} \nabla_\lambda F(\lambda)$,
+$p = {(\nabla_\lambda^2F_0(\lambda))}^{-1} \nabla_\lambda F_0(\lambda)$,
 where $\lambda$ is the current iterate.
 
 \begin{lemma}
-  The gradient and Hessian of $F$ with respect to $\lambda$ are given
+  The gradient and Hessian of $F_0$ with respect to $\lambda$ are given
   by:
   \begin{align*}
-    \nabla_\lambda F(\lambda) &= \delta u + \frac{\hat{s} h}{\sqrt{Q(\lambda)}} {(M\lambda + \epsilon)}, \\
-    \nabla_\lambda^2 F(\lambda) &= \frac{\hat{s}h}{Q(\lambda)^{3/2}} \parens{Q(\lambda) M - {(M\lambda + \epsilon)}{(M\lambda + \epsilon)}^\top}.
+    \nabla_\lambda F_0(\lambda) &= \delta u + \frac{\hat{s} h}{\sqrt{Q(\lambda)}} {(M\lambda + \epsilon)}, \\
+    \nabla_\lambda^2 F_0(\lambda) &= \frac{\hat{s}h}{Q(\lambda)^{3/2}} \parens{Q(\lambda) M - {(M\lambda + \epsilon)}{(M\lambda + \epsilon)}^\top}.
   \end{align*}
 \end{lemma}
 
@@ -85,13 +86,56 @@ where $\lambda$ is the current iterate.
   \begin{align*}
     \nabla_\lambda \sqrt{Q(\lambda)} = \frac{1}{2 \sqrt{Q(\lambda)}} \nabla_\lambda Q(\lambda) = \frac{1}{\sqrt{Q(\lambda)}}\parens{M\lambda + \epsilon}.
   \end{align*}
-  From this, it is easy to see that $\nabla_\lambda F(\lambda)$ has
+  From this, it is easy to see that $\nabla_\lambda F_0(\lambda)$ has
   the desired form. For the Hessian, we write:
   \begin{align*}
-    \nabla_\lambda^2 F(\lambda)
+    \nabla_\lambda^2 F_0(\lambda)
     &= \hat{s}h \nabla_\lambda \frac{1}{\sqrt{Q(\lambda)}}{(M\lambda + \epsilon)} = \hat{s}h \parens{\parens{\nabla_\lambda \frac{1}{\sqrt{Q(\lambda)}}} {(M\lambda + \epsilon)}^\top + \frac{1}{\sqrt{Q(\lambda)}} {(M\lambda + \epsilon)}},
   \end{align*}
   from which the result readily follows.
+\end{proof}
+
+\subsection{Simplified Degree (1, 2, 2) Tetrahedral Update}
+
+\subsection{Simplified Degree (1, 1, 1) and (2, 2, 2) Tetrahedral Updates}
+
+\subsection{Midpoint Rule}
+
+Like the righthand rule and ``modified midpoint'' rule, the midpoint
+rule can be written in terms of a minimization of a line integral
+involving a conic $Q$:
+\begin{align*}
+  \hat{u} = \min_{\lambda \in \Delta^2} F_1(\lambda) := \min_{\lambda \in \Delta^2} \curlyb{u_\lambda + \int_{[\hat{p}, p_\lambda]} sd\sigma} = \mbox{error} + \min_{\lambda \in \Delta^2} \curlyb{u_\lambda + h s_\lambda \sqrt{Q(\lambda)}},
+\end{align*}
+where $s_\lambda = s_0 + \lambda_1 \delta s_1 + \lambda_2 \delta s_2$.
+
+\begin{lemma}
+  The gradient and Hessian of $F_1$ with respect to $\lambda$ are given by:
+  \begin{align*}
+    \nabla_\lambda F_1(\lambda) &= \delta u + h \parens{l_\lambda \delta s + \frac{s_\lambda}{l_\lambda} \nabla_\lambda \parens{M\lambda + \epsilon}}, \\
+    \nabla^2_\lambda F_1(\lambda) &= \frac{h}{l_\lambda} \parens{2\parens{\delta s - \frac{s_\lambda}{2Q(\lambda)}\parens{M\lambda + \epsilon}}\parens{M\lambda + \epsilon}^\top + s_\lambda M}.
+  \end{align*}
+\end{lemma}
+
+\begin{proof}
+  We have $\nabla_\lambda u_\lambda = \delta u$ and
+  $\nabla_\lambda s_\lambda = \delta s$. Then:
+  \begin{align*}
+    \nabla_\lambda F_1(\lambda) = \delta u + h \parens{l_\lambda \delta s + \frac{s_\lambda}{2 l_\lambda} \nabla_\lambda Q(\lambda)},
+  \end{align*}
+  from which the form for $\nabla_\lambda F_1(\lambda)$ follows. Next,
+  noting that:
+  \begin{align*}
+    \nabla_\lambda (l_\lambda \delta s) = \delta s \nabla_\lambda \sqrt{Q(\lambda)}^\top = \frac{1}{2l_\lambda} \delta s \nabla_\lambda Q(\lambda)^\top,
+  \end{align*}
+  and:
+  \begin{align*}
+    \nabla_\lambda \frac{s_\lambda}{l_\lambda} \nabla_\lambda Q(\lambda)
+    &= \parens{\frac{1}{l_\lambda} \nabla_\lambda s_\lambda - \frac{s_\lambda}{2 Q(\lambda)^{3/2}} \nabla_\lambda Q(\lambda)} \nabla_\lambda Q(\lambda)^\top + \frac{s_\lambda}{l_\lambda} \nabla^2_\lambda Q(\lambda) \\
+    &= \frac{1}{l_\lambda} \delta s \nabla_\lambda Q(\lambda)^\top - \frac{s_\lambda}{2 l_\lambda Q(\lambda)} \nabla_\lambda Q(\lambda) \nabla_\lambda Q(\lambda)^\top + \frac{s_\lambda}{l_\lambda} \nabla_\lambda^2 Q(\lambda),
+  \end{align*}
+  and simplifying using our forms for $\nabla_\lambda Q$ and
+  $\nabla_\lambda^2 Q$ gives us our form for the Hessian.
 \end{proof}
 
 \end{document}
