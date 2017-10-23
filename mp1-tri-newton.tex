@@ -1,0 +1,64 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+
+\newcommand{\parens}[1]{\left(#1\right)}
+\newcommand{\sbar}{\overline{s}}
+
+\begin{document}
+
+Define the following:
+\begin{align*}
+  \sbar_i &= \frac{s + s_i}{2}, \\
+  \delta \sbar &= \sbar_1 - \sbar_0, \\
+  \sbar_\lambda &= (1 - \lambda)\sbar_0 + \lambda \sbar_1, \\
+  q(\lambda) &= a\lambda^2 + 2b\lambda + c, \\
+  l_\lambda &= \sqrt{q(\lambda)}, \\
+  u_\lambda &= (1 - \lambda)u_0 + \lambda u_1, \\
+  F(\lambda) &= u_\lambda + \sbar_\lambda h \sqrt{q(\lambda)}.
+\end{align*}
+Then:
+\begin{align*}
+  F'(\lambda) &= \delta u + h\parens{\delta\sbar\cdot{}l_\lambda + \frac{\sbar_\lambda q'(\lambda)}{2 l_\lambda}}, \\
+  F''(\lambda) &= \frac{h}{2 l_\lambda} \parens{2 \delta\sbar\cdot{}q' + q'' - \frac{{(q')}^2}{2 q}}
+\end{align*}
+We can write $q$ as a quadratic form:
+\begin{align*}
+  q(\lambda) = \begin{bmatrix} \lambda \\ 1 \end{bmatrix}^\top \begin{bmatrix} a & b \\ b & c \end{bmatrix} \begin{bmatrix} \lambda \\ 1 \end{bmatrix}.
+\end{align*}
+Then $Q(\lambda)$ in our other write-ups generalizes this.
+
+The derivatives of $q$ are:
+\begin{align*}
+  q'(\lambda) = 2(a\lambda + b), \qquad q''(\lambda) = 2a.
+\end{align*}
+Then:
+\begin{align*}
+  F' &= \delta u + h\parens{\delta\sbar\cdot{}l_\lambda + \frac{\sbar_\lambda}{l_\lambda} \parens{a \lambda + b}} = \delta u + \frac{h}{l_\lambda} \parens{\delta\sbar\cdot{}q + \sbar_\lambda l_\lambda (a \lambda + b)}, \\
+  F'' &= \frac{h}{l_\lambda} \parens{2 \delta\sbar (a \lambda + b) - \frac{a \lambda^2 + 2ab \lambda + b^2}{a\lambda^2 + 2b \lambda + c}}.
+\end{align*}
+
+We would like to derive a relaxed Newton's method with exact line
+search:
+\begin{align*}
+  \lambda_{n+1} \gets \lambda_n + \alpha_n \delta \lambda_n,
+\end{align*}
+where:
+\begin{align*}
+  \delta \lambda_n = -F''(\lambda_n)/F'(\lambda_n),
+\end{align*}
+and:
+\begin{align*}
+  \alpha_n = \operatorname{argmin}_{\alpha \leq 0} F(\lambda_n + \alpha \lambda_n).
+\end{align*}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
