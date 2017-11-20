@@ -1,0 +1,62 @@
+\documentclass{article}
+
+\usepackage{amsmath,amssymb,amsthm,cleveref,fullpage,nicefrac}
+
+\newcommand{\Fmpzero}{F_0^{\operatorname{(mp)}}}
+\newcommand{\Fmpone}{F_1^{\operatorname{(mp)}}}
+\newcommand{\Frhr}{F^{\operatorname{(rhr)}}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\norm}[1]{\left|\left|#1\right|\right|}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\squareb}[1]{\left[#1\right]}
+\newcommand{\parens}[1]{\left(#1\right)}
+
+\begin{document}
+
+\section{Quadrature Rules}
+
+The simplex updates of each OLIM approximately minimize a line
+integral which corresponds a trial evolution of the solution's
+characteristic curve. When performing a simplex update of dimension
+$m$ for $C = \in \calC$, we have access to the numerical solution $u$
+at the points $p_i \in v(C) \backslash \{\hat{p}\}$; i.e.,
+$u_i = u(p_i)$ for $i = 0, \hdots, m$. Defining
+$u_\lambda = \lambda_0 u_0 + \cdots + \lambda_m u_m$ and
+$p_\lambda = \lambda_0 p_0 + \cdots + \lambda_m p_m$, the line
+integral to minimize is:
+\begin{align}\label{eq:hat-u-variational}
+  \hat{u} = \min_{\lambda \in \Delta^m} \set{u_\lambda + \int_{[p_\lambda, \hat{p}]} s(\gamma(t))dt}.
+\end{align}
+That is, we minimize the linear approximation $u_\lambda$ plus the
+time taken to travel from the point $p_\lambda$ on the front of the
+solution to the update point $\hat{p}$. In the integral above, we
+assume that $\gamma(t)$ is an arc length parametrization of the
+interval $[p_\lambda, \hat{p}]$.
+
+In this work, we consider two approximations to
+\cref{eq:hat-u-variational}: the difference between the two is the way
+we incorporate the speed function $s$. Let $\theta \in [0, 1]$ and
+define:
+\begin{align*}
+  F_0(\lambda; \theta) &= u_\lambda + \squareb{(1-\theta)\hat{s} + \frac{\theta}{m} \sum_{i=1}^m s_i} \norm{\hat{p} - p_\lambda}_2, \\
+  F_1(\lambda; \theta) &= u_\lambda + \squareb{(1-\theta)\hat{s} + \theta s_\lambda} \norm{\hat{p} - p_\lambda}_2.
+\end{align*}
+We will primarily concern ourselves with $F_0$ and $F_1$ for
+$\theta = 0$ and $\theta = \nicefrac{1}{2}$. For $\theta = 0$, we have
+$F_0 = F_1$, so we define $\Frhr = F_0 = F_1$. On the other hand,
+$F_0(\lambda;\nicefrac{1}{2}) \neq F_1(\lambda;\nicefrac{1}{2})$
+unless $s \equiv 1$, so we write
+$\Fmpzero(\lambda) = F_0(\lambda; \nicefrac{1}{2})$ and
+$\Fmpone(\lambda) = F_1(\lambda; \nicefrac{1}{2})$, where ``mp''
+stands for ``midpoint''. We will define
+$l_\lambda = \norm{\hat{p} - p_\lambda}/h$, so that:
+\begin{align*}
+  \Frhr(\lambda) = u_\lambda + \hat{s} h l_\lambda, \qquad \Fmpzero(\lambda) = u_\lambda + \frac{\hat{s} + \langle s \rangle}{2} h l_\lambda, \qquad \Fmpone(\lambda) = u_\lambda + \frac{\hat{s} + s_\lambda}{2} h l_\lambda.
+\end{align*}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
