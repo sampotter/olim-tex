@@ -4,3 +4,9 @@ auto
 *.pdf
 *.aux
 *.eps
+*.out
+*.bbl
+*.blg
+*.toc
+.DS_Store
+<none>*
