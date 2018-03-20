@@ -1,0 +1,107 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\section{Fast Projection}
+
+\begin{defn}
+  Let
+  $\Delta^d = \set{(\lambda_1, \cdots, \lambda_d) \in \mathbb{R}^d :
+    \lambda_i \geq 0 \mbox{ and } \sum_{i=1}^d \lambda_i \leq 1}$ be
+  the \emph{barycentric coordinate simplex}.
+\end{defn}
+
+An algorithm for projecting points in $\R^d$ onto $\Delta^d$ in $O(d)$
+time follows.
+
+\begin{algorithm}
+  \caption{projection alg.}
+  \begin{algorithmic}
+    \REQUIRE $y \in \R^d$
+    \ENSURE $y \gets \arg\min_{x \in \Delta^d} \norm{y - x}_2$
+    \STATE Set $\sigma \gets \sum_{i=1}^d y_i$
+    \IF{$\sigma > 1$}
+      \STATE Set $y \gets y + (1 - \sigma)/d$
+    \ENDIF
+    \STATE Set $y \gets \max(0, \min(y, 1))$
+  \end{algorithmic}
+\end{algorithm}
+
+\begin{lemma}
+  This algorithm is correct
+\end{lemma}
+
+\begin{proof}
+  First, note that the column space of the matrix
+  $U \in \R^{d \times d - 1}$ given by:
+  \begin{align*}
+    U = \begin{bmatrix} -\one_{1 \times d - 1} \\ I_{d-1} \end{bmatrix}
+  \end{align*}
+  is the dimension $d-1$ hyperplane
+  $\{x \in \R^d : \one^\top x = 0\}$. Since the columns of $U$ are
+  linearly independent, we can write the orthogonal projector onto
+  this space as $UU^\dagger = U(U^\top U)^{-1}U^\top$. We have
+  $U^\top U = I_{d-1} + \one_{d-1 \times d-1}$, and thus
+  $(U^\top U)^{-1} = I_{d-1} - \one_{d-1 \times d-1}/d$, since
+  (dropping subscripts, and temporarily writing $I = I_{d-1}$ and
+  $\one = \one_{d-1 \times d-1}$):
+  \begin{align*}
+    \parens{I + \one} \parens{I - \tfrac{1}{d}\one} = I - \tfrac{1}{d} \one + \one - \tfrac{d-1}{d} \one = I.
+  \end{align*}
+  From this, we obtain $UU^\dagger = I_d - \one_{d \times d}/d$.
+
+  Geometrically, we can see that an algorithm to orthogonally project
+  $y$ onto $\Delta^d$ is as follows:
+  \begin{enumerate}
+  \item Let $\sigma = y_1 + \cdots + y_d$.
+  \item If $\sigma > 1$, project $y$ onto the halfspace
+    $\{x \in \R^d : \sum_{i=1}^d x_i \leq 1\}$.
+  \item Clamp each $y_i$ to the range $0 \leq y_i \leq 1$.
+  \end{enumerate}
+  In homogeneous coordinates, the second step is equivalent to setting:
+  \begin{align}\label{eq:proj-homogeneous}
+    \begin{bmatrix}
+      y \\ 1
+    \end{bmatrix} \gets \begin{bmatrix}
+      I & \one/d \\ & 1
+    \end{bmatrix} \begin{bmatrix}
+      UU^\dagger & \\
+      & 1
+    \end{bmatrix} \begin{bmatrix}
+      I & -\one/d \\ & 1
+    \end{bmatrix} \begin{bmatrix}
+      y \\ 1
+    \end{bmatrix}
+  \end{align}
+  if $\sigma > 1$. To see this, if $\sigma > 1$, then $y$ lie strictly
+  outside of the halfspace of interest. Translation by $-\one/d$
+  transforms the halfspace into
+  $\set{x \in \R^d : \one^\top x \leq 0}$. Projection onto the plane
+  $\set{x \in \R^d : \one^\top x = 0}$ is then equivalent to
+  projection onto the transformed halfspace, and is effected by
+  multiplication by $UU^\dagger$. Our matrix formulation simply
+  carries this transformation out in homogeneous coordinates. If we
+  multiply out \cref{eq:proj-homogeneous}, we see that this
+  transformation is equivalent to:
+  \begin{align*}
+    \begin{bmatrix}
+      y \\ 1
+    \end{bmatrix} \gets \begin{bmatrix}
+      I_d - \tfrac{1}{d} \one_{d \times d} & -\tfrac{1}{d} \one_{d \times 1} \\
+      & 1
+    \end{bmatrix} \begin{bmatrix}
+      y \\ 1
+    \end{bmatrix} = \begin{bmatrix}
+      y + \frac{1 - \sigma}{d} \one_{d \times 1} \\
+      1
+    \end{bmatrix},
+  \end{align*}
+  i.e. $y \gets y + (1 - \sigma)/d$.
+\end{proof}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

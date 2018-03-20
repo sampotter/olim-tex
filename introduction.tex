@@ -1,0 +1,104 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\section{Introduction}
+
+\paragraph{The eikonal equation.} We are interested in solving the
+\emph{eikonal equation}, a hyperbolic nonlinear PDE encountered in
+wave propagation and the modeling of a wide variety of problems in
+computational and applied science (\hl{cite}). With $d \geq 2$, and
+given a domain $\Omega \in \R^d$, the eikonal equation is of the form:
+\begin{equation}
+  \label{eq:eikonal}
+  \abs{\nabla u(x)} = s(x), \qquad x \in \Omega,
+\end{equation}
+where $s : \Omega \to \R_+$ is a fixed, positive \emph{slowness
+  function}, which forms part of the problem data. Hence, we solve for
+$u : \Omega \to \overline{\R}_+$. The rest of the problem data is a
+subset of $D \subset \Omega$ where $u$ has been fixed; i.e.,
+$\left. u \right|_D = g$, for some
+$g : D \to \overline{\R}_+$. As an example, if $s \equiv 1$ and $g
+\equiv 0$, then the solution
+$u$ of \cref{eq:eikonal} is the distance to
+$D$ at each point in $\Omega$:
+\begin{equation}
+  \label{eq:distance-to-Omega}
+  u(x) = d(x, D) = \inf_{y \in \Omega} \norm{x - y}_2.
+\end{equation}
+The rapid solution of this problem on complicated geometries is an
+example of an exceedingly practical application of the fast marching
+method, which sees use in areas such as computer graphics,
+computational geometry, computed-aided design, and the like
+(\hl{cite}).
+
+\paragraph{The fast marching method.} As we have just alluded to, the
+fast marching method is a particularly efficient method for solving
+the eikonal equation and a variety of others equations
+besides~\cite{sethian1999level}. To describe this method, first let
+$\calP = \set{p_i}_{i \in I} \subseteq \Omega$ be a set of
+\emph{nodes} where we would like to approximate the true solution $u$
+with a numerical solution $U : \calP \to
+\overline{R}_+$. Additionally, for each node $p \in \calP$, define a
+set of neighbors, $\neib(p) \subseteq \calP \backslash \set{p}$. The
+standard fast marching method takes $\calP$ to be a lattice in $\R^d$
+and $\neib(p)$ to be each node's $2d$ neighbhors. With $\calP$
+defined, we also define the \emph{boundary nodes}, the set
+$\boundary$. The set $\boundary$ and $D$ may not coincide; to
+reconcile this difference, the initial value of $U(p)$ for each
+$p \in \boundary$ must take $g$ into account in the best way possible.
+
+We will give a brief description of the fast marching method. There
+are several extra pieces of information that need to be kept track of
+in order to implement the algorithm. For each node $p$, apart from the
+current value of $U(p)$, the most salient piece of information is the
+\emph{state} of each node $p$, written $p$\texttt{.state}
+$\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. The meaning
+of each of these states will become clear from the following
+high-level description of the algorithm:
+\begin{enumerate}
+\item For each $p \in \calP$, initially set $p$\texttt{.state} $=$
+  \texttt{far} and $U(p) = \infty$.
+\item For each $p \in \boundary$, set $p$\texttt{.state} $=$
+  \texttt{valid} and initialize $U(p)$.
+\item Let $p$ be the \texttt{trial} node with the smallest value
+  $U(p)$.
+\item Set $p$\texttt{.state} $\gets$ \texttt{valid}.
+\item For each $q \in \neib(p)$, set $p$\texttt{.state} $\gets$ \texttt{trial} if $p$\texttt{.state} $=$ \texttt{far}.
+\item For each $q \in \neib(\hat{p})$ such that $q$\texttt{.state} $=$
+  \texttt{trial}, update $U(q)$.
+\end{enumerate}
+This algorithm is generic in the following way:
+\begin{itemize}
+\item There are a variety of ways to compute $\boundary$ and
+  subsequently approximate the initial value of $U$ for
+  $p \in \boundary$ using $g$ (\hl{cite}).
+\item The method of keeping track of the node with the smallest value
+  is variable: most frequently, a binary heap storing pointers to the
+  nodes is dynamically updated, leading to $O(n \log n)$ update
+  operations.
+\item The update procedure itself can take different forms: for
+  methods based on finite differences, there are first-order methods
+  and ``almost'' higher-order methods (methods which take advantage of
+  second- and higher-order discretization schemes when the nodes are
+  available for them, and which default the lower order schemes when
+  necessary).
+\item Related to the foregoing point, the arrangement of the nodes
+  (into a grid or otherwise) varies; hence, the neighborhood of each
+  node varies. This naturally affects the update procedure.
+\end{itemize}
+
+\paragraph{A prototypical OLIM.} To motivate the present work, we
+start by presenting the update procedure for the standard fast
+marching method, which is based on finite differences. We then present
+the update for a prototypical version of an \emph{ordered line
+  integral method} (OLIM) and show that it is equivalent to the
+standard fast marching method's update. The rest of the work will then
+concern itself with improvements and refinements of our first OLIM.
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

@@ -3,7 +3,6 @@
 auto
 *.pdf
 *.aux
-*.eps
 *.out
 *.bbl
 *.blg

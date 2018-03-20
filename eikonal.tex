@@ -1,16 +1,36 @@
 \documentclass{article}
 
 \usepackage{eikonal}
+\usepackage{subfiles}
 
 \begin{document}
 
-\large
+\title{Ordered Line Integral Methods \\ for Solving the Eikonal Equation}
+\author{Samuel F. Potter \and Maria Cameron}
+\date{\today}
 
-\input{olim-types.tex}
-\input{quadrature.tex}
-\input{olim3d-newton.tex}
-\input{mp1-tri-newton.tex}
-\input{skipping.tex}
+\maketitle
+
+\abstract{\textbf{TODO}: \hl{write this}.}
+
+\subfile{introduction.tex}
+\subfile{preliminaries.tex}
+\subfile{quadrature.tex}
+\subfile{constrained-newton.tex}
+% \subfile{unconstrained-newton.tex}
+\subfile{tetrahedron-enumeration.tex}
+% \subfile{olim-types.tex}
+% \subfile{olim3d-newton.tex}
+% \subfile{mp1-tri-newton.tex}
+% \subfile{skipping.tex}
+
+% \appendix
+
+% \subfile{fast-simplex-projection.tex}
+% \subfile{simplified-updates.tex}
+
+\bibliographystyle{plain}
+\bibliography{eikonal}{}
 
 \end{document}
 

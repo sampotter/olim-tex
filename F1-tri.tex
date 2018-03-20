@@ -1,0 +1,34 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\section{$F_1$ Triangle Updates}
+
+\textbf{TODO}: we can't follow the same procedure we followed before:
+otherwise we run into a quartic equation in $\lambda$ that we need to
+solve. It's simpler to use Newton's method.
+
+\begin{proof}
+  Since
+  $F_1(\lambda; \theta) = u(\lambda) + h s_\theta(\lambda)
+  l(\lambda)$, we have:
+  \begin{align*}
+    F_1'(\lambda; \theta) = \delta u + h \parens{\theta \cdot \delta s \cdot l(\lambda) + \frac{s_\theta(\lambda) q'(\lambda)}{2 l(\lambda)}} = \delta u + \frac{h}{l(\lambda)} \parens{\theta \cdot \delta s \cdot p_\lambda + s_\theta(\lambda) \delta p}^\top p_\lambda.
+  \end{align*}
+  We also have:
+  \begin{align*}
+    F_1''(\lambda; \theta) = -\frac{h}{l(\lambda)} \parens{2 \theta \delta s p_\lambda^\top \delta p + s(\lambda; \theta) \delta p^\top \calP_{p_\lambda}^\perp \delta p}.
+  \end{align*}
+  This gives the rule:
+  \begin{align*}
+    x_{\operatorname{next}} \gets x + \frac{\langle \theta \delta s p_\lambda + s(\lambda; \theta) \delta p, p_\lambda \rangle}{\langle 2 \theta \delta s p_\lambda + s(\lambda; \theta) \calP^\perp_{p_\lambda} \delta p, \delta p \rangle}.
+  \end{align*}
+\end{proof}
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
