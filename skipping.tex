@@ -1,77 +1,24 @@
-\documentclass{article}
-
-\usepackage{eikonal}
+\documentclass[eikonal.tex]{subfiles}
 
 \begin{document}
 
-\large
-
-\section{Types of Triangular Updates}
-
-For the two- and three-dimensional ordered line integral methods
-(OLIMs), we are concerned with five different triangular updates. If
-we let $p_0, p_1$ be the points forming the vertices of the triangle
-that contains the path of our line integral, then we can identify each
-type of update with the coefficients of a quadratic form.
-
-First, let $\delta p = p_1 - p_0$. Then, define
-$q(\lambda) = \norm{p_0 + \lambda \delta p}_2^2 = a\lambda^2 +
-2b\lambda + c$. Since:
-\begin{align*}
-  p_0 + \lambda \delta p = \begin{bmatrix} \delta p & p_0 \end{bmatrix} \begin{bmatrix} \lambda \\ 1 \end{bmatrix},
-\end{align*}
-we can write:
-\begin{align*}
-  q(\lambda) = \begin{bmatrix} \lambda \\ 1 \end{bmatrix}^\top \begin{bmatrix} \delta p & p_0 \end{bmatrix}^\top \begin{bmatrix} \delta p & p_0 \end{bmatrix} \begin{bmatrix} \lambda \\ 1 \end{bmatrix} = \begin{bmatrix} \lambda \\ 1 \end{bmatrix} \begin{bmatrix} (\delta p, \delta p) & (\delta p, p_0) \\ (p_0, \delta p) & (p_0, p_0) \end{bmatrix} \begin{bmatrix} \lambda \\ 1 \end{bmatrix},
-\end{align*}
-i.e. $a = (\delta p, \delta p)$, $b = (\delta p, p)$, and
-$c = (p, p)$. So, we can see that $q(\lambda)$ is a quadratic form
-determined by the Gram matrix for the vectors $\set{\delta p,
-  p_0}$. This generalizes immediately to tetrahedral and
-higher-dimensional simplex updates.
-
-We can identify each triangular update by the Hamming weights of $p_0$
-and $p_1$. For example, in two dimensions, the triangular updates for
-OLIM4 use $p_0 = (1, 0)$ and $p_1 = (0, 1)$, both of which have
-Hamming weight 1; so, we refer to this triangular update as
-\texttt{tri11}. Altogether, our two- and three-dimensional OLIMs use
-five triangular updates, whose coefficients are listed below:
-\begin{center}
-  \begin{tabular}{c|ccccc}
-    Method & \texttt{tri11} & \texttt{tri12} & \texttt{tri13} & \texttt{tri22} & \texttt{tri23} \\
-    $a$ & 2 & 1 & 2 & 2 & 1 \\
-    $b$ & -1 & 0 & 0 & -1 & 0 \\
-    $c$ & 1 & 1 & 1 & 2 & 2
-  \end{tabular}
-\end{center}
-The different OLIM methods make use of these triangular updates as
-follows:
-\begin{center}
-  \begin{tabular}[h]{cc}
-    OLIM & Types \\
-    \midrule
-    OLIM4, OLIM6 & \texttt{tri11} \\
-    OLIM8 & \texttt{tri12} \\
-    OLIM18 & \texttt{tri12}, \texttt{tri22} \\
-    OLIM26 & \texttt{tri13}, \texttt{tri23}
-  \end{tabular}
-\end{center}
-
 \section{Skipping Triangles}
 
-In this section, let $u(\lambda) = (1 - \lambda) u_0 + \lambda u_1$
-and let $l(\lambda) = \sqrt{q(\lambda)}$.
+We are interested in when:
+\begin{align}\label{eq:constrained-and-unconstrained-tri-agrees}
+  \arg\min_{0 \leq \lambda \leq 1} F_0(\lambda; \theta) = \lambdaopt = \arg\min_{\lambda \in \R} F_0(\lambda; \theta).
+\end{align}
+When the two disagree, we can safely skip over triangle updates.
 
 \begin{lemma}\label{lemma:positive-second-derivative-of-F}
-  Let $F(\lambda) = u(\lambda) + \hat{s} h l(\lambda)$, where
-  $\hat{s}$ and $h$ are positive constants. Then, $F'' > 0$ if
-  $\delta p$ and $p_0$ are linearly independent.
+  If $\delta p$ and $p_0$ are linearly independent, then
+  $F''_0(\lambda; \theta) > 0$ for all $\lambda, \theta \in [0, 1]$.
 \end{lemma}
 
 \begin{proof}
   We have:
   \begin{align*}
-    F''(\lambda) = \frac{\hat{s}h}{2 l(\lambda)} \parens{q''(\lambda) - \frac{{q'(\lambda)}^2}{2q(\lambda)}}.
+    F_0''(\lambda; \theta) = \frac{s_{\theta}h}{2 l(\lambda)} \parens{q''(\lambda) - \frac{{q'(\lambda)}^2}{2q(\lambda)}}.
   \end{align*}
   In our case, $l(\lambda)$ is the length of a nonzero vector, giving
   $l(\lambda) > 0$; so, we examine
@@ -83,50 +30,28 @@ and let $l(\lambda) = \sqrt{q(\lambda)}$.
   independent, the result follows.
 \end{proof}
 
-We would like to know when the minimizer of $F(\lambda)$ lies in
-$(0, 1)$. For all of our triangular updates,
+For all of our triangular updates,
 \cref{lemma:positive-second-derivative-of-F} applies, so that
-$F'' > 0$ everywhere. Then, if $F'(0)$ and $F'(1)$ have the same sign,
-we can conclude that the minimizer of $F$ lies outside the interval
-$(0, 1)$. Since $F'$ is strictly increasing, we can more simply check
-if $F'(0) > 0$ or $F'(1) < 0$.
+$F''_0 > 0$. Then, if $F'_0(0; \theta)$ and $F'_0(1; \theta)$ have the
+same sign, we can conclude that the minimizer of $F_0$ lies outside
+the interval $[0, 1]$. Since $F'_0$ is strictly increasing, we just
+check if $F'_0(0; \theta) > 0$ or $F'_0(1; \theta) < 0$.
 
 \begin{lemma}
-  Let $\rho_i = (\delta p, p_i)/\norm{p_i}_2$ for $i = 0, 1$ and let
-  $\alpha = -\delta u/(\hat{s}h)$. Then, a necessary condition for
-  $\lambdaopt \in (0, 1)$ is $\alpha \in (\rho_0, \rho_1)$.
+  Let $\alpha = -\delta u/(s_\theta h)$. Then,
+  $(\delta p, p_0)/\norm{p_0}_2 \leq \alpha \leq (\delta p,
+  p_1)/\norm{p_1}_2$ implies
+  \cref{eq:constrained-and-unconstrained-tri-agrees}.
 \end{lemma}
 
 \begin{proof}
-  We have
-  $F'(\lambda) = \delta u + \hat{s} h q'(\lambda)/(2 l(\lambda))$. Then:
+  Since $q'(\lambda) = 2(\delta p, p_\lambda)$, we have:
   \begin{align*}
-    F'(0) = \delta u + \hat{s} h b / \sqrt{c}, \qquad F'(1) = \delta u + \hat{s} h \frac{a + b}{\sqrt{a + 2b + c}}.
+    F_0'(\lambda; \theta) = \delta u + s_\theta h \frac{(\delta p, p_\lambda)}{\norm{p_\lambda}}
   \end{align*}
-  Furthermore,
-  $a + b = (\delta p, \delta p) + (\delta p, p_0) = (\delta p, p_1)$,
-  and similarly $b + c = (p_0, p_1)$. Hence,
-  $a + 2b + c = (p_1, p_1)$. Altogether, we have:
-  \begin{align*}
-    \frac{b}{\sqrt{c}} = \frac{(\delta p, p_0)}{\norm{p_0}_2}, \qquad \frac{a + b}{a + 2b + c} = \frac{(\delta p, p_1)}{\norm{p_1}_2}.
-  \end{align*}
-  The result follows from rewriting the condition ``$F'(0) > 0$ or
-  $F'(1) < 0$'', applying these identities to $F'(0)$ and $F'(1)$.
+  Stiuplating that $F'_0(0; \theta) \leq 0$ and
+  $F'(0; \theta) \geq 0$, we get the result.
 \end{proof}
-
-Note that $\rho_i$ above is just the scalar projection of $p_i$ in the
-direction of $\delta p$.
-
-Using our values for the coefficients $a, b$, and $c$ for our
-triangular updates, we get the following table of values for $\rho_0$
-and $\rho_1$:
-\begin{center}
-  \begin{tabular}{c|ccccc}
-    Method & \texttt{tri11} & \texttt{tri12} & \texttt{tri13} & \texttt{tri22} & \texttt{tri23} \\
-    $\rho_0$ & -1 & 0 & 0 & -1/2 & 0 \\
-    $\rho_1$ & 1 & 1/2 & 2/3 & 1/2 & 1/3
-  \end{tabular}
-\end{center}
 
 \section{Skipping Simplexes}
 
@@ -158,7 +83,7 @@ $\lambda_1, \hdots, \lambda_d$).
 The function to be minimized is
 given by:
 \begin{align*}
-  F(\lambda) = u(\lambda) + \hat{s} h l(\lambda),
+  F(\lambda) = u(\lambda) + s_\theta h l(\lambda),
 \end{align*}
 where $u(\lambda) = \lambda_0 u_0 + \cdots + \lambda_d \lambda_d$ and
 $l(\lambda) = \sqrt{Q(\lambda)} = \sqrt{p_\lambda^\top
@@ -173,7 +98,7 @@ $l(\lambda) = \sqrt{Q(\lambda)} = \sqrt{p_\lambda^\top
 \begin{proof}
   We have:
   \begin{align*}
-    \nabla^2 F = \frac{\hat{s}h}{2l} \parens{\nabla^2 Q - \frac{1}{2 Q} \nabla Q \nabla Q^\top}.
+    \nabla^2 F = \frac{s_\theta h}{2l} \parens{\nabla^2 Q - \frac{1}{2 Q} \nabla Q \nabla Q^\top}.
   \end{align*}
   Since $l > 0$, we have $\nabla^2 F > 0$ if
   $2 Q \nabla^2 Q > \nabla Q \nabla Q^\top$ holds. Since we can write
@@ -243,27 +168,32 @@ $\Delta^d$, we need a short lemma.
 \end{proof}
 
 \begin{theorem}
-  Let $\alpha_i = -\delta u_i/(\hat{s}h)$ and
-  $\alpha = (\alpha_1, \hdots, \alpha_d)$. Then, a necessary condition
-  for \cref{eq:minimizers-are-the-same} to hold is
-  $\delta P^\top p_0 \leq \alpha$ and $\alpha \leq \delta P^\top p_i$
-  for $i = 1, \hdots, d$.
+  Let $\alpha_i = -\delta u_i/(s_{\theta}h)$ and
+  $\alpha = (\alpha_1, \hdots, \alpha_m)$. Then:
+  \begin{align*}
+    \arg\min_{\lambda \in \Delta^m} F_0(\lambda; \theta) = \arg\min_{\lambda \in \R^m} F_0(\lambda; \theta)
+  \end{align*}
+  if and only if:
+  \begin{align*}
+    \delta P^\top \frac{p_0}{\norm{p_0}} \leq \alpha \leq \delta P^\top \frac{\overline{p}}{\norm{\overline{p}}}
+  \end{align*}
+  where $\overline{p} = (p_1 + \cdots + p_m)/m$.
 \end{theorem}
 
 \begin{proof}
-  Let $e_i \in \R^d$ denote the standard basis vectors for
-  $i = 1, \hdots, d$ and let $e_0 = 0$. We observe that
+  Let $e_i \in \R^m$ denote the standard basis vectors for
+  $i = 1, \hdots, m$ and let $e_0 = 0$. We observe that
   $p_{e_i} = p_i$ and $l(e_i) = \norm{p_i}$ for $i = 0, \hdots,
-  d$. Hence:
+  m$. Hence:
   \begin{align*}
-    \nabla F(e_i) = \delta u + \frac{\hat{s}h}{\norm{p_i}} \delta P^\top p_i.
+    \nabla F(e_i) = \delta u + \frac{s_\theta h}{\norm{p_i}} \delta P^\top p_i.
   \end{align*}
   For $i = 0$, we require $\nabla F(e_0) \leq 0$ componentwise, giving:
   \begin{align*}
-    \delta u - \hat{s}h \delta P^\top p_0/\norm{p_0} \leq 0  \iff -\alpha \leq \delta P^\top p_0/\norm{p_0}
+    \delta u - s_\theta h \delta P^\top p_0/\norm{p_0} \leq 0  \iff -\alpha \leq \delta P^\top p_0/\norm{p_0}
   \end{align*}
   For $i, j = 1, \hdots, d$, we find
-  $\nabla F(e_i)^\top e_j = \delta u_j + \hat{s} h \delta p_i^\top
+  $\nabla F(e_i)^\top e_j = \delta u_j + s_\theta h \delta p_i^\top
   p_j$ for $i, j = 1, \hdots, d$. Further, if
   $\nabla F(e_i)^\top e_j \leq 0$, this gives
   $\delta P^\top p_i \leq \alpha$ for $i = 1, \hdots, d$.

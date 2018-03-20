@@ -1,0 +1,36 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\section{Notation}
+
+In this section, we briefly present some notation and definitions that
+will be used throughout. Let $n \geq 2$ be an integer and assume
+$d \in \set{0, \hdots, n - 1}$. Let
+$\set{p_0, \hdots, p_d} \subseteq \R^n$ be a linearly independent set
+of vectors (implying $d < n$). We will be interested in convex
+combinations of these vectors. Define the set $\Delta^d$ by:
+\begin{align*}
+  \Delta^d = \set{(\lambda_1, \hdots, \lambda_d) : \lambda_i \geq 0 \mbox{ for } i = 1, \hdots, d \mbox{ and } \sum_{i=1}^d \lambda_i \leq 1}.
+\end{align*}
+For each $\lambda = (\lambda_1, \hdots, \lambda_d) \in \Delta^d$, we
+will write $\lambda_0 = 1 - \lambda_1 - \cdots - \lambda_d$. Then,
+$\sum_{i=0}^d \lambda_i p_i$ lies in the convex hull of
+$\set{p_0, \hdots, p_d}$. We will typically write this vector
+$p_\lambda$. If we define $\delta p_i = p_i - p_0$, we can also write
+$p_\lambda = p_0 + \sum_{i=1}^d \lambda_i \delta p_i$. This is a
+homogeneous transformation applied to $\lambda$; to this end, we
+define the matrix:
+\begin{align*}
+  \delta P = \begin{pmatrix} \delta p_1 & \cdots & \delta p_d \end{pmatrix} \in \R^{n \times d},
+\end{align*}
+so that we can write $p_\lambda = \delta P \lambda + p_0$. We will
+have reason to make use of this ``$\delta$'' notation elsewhere---in
+general, if $x$ is some indexed object, then $\delta x_i = x_i - x_0$.
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

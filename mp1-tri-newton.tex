@@ -1,8 +1,16 @@
-\documentclass{article}
-
-\usepackage{eikonal}
+\documentclass[eikonal.tex]{subfiles}
 
 \begin{document}
+
+\section{Newton's Method for $\Fmpzero$ Triangle Updates}
+
+\begin{align*}
+  F_0(\lambda; \theta) &= u(\lambda) + s_\theta h l(\lambda), \\
+  F_0'(\lambda; \theta) &= \delta u + s_\theta h \frac{\langle p_\lambda, p_0 \rangle}{l(\lambda)}, \\
+  F_0''(\lambda; \theta) &= \frac{s_\theta h}{l(\lambda)} \parens{\langle \delta p, p_0 \rangle - \frac{\langle p_\lambda, p_0 \rangle^2}{\langle p_\lambda, p_\lambda \rangle}}.
+\end{align*}
+
+\section{Newton's Method for $\Fmpone$ Triangle Updates}
 
 Define the following:
 \begin{align*}

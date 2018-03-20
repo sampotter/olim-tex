@@ -2,27 +2,46 @@
 
 %% BeginIpePreamble
 
-\usepackage{algorithm}
-\usepackage{algorithmic}
+\usepackage[]{hyperref}
+\hypersetup{
+  pdftitle={OLIMs for Solving the Eikonal Equation},
+  pdfauthor={Samuel F. Potter and Maria Cameron},
+  colorlinks=true
+}
+
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{blindtext}
 \usepackage{booktabs}
 \usepackage{cleveref}
-\usepackage{fullpage}
+\usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
+\usepackage{multirow}
+\usepackage{nicefrac}
+\usepackage{soul}
+\usepackage{subcaption}
+\usepackage{xcolor}
 
+\newcommand{\boundary}{\texttt{bd}}
+\newcommand{\neib}{\texttt{nb}}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\Fmpone}{F_1^{\operatorname{(mp)}}}
+\newcommand{\Fmpzero}{F_0^{\operatorname{(mp)}}}
+\newcommand{\Frhr}{F^{\operatorname{(rhr)}}}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\calC}{\mathcal{C}}
+\newcommand{\calP}{\mathcal{P}}
 \newcommand{\curlyb}[1]{\left\{#1\right\}}
 \newcommand{\lambdaopt}{\lambda_{\operatorname{opt}}}
 \newcommand{\m}[1]{\boldsymbol{#1}}
 \newcommand{\norm}[1]{\left|\left|#1\right|\right|}
-\newcommand{\onevec}{\mathbb{1}}
+\newcommand{\onevec}{\m{1}}
+\newcommand{\one}{\onevec}
 \newcommand{\parens}[1]{\left(#1\right)}
 \newcommand{\sbar}{\overline{s}}
 \newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\squareb}[1]{\left[#1\right]}
 \newcommand{\xopt}{x_{\operatorname{opt}}}
 
 \DeclareMathOperator{\argmax}{argmax}
@@ -30,6 +49,7 @@
 \DeclareMathOperator{\conv}{conv}
 
 \theoremstyle{plain}
+\newtheorem{corollary}{Corollary}
 \newtheorem{lemma}{Lemma}
 \newtheorem{theorem}{Theorem}
 
