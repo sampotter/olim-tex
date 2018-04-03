@@ -2,26 +2,23 @@
 
 \begin{document}
 
-\section{Introduction}
+\section{Introduction}\label{sec:intro}
 
 \paragraph{The eikonal equation.} We are interested in solving the
-\emph{eikonal equation}, a hyperbolic nonlinear PDE encountered in
-wave propagation and the modeling of a wide variety of problems in
-computational and applied science (\hl{cite}). With $d \geq 2$, and
-given a domain $\Omega \in \R^d$, the eikonal equation is of the form:
-\begin{equation}
-  \label{eq:eikonal}
+\emph{eikonal equation}, a nonlinear PDE encountered in wave
+propagation and the modeling of a wide variety of problems in
+computational and applied science (\hl{cite}). With $n \geq 2$, and
+given a domain $\Omega \in \R^n$, the eikonal equation is of the form:
+\begin{equation}\label{eq:eikonal}
   \abs{\nabla u(x)} = s(x), \qquad x \in \Omega,
 \end{equation}
-where $s : \Omega \to \R_+$ is a fixed, positive \emph{slowness
+where $s : \Omega \to \R_+$ is a fixed, nonnegative \emph{slowness
   function}, which forms part of the problem data. Hence, we solve for
 $u : \Omega \to \overline{\R}_+$. The rest of the problem data is a
 subset of $D \subset \Omega$ where $u$ has been fixed; i.e.,
-$\left. u \right|_D = g$, for some
-$g : D \to \overline{\R}_+$. As an example, if $s \equiv 1$ and $g
-\equiv 0$, then the solution
-$u$ of \cref{eq:eikonal} is the distance to
-$D$ at each point in $\Omega$:
+$\left. u \right|_D = g$, for some $g : D \to \overline{\R}_+$. As an
+example, if $s \equiv 1$ and $g \equiv 0$, then the solution $u$ of
+\cref{eq:eikonal} is the distance to $D$ at each point in $\Omega$:
 \begin{equation}
   \label{eq:distance-to-Omega}
   u(x) = d(x, D) = \inf_{y \in \Omega} \norm{x - y}_2.
@@ -36,13 +33,13 @@ computational geometry, computed-aided design, and the like
 fast marching method is a particularly efficient method for solving
 the eikonal equation and a variety of others equations
 besides~\cite{sethian1999level}. To describe this method, first let
-$\calP = \set{p_i}_{i \in I} \subseteq \Omega$ be a set of
+$\calP = \{p_i\}_{i \in I} \subseteq \Omega$ be a set of
 \emph{nodes} where we would like to approximate the true solution $u$
 with a numerical solution $U : \calP \to
-\overline{R}_+$. Additionally, for each node $p \in \calP$, define a
+\overline{\mathbb{R}}_+$. Additionally, for each node $p \in \calP$, define a
 set of neighbors, $\neib(p) \subseteq \calP \backslash \set{p}$. The
-standard fast marching method takes $\calP$ to be a lattice in $\R^d$
-and $\neib(p)$ to be each node's $2d$ neighbhors. With $\calP$
+standard fast marching method takes $\calP$ to be a lattice in $\R^n$
+and $\neib(p)$ to be each node's $2n$ neighbhors. With $\calP$
 defined, we also define the \emph{boundary nodes}, the set
 $\boundary$. The set $\boundary$ and $D$ may not coincide; to
 reconcile this difference, the initial value of $U(p)$ for each
@@ -60,41 +57,96 @@ high-level description of the algorithm:
 \item For each $p \in \calP$, initially set $p$\texttt{.state} $=$
   \texttt{far} and $U(p) = \infty$.
 \item For each $p \in \boundary$, set $p$\texttt{.state} $=$
-  \texttt{valid} and initialize $U(p)$.
-\item Let $p$ be the \texttt{trial} node with the smallest value
-  $U(p)$.
-\item Set $p$\texttt{.state} $\gets$ \texttt{valid}.
-\item For each $q \in \neib(p)$, set $p$\texttt{.state} $\gets$ \texttt{trial} if $p$\texttt{.state} $=$ \texttt{far}.
-\item For each $q \in \neib(\hat{p})$ such that $q$\texttt{.state} $=$
-  \texttt{trial}, update $U(q)$.
+  \texttt{valid}, initialize $U(p)$, and execute
+  \cref{enum:set-trial,enum:update-U}.
+\item While there are \texttt{trial} or \texttt{far} nodes left:
+  \begin{enumerate}
+  \item Let $p$ be the \texttt{trial} node with the smallest value
+    $U(p)$.
+  \item Set $p$\texttt{.state} $\gets$ \texttt{valid}.
+  \item For each $q \in \neib(p)$, set $p$\texttt{.state} $\gets$
+    \texttt{trial} if $p$\texttt{.state} $=$
+    \texttt{far}.\label{enum:set-trial}
+  \item For each $q \in \neib(\hat{p})$ such that $q$\texttt{.state}
+    $=$ \texttt{trial}, update $U(q)$.\label{enum:update-U}
+  \end{enumerate}
 \end{enumerate}
-This algorithm is generic in the following way:
+The exact sequencing and details of some of these steps is
+variable. Our intent here is to give a birds-eye view of the
+algorithm---for concrete details, a suitable reference should be
+consulted (\hl{cite}).
+
+The preceding algorithm is generic in the following ways:
 \begin{itemize}
 \item There are a variety of ways to compute $\boundary$ and
   subsequently approximate the initial value of $U$ for
   $p \in \boundary$ using $g$ (\hl{cite}).
 \item The method of keeping track of the node with the smallest value
   is variable: most frequently, a binary heap storing pointers to the
-  nodes is dynamically updated, leading to $O(n \log n)$ update
-  operations.
+  nodes is dynamically updated, leading to $O(N \log N)$ update
+  operations, where $N$ is the number of nodes.
 \item The update procedure itself can take different forms: for
   methods based on finite differences, there are first-order methods
   and ``almost'' higher-order methods (methods which take advantage of
-  second- and higher-order discretization schemes when the nodes are
-  available for them, and which default the lower order schemes when
-  necessary).
+  second- and higher-order discretizations when the nodes are
+  available for them, and which default the lower order schemes
+  otherwise).
 \item Related to the foregoing point, the arrangement of the nodes
   (into a grid or otherwise) varies; hence, the neighborhood of each
   node varies. This naturally affects the update procedure.
 \end{itemize}
 
-\paragraph{A prototypical OLIM.} To motivate the present work, we
-start by presenting the update procedure for the standard fast
-marching method, which is based on finite differences. We then present
-the update for a prototypical version of an \emph{ordered line
-  integral method} (OLIM) and show that it is equivalent to the
-standard fast marching method's update. The rest of the work will then
-concern itself with improvements and refinements of our first OLIM.
+\paragraph{Minimum action integral of the eikonal equation.} The
+eikonal equation \cref{eq:eikonal} is a Hamilton-Jacobi equation for
+$u$. If we let each fixed characteristic (ray) of the eikonal equation
+be parametrized by some parameter $\sigma$ and denote
+$p = \dot{x} = dx/d\sigma$, the corresponding Hamiltonian is defined
+as:
+\begin{equation}
+  \label{eq:eikonal-hamiltonian}
+  \mathcal{H}{(p, x)} = \frac{\norm{p}^2}{2} - \frac{s(x)^2}{2} = 0.
+\end{equation}
+From Hamilton's equation,
+$\mathcal{H}(p, x) = p^\top \dot{x} - \mathcal{L}(x, \dot{x})$, we can
+see that the Lagrangian is given by:
+\begin{equation}
+  \label{eq:eikonal-lagrangian}
+  \mathcal{L}(x, \dot{x}) = p^\top \dot{x} = \dot{x}^\top \dot{x} = \norm{\dot{x}}^2.
+\end{equation}
+From \cref{eq:eikonal-hamiltonian}, we can also see that
+$s(x) = \norm{p}$, since $s$ was assumed to be nonnegative. Now,
+applying the Cauchy-Schwarz inequality to
+\cref{eq:eikonal-lagrangian}, we obtain:
+\begin{equation}
+  \label{eq:eikonal-lagrangian-2}
+  \mathcal{L}(x, \dot{x}) = \dot{x}^\top \dot{x} = \norm{p} \cdot \norm{\dot{x}} = s(x) \norm{\dot{x}}.
+\end{equation}
+By definition of \cref{eq:eikonal-hamiltonian}, we have
+$\dot{x} = p = \nabla u(x)$. Since $\mathcal{L} > 0$, this lets us
+write:
+\begin{equation}
+  \mathcal{L}(x, \dot{x}) = \norm{\dot{x}}^2 = \abs{\nabla u(x)^\top \dot{x}} = \nabla u(x)^\top \dot{x} = \dot{u}.
+\end{equation}
+And, integrating this along a fixed ray, say from $\sigma_0$ to
+$\sigma_1$:
+\begin{equation}
+  \label{eq:minimum-action-on-a-ray}
+  u(\sigma_1) - u(\sigma_0) = \int_{\sigma_0}^{\sigma_1} \mathcal{L}(x, \dot{x}) d\sigma = \int_{\sigma_0}^{\sigma_1} s(x) \norm{\dot{x}} d\sigma.
+\end{equation}
+A characteristic of \cref{eq:eikonal} minimizes
+\cref{eq:minimum-action-on-a-ray} if the path is allowed to
+vary. Then, if $\hat{x}$ is fixed and $\alpha : [0, L] \to \R^n$ is an
+arc-length parametrized curve with $\alpha(L) = \hat{x}$,
+\cref{eq:minimum-action-on-a-ray} is equivalent to:
+\begin{equation}\label{eq:eikonal-minimum-action-path}
+  \hat{u} = u(\hat{x}) = \min_\alpha \curlyb{u(\alpha(0)) + \int_\alpha s dl},
+\end{equation}
+where $dl$ is the differential element of displacement along
+$\alpha$. Our update procedure is based on
+\cref{eq:eikonal-minimum-action-path}. While the standard finite
+difference method effectively discretizes the Hamiltonian, the method
+presented here discretizes \cref{eq:eikonal-minimum-action-path}. In
+this way, we can see that it relates to the method of characteristics.
 
 \end{document}
 

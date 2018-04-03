@@ -2,136 +2,21 @@
 
 \begin{document}
 
-% \section{Comparing $F_0$ and $F_1$}
+\section{Comparing $F_0$ and $F_1$}
 
-% \emph{This is for $\theta \in (0, 1)$...}
-
-% \begin{lemma}
-%   Let $\lambda^*$ denote the minimizer of $F_0(\lambda; \theta)$
-%   over $\Delta^d$, and let $e(\lambda^*)$ denote the error incurred by
-%   replacing the evaluation of $F_0$ with $F_1$; i.e.,
-%   $e(\lambda^*) = F_0(\lambda^*; \theta) - F_1(\lambda^*;
-%   \theta)$. Then:
-%   \begin{equation*}
-%     \abs{e(\lambda^*)} \leq \parens{\sqrt{d} \max_{1 \leq i \leq d} \abs{\delta u_i} + s_\theta h} \norm{\delta \lambda} + O(\norm{\delta \lambda}^4).
-%   \end{equation*}
-% \end{lemma}
-
-% \begin{proof}
-%   Let $\underline{\lambda} = {(d + 1)}^{-1} \m{1}_{d \times 1}$, and
-%   write $\lambda^* = \underline{\lambda} + \delta \lambda$, where
-%   $\delta \lambda$ is a perturbation of $\underline{\lambda}$. Now, Taylor expand $F_0(\underline{\lambda}; \theta)$ about
-%   $\lambda^*$ to get:
-%   \begin{equation}\label{eq:mp0_vs_mp1:1}
-%     F_0(\underline{\lambda}; \theta) = F_0(\lambda^*; \theta) - \nabla F_0(\lambda^*; \theta)^\top \delta \lambda + \frac{1}{2} \delta \lambda^\top \nabla^2 F_0(\lambda^*; \theta) \delta \lambda + R \geq F_0(\lambda^*; \theta) + R,
-%   \end{equation}
-%   where $R$ is the remainder term, and where we have used the fact
-%   that $\nabla^2 F_0$ is positive semidefinite and
-%   $\nabla F_0(\lambda^*; \theta) = 0$ by optimality. Along the same
-%   lines, we have:
-%   \begin{equation*}
-%     F_1(\lambda^*; \theta) = F_1(\underline{\lambda}; \theta) + \nabla F_1(\underline{\lambda})^\top \delta \lambda + \frac{1}{2} \delta \lambda^\top \nabla^2 F_1(\underline{\lambda}) \delta \lambda + R'.
-%   \end{equation*}
-%   Note that $F_1(\underline{\lambda}) =
-%   F_0(\underline{\lambda})$. Then:
-%   \begin{equation}\label{eq:mp0_vs_mp1:2}
-%     F_1(\lambda^*; \theta) \geq F_0(\underline{\lambda}; \theta) + \nabla F_0(\underline{\lambda}; \theta)^\top \delta \lambda + R'.
-%   \end{equation}
-%   Combining \cref{eq:mp0_vs_mp1:1} and \cref{eq:mp0_vs_mp1:2}, we get
-%   $e(\lambda^*) = F_0(\lambda^*; \theta) - F_1(\lambda^*; \theta) \leq
-%   -\nabla F_0(\underline{\lambda})^\top \delta \lambda - R - R'$. Now,
-%   if we expand our original two Taylor series one term past $R$ and
-%   $R'$, we can see that the newly created third order terms cancel,
-%   owing to the fact that the perturbation for one Taylor series is
-%   $\delta\lambda$, and $-\delta\lambda$ for the other; and also
-%   because
-%   $\nabla^3 F_1(\underline{\lambda}) = \nabla^3
-%   F_0(\underline{\lambda})$. The magnitude of the fourth order term is
-%   $O(\norm{\delta \lambda}^4)$. Hence:
-%   \begin{equation*}
-%     \abs{e(\lambda^*)} \leq \norm{\nabla F_0(\underline{\lambda}; \theta)} \norm{\delta \lambda} + O(\norm{\delta \lambda}^4) \leq \parens{\norm{\delta u} + s_\theta h} \norm{\delta \lambda} + O(\norm{\delta \lambda}^4),
-%   \end{equation*}
-%   where we have used the fact that
-%   $\norm{\delta P^\top p_\lambda/l(\lambda)} \leq 1$ in bounding
-%   $\norm{\nabla F_0(\lambda; \theta)}$. Finally, applying
-%   $\norm{\delta u} = \norm{\delta u}_2 \leq \sqrt{d} \norm{\delta
-%     u}_\infty$ gives the result.
-% \end{proof}
-
-% Since $\lambda^*$ is constrained to lie in $\Delta^d$, we can see that
-% $\norm{\delta \lambda}$ is maximized when $\lambda^*$ is one of the
-% nonzero vertices of $\Delta^d$ (i.e., $\lambda^* = e_i$ for some
-% $i$). Then:
-% \begin{equation*}
-%   \norm{\delta\lambda} \leq \sqrt{\parens{1 - \frac{1}{d + 1}}^2 + \frac{d - 1}{{(d + 1)}^2}} = \frac{\sqrt{d^2 + d - 1}}{d + 1} < 1,
-% \end{equation*}
-% and $\norm{\delta \lambda} \to 1$ as $d \to \infty$. So, as $d$ grows,
-% the above bound performs progressively worse. For our common cases of
-% $d = 2$ and $d = 3$, we have
-% $\norm{\delta \lambda} = \sqrt{5}/3 \approx 0.745$ and
-% $\norm{\delta \lambda} = \sqrt{11}/4 \approx 0.829$,
-% respectively. Although these are relatively large quantities, we can
-% be confident that most of the error is concentrated in the
-% leading-order term. For instance, for $d = 2$,
-% $\norm{\delta \lambda} \approx 0.308$, and the constant on the fourth
-% order term is $C/12$, whether $C$ is some positive constant; so, the
-% fourth order term is approximately $0.0256 C$. \textbf{It may be
-%   worthwhile investigating this constant, since it should depend on
-%   $s_\theta$ and $h$---i.e., it relates to
-%   $\nabla^4 F_0(\underline{\lambda}; \theta)$.}
-
-% So, we need to control $\delta u$ and $h$ in order to minimize the
-% error. Minimizing $h$ is a straightforward (if potentially costly)
-% matter of changing the settings of the algorithms; the vector
-% $\delta u$ is more involved, but we can see that it should be
-% indirectly controlled by $h$. For a smooth speed function, as
-% $h \to 0$, the change in the computed solution between grid points
-% should also tend to zero. However, as $d$ grows, each
-% $\abs{\delta u_i}$ is driven to zero more slowly.
-
-\paragraph{Setup.} For fixed problem data, let $\lambda_1^*$ be the
-optimizer of $F_1(\lambda; \theta)$ over $\Delta^d$; likewise, define
-$\lambda_0^*$ to be the optimizer of $F_0$. We would like to estimate
-the error $F_1(\lambda^*_1; \theta) - F_1(\lambda^*_0; \theta)$. That
-is, we would like to estimate the error incurred by first finding the
-minimizer of $F_0$ and then evaluating $F_1$ in place of $F_0$ as a
-surrogate.
-
-To get our estimate, we need a few Taylor expansions of different
-quantities. Let $\delta \lambda^* = \lambda_1^* - \lambda_0^*$,
-$\hat{p}_\lambda = p_\lambda/l_\lambda$, and
-$\delta p^* = p_1^* - p_0^*$. Notice that
-$\delta p^* = \delta P
-(\lambda_1^* - \lambda_0^*) = \delta P \delta \lambda^*$.  Then:
-\begin{align}
-  l_{\lambda_1^*} &= l_{\lambda_0^* + \delta \lambda^*} = l_{\lambda_0^*} + p_{\lambda_0^*}^\top \delta p^* + O(\norm{\delta \lambda^*}^2),\label{mp0-vs-mp1:eq:1} \\
-  s_{\lambda_1^*}^\theta &= s_{\underline{\lambda} + (\lambda_1 - \underline{\lambda})}^\theta  = s_{\underline{\lambda}}^\theta + \theta \delta s^\top {(\lambda_1^* - \underline\lambda)} + O(\norm{\lambda_1^* - \underline\lambda}^2).\label{mp0-vs-mp1:eq:2}
-\end{align}
-We also have the following lemma.
-
-\begin{lemma}
-  \textbf{TODO}.
-\end{lemma}
+\begin{theorem}
+  For fixed problem data and $s$ Lipschitz continuous, let
+  $\lambda_0^*$ be the minimizer of $F_0$ and let $\lambda_1^*$ be the
+  minimizer of $F_1$. Then, the error incurred by minimizing $F_0$ and
+  then switching to $F_1$ for evaluation is $O(h^2)$; i..e:
+  \begin{equation}
+    |F_1(\lambda_1^*; \theta) - F_1(\lambda_0^*; \theta)| = O(h^3).
+  \end{equation}
+\end{theorem}
 
 \begin{proof}
-  Using \cref{mp0-vs-mp1:eq:1}, compute:
-  \begin{equation*}
-    \hat{p}_{\lambda_1^*} = \frac{p_{\lambda_1^*}}{l_{\lambda_1^*}} = \frac{p_{\lambda_0^*} + \delta p^*}{l_{\lambda_0^*} + p_{\lambda_0^*}^\top \delta p^* + O(\norm{\delta \lambda^*}^2)}
-    = \frac{\hat{p}_{\lambda_0^*} + \delta p^* / l_{\lambda_0^*}}{1 + \hat{p}_{\lambda_0^*}^\top \delta p^* + O(\norm{\delta \lambda^*}^2)}
-  \end{equation*}
-  Since
-  $|\hat{p}_{\lambda_0^*}^\top \delta p^* + O(\norm{\delta \lambda^*}^2)| \leq \norm{\delta p^*} + O(\norm{\delta \lambda^*}^2) < 1$ (???):
-  \begin{align*}
-    \hat{p}_{\lambda_1^*}
-    &= \parens{\hat{p}_{\lambda_0^*} + \delta p^* / l_{\lambda_0^*}} \parens{1 - \hat{p}_{\lambda_0^*}^\top \delta p^* - O(\norm{\delta \lambda^*}^2)} \\
-    &= \parens{1 - \frac{\delta p^* {\delta p^*}^\top}{l_{\lambda_0}^*}} \hat{p_{\lambda_0^*}} + \parens{\frac{1}{l_{\lambda_0^*}} - \hat{p}_{\lambda_0^*} \hat{p}_{\lambda_0^*}^\top} \delta p^* - O(\norm{\delta \lambda^*}^2) \frac{p_{\lambda_1}^*}{l_{\lambda_0^*}}
-  \end{align*}
+  \hl{todo}
 \end{proof}
-
-We have:
-\begin{align*}
-  \nabla F_1(\lambda_1^*; \theta) = \delta u + \theta h \delta s^\top \hat{p}_{\lambda_1^*} + h s_{\lambda_1^*}^\theta \delta P^\top \hat{p}_{\lambda_1^*}
-\end{align*}
 
 \end{document}
 

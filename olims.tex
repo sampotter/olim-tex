@@ -1,0 +1,92 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\section{Ordered Line Integral Methods}
+
+To justify the present work, we start by presenting the update
+procedure (step 6 of the fast marching method described in
+\cref{sec:intro}) for the standard fast marching method, which is
+based on finite differences. We then present the update for a
+prototypical version of an \emph{ordered line integral method} (OLIM)
+and show that it is equivalent to the standard fast marching method's
+update. The rest of the work will then concern itself with
+improvements and refinements of our first OLIM.
+
+Let $h > 0$, and assume our grid forms a subset of $h
+\mathbb{Z}^{n+1}$. Let $\hat{p} \in h \mathbb{Z}^{n+1}$ be the node with the
+minimal heap value (as in step 3 in the informal description of the
+algorithm); and, without loss of generality, identify $\hat{p}$ with
+the origin. During the update step for the fast marching method, the
+valid neighbors with the minimum value along each axis are
+extracted. For example, for each $j$ such that $0 \leq j \leq n$, one
+of $\pm h e_j$ is selected, depending on the values of $U$ and whether
+node is \texttt{valid}. There may be fewer than $n$ nodes selected
+this way. Without loss of generality, we assume that $n$ nodes have
+been selected, and that they are given by $\{h e_i\}_{i=0}^n$. Once
+applied, the update rule consists of solving the following equation
+for $\hat{u}$:
+\begin{equation}
+  \label{eq:fmm-equation}
+  \sum_{i=0}^n {(\hat{u} - u_i)}^2 = \hat{s}^2 h^2.
+\end{equation}
+The value of $\hat{u}$ is given by:
+\begin{equation}
+  \label{eq:fmm-uhat}
+  \hat{u} = \frac{1}{n} \sum_{i=0}^n u_i + \frac{1}{n} \sqrt{\parens{\sum_{i=0}^n u_j}^2 - n \parens{\sum_{i=0}^n u_i^2 - \hat{s}^2 h^2}}.
+\end{equation}
+If the discriminant of \cref{eq:fmm-uhat} is negative, a
+lower-dimensional update is performed a subset of the selected nodes.
+
+We will consider the OLIMs in $\R^{n+1}$ with the same stencil as the
+(finite difference-based) fast marching method---in particular, where
+the stencil for each node consists of its $2(n+1)$ nearest
+neighbors---and using the right-hand rule, $\Frhr$. From
+\cref{eq:hat-u-variational}, we solve:
+\begin{equation}
+  \label{eq:basic-olim-min}
+  \hat{u} = \min_{\lambda \in \Delta^n} \Frhr(\lambda) = \min_{\lambda \in \Delta^n} \set{u_\lambda + \hat{s} h l_\lambda}.
+\end{equation}
+where we write $s^\theta = s^0 = \hat{s}$ since $\hat{s}$ corresponds
+with $s$ evaluated at $\hat{p}$. For the fast marching marching method
+update, the method of selecting which nodes incorporate into
+\cref{eq:fmm-equation} is determined by the discretization of the
+differential operator. The ordered line integral method is akin to the
+method of characteristics, and the considerations become geometric in
+nature. \textbf{TODO}: say more about this.
+
+\begin{theorem}
+  As before, without loss of generality, let the update nodes be
+  $\{h e_i\}_{i=0}^n$. Then, the solution of \cref{eq:fmm-equation}
+  corresponds with the solution of \cref{eq:basic-olim-min},
+  \textbf{TODO}: under certain conditions.
+\end{theorem}
+
+\begin{proof}
+  First, we solve \cref{eq:basic-olim-min} by the method of Lagrange
+  multipliers. Ignoring the requirement that $\lambda_i \geq 0$ for
+  $i$ such that $0 \leq i \leq n$, we solve \cref{eq:basic-olim-min}
+  only subject to the requirement that
+  $g(\lambda) = \m{1}^\top \lambda - 1 = 0$. Defining the Lagrangian
+  $L(\lambda, \alpha) = \Frhr(\lambda) - \alpha g(\lambda)$, the
+  resulting system of equations is
+  $\alpha \m{1} - u = \hat{s} h \lambda / l_\lambda$ and
+  $\m{1}^\top \lambda = 1$. Squaring the first of these gives us
+  $\norm{\alpha \m{1} - u}^2 = \hat{s}^2 h^2$, where the dependence on
+  $\lambda$ drops out. Furthermore, letting $(\lambda^*, \alpha^*)$ be
+  optimum, if we multiply $\nabla_\lambda L(\lambda^*, \alpha^*) = 0$ through by
+  $\lambda^*$, we obtain:
+  \begin{equation*}
+    0 = \nabla_\lambda L(\lambda^*, \alpha^*)^\top \lambda^* = u^\top \lambda^* - \alpha^* \m{1}^\top \lambda^* + \hat{s} h \frac{l_{\lambda^*}^2}{l_{\lambda^*}} = u_\lambda^* - \alpha^* + \hat{s} h l_{\lambda^*}.
+  \end{equation*}
+  Hence, $\alpha^* = u_{\lambda^*} + \hat{s} h l_{\lambda^*} = \hat{u}$, and
+  $\norm{\hat{u} \m{1} - u}^2 = \hat{s}^2 h^2$, recovering
+  \cref{eq:fmm-equation}.
+\end{proof}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
