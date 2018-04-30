@@ -12,3 +12,5 @@ auto
 *.toc
 .DS_Store
 <none>*
+*.nav
+*.snm
