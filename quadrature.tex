@@ -24,29 +24,31 @@
 
 \section{Quadrature Rules}
 
-In this section, we discuss how to compute updates. For each update,
-we identify the updated point with the origin. We assume our method is
-operating on a uniform grid with lattice constant $h$. The vectors
-$\set{p_0, \hdots, p_d}$ of the previous section are the vectors of
-the simplex corresponding to the current update. We assume these
-vectors are scaled so that, if $\hat{p}$ denotes the update grid
-point, then the points which lie on the (approximate) front of the
-solution are $\hat{p} + h p_i \in \R^n$ for $i = 0, \hdots, d$. This
-is useful because on a uniform grid, it will be convenient for us to
-work with vectors $p_i$ whose components satisfy
-$(p_i)_j \in \set{0, -1, 1}$ for $j = 1, \hdots, n$. In particular,
-many of the quantities that we will encounter become integer-valued
-and simpler to compute digitally (e.g., the dot product between two
-such vectors can be computed rapidly using bitwise operations).
+In this section, we discuss how to compute updates (in
+\cref{sec:intro}, \cref{enum:update-U} in our informal description of
+the fast marching method). For each update, we identify the updated
+point with the origin. We assume our method is operating on a uniform
+grid with lattice constant $h$. The vectors $\set{p_0, \hdots, p_d}$
+of the previous section are the vectors of the simplex corresponding
+to the current update. We assume these vectors are scaled so that, if
+$\hat{p}$ denotes the update grid point, then the points which lie on
+the (approximate) front of the solution are $\hat{p} + h p_i \in \R^n$
+for $i = 0, \hdots, d$. This is useful because on a uniform grid, it
+will be convenient for us to work with vectors $p_i$ whose components
+satisfy $(p_i)_j \in \set{0, -1, 1}$ for $j = 1, \hdots, n$. In
+particular, many of the quantities that we will encounter become
+integer-valued and simpler to compute digitally (e.g., the dot product
+between two such vectors can be computed rapidly using bitwise
+operations).
 
-Each simplex update approximately minimize a line integral
+Each simplex update approximately minimizes a line integral
 corresponding to a trial evolution of a characteristic curve of the
-numerical solution. We identify the current grid point with the origin
-and denote the trial value of the numerical solution at this point by
-$\hat{u}$. In general, we use a hat to denote quantities for the
-update point; e.g., below, $\hat{s} = s(\hat{p})$. We also define
-$u_\lambda = u_0 + \delta u^\top \lambda$. Then, the goal is to
-approximate:
+numerical solution. We identify the current grid point to be updated
+with the origin and denote the trial value of the numerical solution
+at this point by $\hat{u}$. In general, we use a hat to denote
+quantities for the update point; e.g., below, $\hat{s} =
+s(\hat{p})$. We also define $u_\lambda = u_0 + \delta u^\top
+\lambda$. Then, the goal is to approximate:
 \begin{align}\label{eq:hat-u-variational}
   \hat{u} = \min_{\lambda \in \Delta^n} \set{u_\lambda + h \int_{[p_\lambda, 0]} s(\gamma(t))dt}.
 \end{align}
@@ -58,8 +60,8 @@ difference between the two pertains to the way we incorporate the
 speed function $s$. Let $\theta \in [0, 1]$ and define
 $l_\lambda = \norm{p_\lambda}_2$. Then, we define:
 \begin{align*}
-  F_0(\lambda; \theta) &:= u_\lambda + h s^{(\theta)} l_\lambda = u_\lambda + h \squareb{(1-\theta)\hat{s} + \frac{\theta}{d + 1} \sum_{i=0}^d s_i} l_\lambda, \\
-  F_1(\lambda; \theta) &:= u_\lambda + h s^{(\theta)}_\lambda l_\lambda = u_\lambda + h \squareb{(1-\theta)\hat{s} + \theta s_\lambda} l_\lambda.
+  F_0(\lambda; \theta) &:= u_\lambda + h s^{\theta} l_\lambda = u_\lambda + h \squareb{(1-\theta)\hat{s} + \frac{\theta}{d + 1} \sum_{i=0}^d s_i} l_\lambda, \\
+  F_1(\lambda; \theta) &:= u_\lambda + h s^{\theta}_\lambda l_\lambda = u_\lambda + h \squareb{(1-\theta)\hat{s} + \theta s_\lambda} l_\lambda.
 \end{align*}
 We will primarily concern ourselves with $F_0$ and $F_1$ for
 $\theta = 0$ and $\theta = \nicefrac{1}{2}$. For $\theta = 0$, we have
@@ -74,8 +76,13 @@ stands for ``midpoint''.
   \centering
   \includegraphics{speed-tetra.eps}
   \caption{A depiction of the different quantities related to
-    $s^{(\theta)}$ and $s^{(\theta)}_\lambda$ (the case of $d = 2$, a
-    tetrahedron update).}
+    $s^{\theta}$ and $s^{\theta}_\lambda$ for the case of $d = 2$, a
+    tetrahedron update. Both of $s^\theta$ and $s^\theta_\lambda$ live
+    on the $\theta$-section of the simplex
+    $\conv \set{\hat{p}, p_0, p_1, p_2}$. The function
+    $s^\theta_\lambda$ is a linear combination of $\hat{s}, s_0, s_1$,
+    and $s_2$; the value $s^\theta$ is $s^\theta_\lambda$ evaluated at
+    the centroid of the $\theta$-section.}
 \end{figure}
 
 To compute $\hat{u}$, we will need access to the gradient and Hessian
@@ -86,8 +93,8 @@ quantities here.
 \begin{lemma}\label{lemma:F0-grad-and-Hess}
   The gradient and Hessian of $F_0(\lambda; \theta)$ satisfy:
   \begin{align}
-    \nabla_\lambda F_0(\lambda; \theta) &= \delta u + \frac{s^{(\theta)} h}{l_\lambda} \delta P^\top p_\lambda, \\
-    \nabla^2_\lambda F_0(\lambda; \theta) &= \frac{s^{(\theta)} h}{l_\lambda} \delta P^\top \calP^\perp_{p_\lambda} \delta P,
+    \nabla_\lambda F_0(\lambda; \theta) &= \delta u + \frac{s^{\theta} h}{l_\lambda} \delta P^\top p_\lambda, \\
+    \nabla^2_\lambda F_0(\lambda; \theta) &= \frac{s^{\theta} h}{l_\lambda} \delta P^\top \calP^\perp_{p_\lambda} \delta P,
   \end{align}
   where $\calP_{p_\lambda}$ denotes the orthogonal projector onto
   $\operatorname{span}(p_\lambda)$ and $\calP_{p_\lambda}^\perp$ is
@@ -98,14 +105,14 @@ quantities here.
 \begin{proof}
   For the gradient, we have:
   \begin{align*}
-    \nabla_\lambda F_0(\lambda; \theta) = \delta u + \frac{s^{(\theta)} h}{2 l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda = \delta u + \frac{s^{(\theta)} h}{l_\lambda} \delta P^\top p_\lambda,
+    \nabla_\lambda F_0(\lambda; \theta) = \delta u + \frac{s^{\theta} h}{2 l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda = \delta u + \frac{s^{\theta} h}{l_\lambda} \delta P^\top p_\lambda,
   \end{align*}
   since
   $\nabla_\lambda p_\lambda^\top p_\lambda = 2 \delta P^\top
   p_\lambda$. For the Hessian:
   \begin{align*}
-    \nabla^2_\lambda F_0(\lambda; \theta) &= \nabla_\lambda \parens{\frac{s^{(\theta)} h}{l_\lambda} p_\lambda^\top \delta P} = s^{(\theta)} h \parens{\nabla_\lambda \frac{1}{l_\lambda} p_\lambda^\top \delta P + \frac{1}{l_\lambda} \nabla_\lambda p_\lambda^\top \delta P} \\
-    &= \frac{s^{(\theta)} h}{l_\lambda} \parens{\delta P^\top \delta P - \frac{\delta P^\top p_\lambda p_\lambda^\top \delta P}{p_\lambda^\top p_\lambda}} = \frac{s^{(\theta)} h}{l_\lambda} \delta P^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} \delta P,
+    \nabla^2_\lambda F_0(\lambda; \theta) &= \nabla_\lambda \parens{\frac{s^{\theta} h}{l_\lambda} p_\lambda^\top \delta P} = s^{\theta} h \parens{\nabla_\lambda \frac{1}{l_\lambda} p_\lambda^\top \delta P + \frac{1}{l_\lambda} \nabla_\lambda p_\lambda^\top \delta P} \\
+    &= \frac{s^{\theta} h}{l_\lambda} \parens{\delta P^\top \delta P - \frac{\delta P^\top p_\lambda p_\lambda^\top \delta P}{p_\lambda^\top p_\lambda}} = \frac{s^{\theta} h}{l_\lambda} \delta P^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} \delta P,
   \end{align*}
   from which the result follows.
 \end{proof}
@@ -113,19 +120,19 @@ quantities here.
 \begin{lemma}\label{lemma:F1-grad-and-Hess}
   The gradient and Hessian of $F_1(\lambda; \theta)$ satisfy:
   \begin{align}
-    \nabla_\lambda F_1(\lambda; \theta) &= \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda \delta s^\top + s^{(\theta)}_\lambda \delta P}^\top p_\lambda, \\
-    \nabla_\lambda^2 F_1(\lambda; \theta) &= \frac{h}{l_\lambda} \parens{\theta \parens{\delta P^\top p_\lambda \delta s^\top + \delta s p_\lambda^\top \delta P} + s^{(\theta)}_\lambda \delta P^\top \calP^\perp_{p_\lambda} \delta P}.
+    \nabla_\lambda F_1(\lambda; \theta) &= \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda \delta s^\top + s^{\theta}_\lambda \delta P}^\top p_\lambda, \\
+    \nabla_\lambda^2 F_1(\lambda; \theta) &= \frac{h}{l_\lambda} \parens{\theta \parens{\delta P^\top p_\lambda \delta s^\top + \delta s p_\lambda^\top \delta P} + s^{\theta}_\lambda \delta P^\top \calP^\perp_{p_\lambda} \delta P}.
   \end{align}
 \end{lemma}
 
 \begin{proof}
-  Since $F_1(\lambda; \theta) = u_\lambda + h s^{(\theta)}_\lambda l_\lambda$, for the gradient we have:
+  Since $F_1(\lambda; \theta) = u_\lambda + h s^{\theta}_\lambda l_\lambda$, for the gradient we have:
   \begin{align*}
-    \nabla_\lambda F_1(\lambda; \theta) = \delta u + h \parens{\theta l_\lambda \delta s + \frac{s^{(\theta)}_\lambda}{2l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda} = \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda^\top p_\lambda \delta s + s^{(\theta)} \delta P^\top p_\lambda},
+    \nabla_\lambda F_1(\lambda; \theta) = \delta u + h \parens{\theta l_\lambda \delta s + \frac{s^{\theta}_\lambda}{2l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda} = \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda^\top p_\lambda \delta s + s^{\theta} \delta P^\top p_\lambda},
   \end{align*}
   and for the Hessian:
   \begin{align*}
-    \nabla_\lambda^2 F_1(\lambda; \theta) &= \frac{h}{2 l_\lambda} \parens{\theta \parens{\nabla_\lambda p_\lambda^\top p_\lambda \delta s^\top + \delta s {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top} + s^{(\theta)}_\lambda \parens{\frac{1}{2 p_\lambda^\top p_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top - \nabla^2_\lambda p_\lambda^\top p_\lambda}}.
+    \nabla_\lambda^2 F_1(\lambda; \theta) &= \frac{h}{2 l_\lambda} \parens{\theta \parens{\nabla_\lambda p_\lambda^\top p_\lambda \delta s^\top + \delta s {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top} + s^{\theta}_\lambda \parens{\frac{1}{2 p_\lambda^\top p_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top - \nabla^2_\lambda p_\lambda^\top p_\lambda}}.
   \end{align*}
   Simplfying this gives us the result.
 \end{proof}
@@ -153,10 +160,10 @@ lying in the nonnegative orthant of $\R^{d+1}$ such that
 $\sum_{i=0}^d \lambda_i = 1$, then, letting
 $P \in \R^{d + 1 \times d + 1}$ so that the $j$th column of $P$ is
 $p_i$, we need to define
-$F_0(\lambda; \theta) = u^\top \lambda + s^{(\theta)} h \sqrt{\lambda^\top
+$F_0(\lambda; \theta) = u^\top \lambda + s^{\theta} h \sqrt{\lambda^\top
   P^\top P \lambda}$. Then:
 \begin{equation*}
-  \nabla F_0(\lambda; \theta) = u + s^{(\theta)} h \frac{P^\top p_\lambda}{l_\lambda}, \qquad \text{and} \qquad \nabla^2 F_0(\lambda; \theta) = \frac{s^{(\theta)} h}{l_\lambda} P^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} P.
+  \nabla F_0(\lambda; \theta) = u + s^{\theta} h \frac{P^\top p_\lambda}{l_\lambda}, \qquad \text{and} \qquad \nabla^2 F_0(\lambda; \theta) = \frac{s^{\theta} h}{l_\lambda} P^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} P.
 \end{equation*}
 An immediate issue here is that, following this definition,
 $\nabla^2 F_0$ becomes singular. Before, the size of $\delta P$

@@ -31,19 +31,19 @@ computational geometry, computed-aided design, and the like
 
 \paragraph{The fast marching method.} As we have just alluded to, the
 fast marching method is a particularly efficient method for solving
-the eikonal equation and a variety of others equations
-besides~\cite{sethian1999level}. To describe this method, first let
-$\calP = \{p_i\}_{i \in I} \subseteq \Omega$ be a set of
+the eikonal equation~\cite{sethian1999level}. To describe this method,
+first let $\calP = \{p_i\}_{i \in I} \subseteq \Omega$ be a set of
 \emph{nodes} where we would like to approximate the true solution $u$
 with a numerical solution $U : \calP \to
-\overline{\mathbb{R}}_+$. Additionally, for each node $p \in \calP$, define a
-set of neighbors, $\neib(p) \subseteq \calP \backslash \set{p}$. The
-standard fast marching method takes $\calP$ to be a lattice in $\R^n$
-and $\neib(p)$ to be each node's $2n$ neighbhors. With $\calP$
-defined, we also define the \emph{boundary nodes}, the set
-$\boundary$. The set $\boundary$ and $D$ may not coincide; to
-reconcile this difference, the initial value of $U(p)$ for each
-$p \in \boundary$ must take $g$ into account in the best way possible.
+\overline{\mathbb{R}}_+$. Additionally, for each node $p \in \calP$,
+define a set of neighbors,
+$\neib(p) \subseteq \calP \backslash \set{p}$. The standard fast
+marching method takes $\calP$ to be a lattice in $\R^n$ and $\neib(p)$
+to be each node's $2n$ neighbhors. With $\calP$ defined, we also
+define the \emph{boundary nodes}, the set $\boundary$. The set
+$\boundary$ and $D$ may not coincide; to reconcile this difference,
+the initial value of $U(p)$ for each $p \in \boundary$ must take $g$
+into account in the best way possible.
 
 We will give a brief description of the fast marching method. There
 are several extra pieces of information that need to be kept track of
@@ -53,24 +53,28 @@ current value of $U(p)$, the most salient piece of information is the
 $\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. The meaning
 of each of these states will become clear from the following
 high-level description of the algorithm:
-\begin{enumerate}
-\item For each $p \in \calP$, initially set $p$\texttt{.state} $=$
-  \texttt{far} and $U(p) = \infty$.
-\item For each $p \in \boundary$, set $p$\texttt{.state} $=$
-  \texttt{valid}, initialize $U(p)$, and execute
-  \cref{enum:set-trial,enum:update-U}.
-\item While there are \texttt{trial} or \texttt{far} nodes left:
-  \begin{enumerate}
-  \item Let $p$ be the \texttt{trial} node with the smallest value
-    $U(p)$.
-  \item Set $p$\texttt{.state} $\gets$ \texttt{valid}.
-  \item For each $q \in \neib(p)$, set $p$\texttt{.state} $\gets$
-    \texttt{trial} if $p$\texttt{.state} $=$
-    \texttt{far}.\label{enum:set-trial}
-  \item For each $q \in \neib(\hat{p})$ such that $q$\texttt{.state}
-    $=$ \texttt{trial}, update $U(q)$.\label{enum:update-U}
+
+\begin{center}
+  \begin{enumerate}[nolistsep]
+  \item For each $p \in \calP$, initially set $p$\texttt{.state} $=$
+    \texttt{far} and $U(p) = \infty$.
+  \item For each $p \in \boundary$, set $p$\texttt{.state} $=$
+    \texttt{valid}, initialize $U(p)$, and execute
+    \cref{enum:set-trial,enum:update-U}.
+  \item While there are \texttt{trial} or \texttt{far} nodes left:
+    \begin{enumerate}[nolistsep]
+    \item Let $p$ be the \texttt{trial} node with the smallest value
+      $U(p)$.
+    \item Set $p$\texttt{.state} $\gets$ \texttt{valid}.
+    \item For each $q \in \neib(p)$, set $p$\texttt{.state} $\gets$
+      \texttt{trial} if $p$\texttt{.state} $=$
+      \texttt{far}.\label{enum:set-trial}
+    \item For each $q \in \neib(\hat{p})$ such that $q$\texttt{.state}
+      $=$ \texttt{trial}, update $U(q)$.\label{enum:update-U}
+    \end{enumerate}
   \end{enumerate}
-\end{enumerate}
+\end{center}
+
 The exact sequencing and details of some of these steps is
 variable. Our intent here is to give a birds-eye view of the
 algorithm---for concrete details, a suitable reference should be
@@ -100,53 +104,53 @@ The preceding algorithm is generic in the following ways:
 eikonal equation \cref{eq:eikonal} is a Hamilton-Jacobi equation for
 $u$. If we let each fixed characteristic (ray) of the eikonal equation
 be parametrized by some parameter $\sigma$ and denote
-$p = \dot{x} = dx/d\sigma$, the corresponding Hamiltonian is defined
-as:
+$p = x' = dx/d\sigma$, the corresponding Hamiltonian is:
 \begin{equation}
   \label{eq:eikonal-hamiltonian}
-  \mathcal{H}{(p, x)} = \frac{\norm{p}^2}{2} - \frac{s(x)^2}{2} = 0.
+  H{(p, x)} = \frac{\norm{p}^2}{2} - \frac{s(x)^2}{2} = 0.
 \end{equation}
-From Hamilton's equation,
-$\mathcal{H}(p, x) = p^\top \dot{x} - \mathcal{L}(x, \dot{x})$, we can
-see that the Lagrangian is given by:
+Since $H = 0$, \cref{eq:eikonal-hamiltonian} implies
+$L = \langle p, x'\rangle = H$, where $x' = \partial_p H = p$.  From
+Hamilton's equation, $H(p, x) = \langle p, x'\rangle - L(x, x')$, we
+can see that the Lagrangian is given by:
 \begin{equation}
   \label{eq:eikonal-lagrangian}
-  \mathcal{L}(x, \dot{x}) = p^\top \dot{x} = \dot{x}^\top \dot{x} = \norm{\dot{x}}^2.
+  L(x, x') = \langle p, x'\rangle = \langle x', x'\rangle = \norm{x'}^2,
 \end{equation}
-From \cref{eq:eikonal-hamiltonian}, we can also see that
-$s(x) = \norm{p}$, since $s$ was assumed to be nonnegative. Now,
-applying the Cauchy-Schwarz inequality to
-\cref{eq:eikonal-lagrangian}, we obtain:
+i.e. $L = \norm{x'}^2$. From \cref{eq:eikonal-hamiltonian}, we can
+also see that $s(x) = \norm{p} = \norm{x'}$, since $s$ was assumed to
+be nonnegative. Substituting this into \cref{eq:eikonal-lagrangian},
+we get $L(x, x') = s(x) \norm{x'}$. By \cref{eq:eikonal-hamiltonian},
+we have $x' = p = \nabla u(x)$. Since $L > 0$, we can write:
 \begin{equation}
-  \label{eq:eikonal-lagrangian-2}
-  \mathcal{L}(x, \dot{x}) = \dot{x}^\top \dot{x} = \norm{p} \cdot \norm{\dot{x}} = s(x) \norm{\dot{x}}.
+  L(x, x') = \norm{x'}^2 = \abs{\langle \nabla u(x), x'\rangle} = \langle \nabla u(x), x'\rangle = u'.
 \end{equation}
-By definition of \cref{eq:eikonal-hamiltonian}, we have
-$\dot{x} = p = \nabla u(x)$. Since $\mathcal{L} > 0$, this lets us
-write:
-\begin{equation}
-  \mathcal{L}(x, \dot{x}) = \norm{\dot{x}}^2 = \abs{\nabla u(x)^\top \dot{x}} = \nabla u(x)^\top \dot{x} = \dot{u}.
-\end{equation}
-And, integrating this along a fixed ray, say from $\sigma_0$ to
-$\sigma_1$:
+
+Let $x(\sigma)$ be a characteristic arriving at
+$\hat{x} = x(\hat\sigma)$ from $x_0 = x(0)$, which lies on the
+expanding front. Integrating from $0$ to $\hat\sigma$ and letting
+$\hat u = u(\hat x)$ and $u_0 = u(x_0)$:
 \begin{equation}
   \label{eq:minimum-action-on-a-ray}
-  u(\sigma_1) - u(\sigma_0) = \int_{\sigma_0}^{\sigma_1} \mathcal{L}(x, \dot{x}) d\sigma = \int_{\sigma_0}^{\sigma_1} s(x) \norm{\dot{x}} d\sigma.
+  \hat u - u_0 = \int_{0}^{\hat\sigma} L(x, x') d\sigma = \int_{0}^{\hat\sigma} s(x) \norm{x'} d\sigma = \int_0^L s(x) dl,
 \end{equation}
-A characteristic of \cref{eq:eikonal} minimizes
-\cref{eq:minimum-action-on-a-ray} if the path is allowed to
-vary. Then, if $\hat{x}$ is fixed and $\alpha : [0, L] \to \R^n$ is an
-arc-length parametrized curve with $\alpha(L) = \hat{x}$,
+where $L$ is the length of the characteristic from $x_0$ to $\hat{x}$
+and $dl$ is the length element. A characteristic of \cref{eq:eikonal}
+minimizes \cref{eq:minimum-action-on-a-ray} if the path is allowed to
+vary. Then, if $\hat{x}$ is fixed and $\alpha$ is an arc-length
+parametrized curve with $\alpha(L) = \hat{x}$,
 \cref{eq:minimum-action-on-a-ray} is equivalent to:
 \begin{equation}\label{eq:eikonal-minimum-action-path}
-  \hat{u} = u(\hat{x}) = \min_\alpha \curlyb{u(\alpha(0)) + \int_\alpha s dl},
+  \hat{u} = u(\hat{x}) = \min_\alpha \curlyb{u(\alpha(0)) + \int_\alpha s(x) dl}.
 \end{equation}
-where $dl$ is the differential element of displacement along
-$\alpha$. Our update procedure is based on
-\cref{eq:eikonal-minimum-action-path}. While the standard finite
-difference method effectively discretizes the Hamiltonian, the method
-presented here discretizes \cref{eq:eikonal-minimum-action-path}. In
-this way, we can see that it relates to the method of characteristics.
+Our update procedure is based on
+\cref{eq:eikonal-minimum-action-path}. This problem may have multiple
+local minima---$\hat{u}$ above corresponds to the first arrival, which
+is what interests us primarily in this work. Also, while the standard
+finite difference method effectively discretizes the Hamiltonian, the
+method presented here discretizes
+\cref{eq:eikonal-minimum-action-path}. In this way, we can see that it
+relates to the method of characteristics.
 
 \end{document}
 
