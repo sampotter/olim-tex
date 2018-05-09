@@ -153,7 +153,65 @@ quantities here.
     where $n$ is the dimension of the ambient space and $d$ is the
     number of vectors $p_i$.}}
 
-\paragraph{Which simplex?}
+\begin{lemma}
+  Let $\Delta^n$ be a nondegenerate simplex. Then,
+  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$ is positive
+  definite.
+\end{lemma}
+
+\begin{proof}
+  \textbf{TODO}.
+\end{proof}
+
+\begin{lemma}
+  Let $\Delta^n$ be a nondegenerate simplex. Then, the function $F_0$
+  is strictly convex (i.e., $\nabla^2 F_0$ is positive definite) for
+  all $h > 0$; and, as $h \to 0$, the same holds for $F_1$.
+\end{lemma}
+
+\begin{proof}
+  To show that $F_0$ is strictly convex, first note that
+  $(s^\theta h)/l_\lambda > 0$, so that we can simply focus on
+  establishing that
+  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$ is positive
+  definite. Since $\mathcal{P}^\perp_{p_\lambda}$ is an orthogonal
+  projector, it is positive semidefinite, and since it is the
+  projection onto the orthogonal complement of
+  $\langle p_\lambda \rangle$, it is rank deficient with rank $n$. At
+  the same time, the matrix $\delta P \in \mathbb{R}^{n + 1 \times n}$
+  has $n$ linear independent columns (hence, rank $n$) if it
+  corresponds to a nondegenerate simplex, which we have assumed to be
+  true. Since $\mathcal{P}^\perp_{p_\lambda}$ is positive
+  semidefinite, we can write it as a Gram matrix
+  $\mathcal{P}^\perp_{p_\lambda} = GG^\top$. Then,
+  $\delta P^\top \mathcal{P}^\top_{p_\lambda} \delta P = (G^\top
+  \delta P) (G^\top \delta P)^\top$; i.e, it is also a Gram matrix,
+  and therefore positive semidefinite. \textbf{TODO}: need to show
+  that it is also positive definite.
+
+  To show that $\nabla^2 F_1$ is positive definite as $h \to 0$, note
+  that this is implied by:
+  \begin{equation*}
+    \delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P \succ -\frac{\theta}{s_\lambda^\theta} \curlyb{\delta P^\top p_{\lambda}, \delta s}.
+  \end{equation*}
+  We have $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$ is
+  positive definite, so that
+  $\lambda_{\text{min}}(\delta P^\top \mathcal{P}^\perp_{p_\lambda}
+  \delta P) > C > 0$, where $C$ is independent of $h$. Furthermore:
+  \begin{equation*}
+    \abs{\lambda_{\max} (\{\delta P^\top p_\lambda, \delta s\})} = \norm{\curlyb{\delta P^\top p_\lambda, \delta s}} \leq 2 \norm{\delta P^\top p_\lambda} \norm{\delta s} = O(h).
+  \end{equation*}
+  So, for $h$ small enough,
+  $\lambda_{\max}(\{\delta P^\top p_\lambda, \delta s\}) \leq
+  \abs{\lambda_{\max}(\{\delta P^\top p_\lambda, \delta s\})} < C$,
+  and:
+  \begin{equation*}
+    \delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P \succ C I \succ -\frac{\theta}{s_\lambda^\theta} \curlyb{\delta P^\top p_{\lambda}, \delta s},
+  \end{equation*}
+  implying the result.
+\end{proof}
+
+\paragraph{Which simplex should we minimize over?}
 \Cref{lemma:F0-grad-and-Hess,lemma:F1-grad-and-Hess} can be formulated
 slightly differently. If we take $\Delta^d$ to be the set of $\lambda$
 lying in the nonnegative orthant of $\R^{d+1}$ such that
