@@ -1,0 +1,59 @@
+\documentclass{siamart171218}
+
+\usepackage{eikonal}
+\usepackage{subfiles}
+
+\begin{document}
+
+\title{Ordered Line Integral Methods \\ for Solving the Eikonal Equation}
+\author{Samuel F.\ Potter and Maria K.\ Cameron}
+\date{\today}
+
+\maketitle
+
+\begin{abstract}
+  \hl{\textbf{TODO}}
+\end{abstract}
+
+\begin{keywords}
+  eikonal equation, factored eikonal equation, fast marching method,
+  semi-Lagrangian method
+\end{keywords}
+
+% https://mathscinet.ams.org/msc/pdfs/classifications2010.pdf
+\begin{AMS}
+  97N40, % numerical analysis
+\end{AMS}
+
+\subfile{introduction.tex}
+\subfile{background.tex}
+\subfile{olim.tex}
+\subfile{implementation.tex}
+\subfile{numerical-results.tex}
+\subfile{conclusion.tex}
+
+\bibliographystyle{siamplain}
+\bibliography{eikonal}{}
+
+\appendix
+
+\newpage
+\subfile{plots.tex}
+
+\newpage
+\subfile{tetrahedron-groups.tex}
+
+\newpage
+\subfile{action-functional.tex}
+\subfile{quadrature-proofs.tex}
+\subfile{validation-proofs.tex}
+\subfile{exact-soln-proofs.tex}
+\subfile{equivalence-proofs.tex}
+\subfile{causality-proofs.tex}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

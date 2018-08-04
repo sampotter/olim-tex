@@ -1,0 +1,52 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\subsection{Causality.}
+
+\begin{theorem}
+  ``The method is causal?'' (\textbf{TODO}: where is this
+  defined...? why is it important?)
+\end{theorem}
+
+\begin{proof}
+  Let $F = F_i$ for $i = 0, 1$.  Let
+  $\hat{u} = \min_{\lambda \in \Delta^n} F(\lambda)$, i.e.
+  $\hat{u} = F(\lambda^*) = u_{\lambda^*} + s^\theta h l_{\lambda^*}$.
+  WTS: $\hat{u} \geq \max_{1 \leq i \leq n} u_i$. Assume WLOG that
+  $\umax = u_0 = \max_{1\leq i \leq n} u_i$. Then, we equivalently want to
+  prove:
+  \begin{equation}
+    c(\lambda^*) = \sum_{i=1}^n {(\umax - u_i)} \lambda^*_i = -\delta u^\top \lambda^* \leq s^\theta h l_{\lambda^*}
+  \end{equation}
+  In general, we must have:
+  \begin{equation}
+    c(\lambda^*) \leq \max_{\lambda \in \Delta^n} c(\lambda) \overset{(*)}{=} \max_{1 \leq i \leq n} c(e_i) = \umax - \min_{1\leq i \leq n} u_i = \umax - \umin \leq Ch
+  \end{equation}
+  for some $C > 0$. We justify the equality $(*)$ in the following
+  way:
+  \begin{itemize}
+  \item The function $c(\lambda)$ is linear, and the set $\Delta^n$
+    can be described by a linear matrix inequality; hence,
+    $\max_{\lambda \in \Delta^n} c(\lambda)$ is a linear program and
+    its optimum must be attained by one of its vertices.
+  \item Clearly, $c(0) = 0$; furthermore, $\umax - u_i \geq 0$ for
+    all $i$ such that $1 \leq i \leq n$.
+  \item From these two observations, we can see that the optimum
+    occurs at one of the vertices, and that ruling out the vertex
+    $0 \in \Delta^n$ is safe, since $c(0)$ cannot be strictly greater
+    than all other vertices $e_i \in \Delta^n$.
+  \end{itemize}
+  On the other hand, note that $l_\lambda$ is a strictly convex
+  function; hence,
+  \begin{equation}
+    \min
+  \end{equation}
+\end{proof}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

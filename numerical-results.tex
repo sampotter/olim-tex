@@ -1,0 +1,91 @@
+\documentclass[sisc-eikonal.tex]{subfiles}
+
+\begin{document}
+
+\section{Numerical Results}\label{sec:numerical-results}
+
+\subsection[Single point source]{Nonsymmetric slowness functions with
+  a single point source}\label{ssec:point-source-problems}
+
+Using \cref{eq:eikonal}, a simple recipe to create pairs of slowness
+functions $s$ and solutions $u$ is to prescribe a solution $u$ and
+compute $s(x) = \norm{\nabla u(x)}_2$. In general, $u$ may be
+discontinuous due to rarefaction fans and shocks in the solution, so
+some care must be taken with this. Although it's possible to use this
+recipe with complicated choices of $\boundary$, we limit ourselves to
+considering a single point source at the origin---i.e.,
+$\boundary = \set{0}$.
+
+\begin{center}
+  \begin{tabular}{cccc}
+    Name & $u(x)$ & $s(x)$ \\
+    \midrule
+    \texttt{s1} & $\cos(r) + r - 1$ & $1 - \sin(r)$ \\
+    \texttt{s4} & $\tfrac{1}{2} x^\top A^{1/2} x$, where $A^\top = A$ and $A \succ 0$ & $\norm{x}_A$
+  \end{tabular}
+\end{center}
+
+A simple recipe for generating \texttt{s4} is to compute a random
+orthogonal matrix $Q$ using the QR decomposition, letting
+$\Lambda = \operatorname{diag}(\lambda_i)$ where $\lambda_i > 0$ be a
+diagonal matrix, and setting $A = Q\Lambda Q^\top$.
+
+\subsection{Slotnick's slowness function}\label{ssec:slotnick}
+
+We consider a problem that has an analytical ray tracing solution and
+is used as a test problem elsewhere for solvers for the factored
+eikonal
+equation~\cite{slotnick1959lessons,fomel2009fast,qi2018corner}. For a
+single point source at $x_i$ and a vector $v$, we define:
+\begin{equation}
+  \label{eq:slotnick-single-source}
+  \frac{1}{s_i(x)} = \frac{1}{s_i} + v^\top {(x - x_i)},
+\end{equation}
+hence $s_i(x_i) = s_i$. The analytic solution to \cref{eq:eikonal} for a
+single source and slowness function given by
+\cref{eq:slotnick-single-source} is:
+\begin{equation}
+  \label{eq:slotnick-single-source-solution}
+  u_i(x) = \frac{1}{\norm{v}} \cosh^{-1} \parens{1 + \frac{s_i}{2} s(x) \norm{v}^2 \norm{x - x_i}^2}.
+\end{equation}
+If we shift the point source from $x_i$ to another location $x_j$, we
+find:
+\begin{equation}
+  \label{eq:slotnick-slowness-shift}
+  \frac{1}{s_i(x)} = \frac{1}{s_i} + v^\top {(x - x_j + x_j - x_i)} = \frac{1}{s_i} + v^\top {(x_j - x_i)} + v^\top {(x - x_j)} = \frac{1}{s_i(x_j)} + v^\top {(x - x_j)}.
+\end{equation}
+Defining $s_j = s_i(x_j)$ and $s_j(x)$ from:
+\begin{equation}
+  \frac{1}{s_j(x)} = \frac{1}{s_j} + v^\top {(x - x_j)},
+\end{equation}
+we can see that $s_j(x_i) = s_i(x_j)$, that shifting the point source
+from $x_i$ to $x_j$ is equivalent to changing the parameter $s_i$ to
+$s_j$, and that $u_j(x)$ is defined analogously to
+\cref{eq:slotnick-single-source-solution}. The solution for multiple
+point sources $\set{x_i}$ is then given by:
+\begin{equation}
+  u(x) = \min_i u_i(x).
+\end{equation}
+
+\subsection{Comparison of hierarchical algorithms}\label{ssec:alg-comparison}
+
+\Cref{alg:bottom-up,alg:top-down} can be compared in terms of the
+number of updates of different degree that they
+perform. In~\cref{tab:stats}, for our usual single point source
+problem on $\Omega = [-1, 1]^3$, discretized into a grid with $n^3$
+points, where $n = 5, 9, \hdots, 129$, we \hl{\textbf{TODO}}:
+\emph{explain what we do...}
+
+\begin{table}
+  \centering
+  \input{../eikonal/misc/data/stats_table.tex}
+  \caption{Table of update statistics for~\cref{ssec:alg-comparison}.}
+  \label{tab:stats}
+\end{table}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "sisc-eikonal.tex"
+%%% End:

@@ -1,7 +1,19 @@
 \documentclass[10pt]{article}
 
+\usepackage{amsthm}
 \usepackage{eikonal}
 \usepackage{subfiles}
+
+\theoremstyle{plain}
+\newtheorem{corollary}{Corollary}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
+
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
 
 \begin{document}
 
@@ -16,9 +28,11 @@
 \end{abstract}
 
 \subfile{introduction.tex}
+\subfile{background.tex}
 \subfile{preliminaries.tex}
 \subfile{quadrature.tex}
 \subfile{olims.tex}
+\subfile{f0-exact.tex}
 \subfile{mp0_vs_mp1.tex}
 \subfile{constrained-newton.tex}
 % \subfile{unconstrained-newton.tex}

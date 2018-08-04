@@ -1,0 +1,92 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\paragraph{An idea for quadratically approximating characteristics.}
+Let $\alpha(t) = \alpha(t; \lambda)$ be the local approximation to the
+characteristic. With our usual setup with the linear approximation,
+$\alpha(t) = (1 - t) p_\lambda$ so that $\alpha(0) = p_\lambda$ and
+$\alpha(1) = 0 = \hat{p}$ (normally we make $\alpha$ p.b.a.l., but
+this isn't important). For a quadratic approximation, add the
+quadratic perturbation $\rho(t) = at^2 + bt$ (where
+$a, b \in \mathbb{R}^n$) to $\alpha$ to get:
+\begin{equation}
+  \alpha(t) = (1 - t)p_\lambda + \rho(t) = (1 - t)p_\lambda + at^2 + bt
+\end{equation}
+Clearly, $\rho(0) = 0$. Since $\rho$ is a perturbation, we want
+$\rho(1) = 0$, which forces $a = -b$, giving us $\rho(t) = bt(1-t)$
+and:
+\begin{equation}
+  \alpha(t) = (1 - t)p_\lambda + bt(1 - t)
+\end{equation}
+At this point, we can easily see that the vector $b$ encodes the
+perturbation---if $b = 0$, we just recover our original linear
+approximation to the characteristic. With $\alpha$ in hand, we can
+formulate our functional minimization problem:
+\begin{equation}\label{eq:func-min-1}
+  \hat{u} = \min_{\lambda, b} \set{u_\lambda + \int_0^1 s(\alpha(t)) \norm{\alpha'(t)} dt} = \min_{\lambda, b} \set{u_\lambda + \int_0^1 s((1 - t)p_\lambda + bt(1 - t)) \norm{(1 - 2t)b - p_\lambda} dt}.
+\end{equation}
+Since $b = 0$ recovers our original linear approximation, it seems
+unlikely that an optimal value of $b$ will be very large. One way to
+enforce this would be to apply Tikhonov regularization to
+\cref{eq:func-min-1}.
+
+\paragraph{Imposing some constraints on $b$.} Since we only perform
+updates using fixed values, we have access to the gradients
+$g_i = \nabla u(p_i)$ for each update point $p_i$. Let:
+\begin{equation}
+  G = \begin{bmatrix} g_0 & \cdots & g_n \end{bmatrix}.
+\end{equation}
+If we assume that there exists some vector of convex coefficients
+$\gamma$ such that
+$\alpha'(0) = \gamma_0 g_0 + \cdots + \gamma_n g_n = G\gamma$, then we
+get:
+\begin{equation}\label{eq:alpha-G-gamma}
+  \alpha(t) = (1 - t) \squareb{(1 + t) p_\lambda + tG\gamma}.
+\end{equation}
+Another possibility would be to assume that
+$\alpha'(0) = \nabla u(p_\lambda)$ (which would need to be
+approximated somehow, possibly linearly, which would recover
+$\alpha'(0) = G\gamma$), so that:
+\begin{equation}\label{eq:alpha-nabla-u}
+  \alpha(t) = (1 - t) \squareb{(1 + t) p_\lambda + t \nabla u(p_\lambda)}.
+\end{equation}
+Equations \cref{eq:alpha-G-gamma,eq:alpha-nabla-u} lead to:
+\begin{equation}
+  \alpha'(t) = -2tp_\lambda + (1 - 2t)G\gamma, \qquad \norm{\alpha'(t)}^2 = 4t^2 \norm{p_\lambda}^2 - 4t(1-2t) p_\lambda^\top G\gamma + (1 - 2t)^2 \norm{G\gamma}^2
+\end{equation}
+and:
+\begin{equation}
+  \alpha'(t) = -2tp_\lambda + (1 - 2t)\nabla u(p_\lambda), \qquad \norm{\alpha'(t)}^2 = 4t^2 \norm{p_\lambda}^2 - 4t(1-2t) p_\lambda^\top \nabla u(p_\lambda) + (1 - 2t)^2 \norm{\nabla u(p_\lambda)}^2
+\end{equation}
+respectively. It is clear that in either case (taking the first as an
+example), that $\norm{\alpha'(t)}^2$ is a degenerate bilinear form,
+i.e.:
+\begin{equation}
+  \norm{\alpha'(t)}^2 = \begin{bmatrix} p_\lambda \\ G\gamma \end{bmatrix}^\top \begin{bmatrix} 4t^2 I & 2t(1-2t)I \\ 2t(1-2t)I & (1-2t)^2I \end{bmatrix} \begin{bmatrix} p_\lambda \\ G\gamma \end{bmatrix} = \begin{bmatrix} p_\lambda \\ G\gamma \end{bmatrix}^\top \begin{bmatrix} -2t I \\ (1 - 2t)I \end{bmatrix}\begin{bmatrix} -2t I \\ (1 - 2t)I \end{bmatrix}^\top \begin{bmatrix} p_\lambda \\ G\gamma \end{bmatrix}
+\end{equation}
+
+\paragraph{Quadrature and minimization.} Define the following
+quadrature rules to start with:
+\begin{equation}
+  \mathcal{Q}^{\operatorname{rhr}}\parens{\int_0^1 f(t) d} = f(1), \qquad \mathcal{Q}^{\operatorname{mp}}\parens{\int_0^1 f(t) d} = f(1/2), \qquad \mathcal{Q}^{\operatorname{lhr}}\parens{\int_0^1 f(t) d} = f(0).
+\end{equation}
+Then, applying these quadratures to our functional minimization
+problems, we get:
+\begin{align}
+  F^{\operatorname{rhr}} &= u_\lambda + \hat{s} \norm{2p_\lambda + G\gamma}, \\
+  F^{\operatorname{mp}} &= u_\lambda + s\parens{\frac{3p_\lambda + G\gamma}{4}} \norm{p_\lambda}, \\
+  F^{\operatorname{lhr}} &= u_\lambda + s(p_\lambda) \norm{G\gamma}.
+\end{align}
+If we let $F$ be one of these three functions, the approximate
+functional minimization problem is:
+\begin{equation}
+  \hat{u} = \min_{(\lambda, \gamma) \in \Delta^n \times \Delta^n} F(\lambda, \gamma).
+\end{equation}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

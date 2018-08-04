@@ -2,159 +2,63 @@
 
 \begin{document}
 
-\section{Introduction}\label{sec:intro}
+\section{Introduction}\label{sec:introduction}
 
-\paragraph{The eikonal equation.} We are interested in solving the
-\emph{eikonal equation}, a nonlinear PDE encountered in wave
+\subsection{The eikonal equation}
+
+In this work, we are interested in solving the \emph{eikonal
+  equation}, a nonlinear hyperbolic PDE encountered in wave
 propagation and the modeling of a wide variety of problems in
-computational and applied science (\hl{cite}). With $n \geq 2$, and
-given a domain $\Omega \in \R^n$, the eikonal equation is of the form:
+computational and applied science~\cite{sethian1999level}. With
+$n \geq 2$, and given a domain $\Omega \in \R^n$, the eikonal equation
+is of the form:
 \begin{equation}\label{eq:eikonal}
-  \abs{\nabla u(x)} = s(x), \qquad x \in \Omega,
+  \norm{\nabla u(x)}_2 = s(x), \qquad x \in \Omega,
 \end{equation}
 where $s : \Omega \to \R_+$ is a fixed, nonnegative \emph{slowness
   function}, which forms part of the problem data. Hence, we solve for
 $u : \Omega \to \overline{\R}_+$. The rest of the problem data is a
-subset of $D \subset \Omega$ where $u$ has been fixed; i.e.,
-$\left. u \right|_D = g$, for some $g : D \to \overline{\R}_+$. As an
+subset $D \subset \Omega$ where $u$ has been fixed; i.e.,
+$\left. u \right|_D = g$ for some $g : D \to \overline{\R}_+$. As an
 example, if $s \equiv 1$ and $g \equiv 0$, then the solution $u$ of
 \cref{eq:eikonal} is the distance to $D$ at each point in $\Omega$:
 \begin{equation}
   \label{eq:distance-to-Omega}
   u(x) = d(x, D) = \inf_{y \in \Omega} \norm{x - y}_2.
 \end{equation}
-The rapid solution of this problem on complicated geometries is an
-example of an exceedingly practical application of the fast marching
-method, which sees use in areas such as computer graphics,
-computational geometry, computed-aided design, and the like
-(\hl{cite}).
+A variety of numerical methods have been proposed and study for the
+solution of \cref{eq:eikonal}.
 
-\paragraph{The fast marching method.} As we have just alluded to, the
-fast marching method is a particularly efficient method for solving
-the eikonal equation~\cite{sethian1999level}. To describe this method,
-first let $\calP = \{p_i\}_{i \in I} \subseteq \Omega$ be a set of
-\emph{nodes} where we would like to approximate the true solution $u$
-with a numerical solution $U : \calP \to
-\overline{\mathbb{R}}_+$. Additionally, for each node $p \in \calP$,
-define a set of neighbors,
-$\neib(p) \subseteq \calP \backslash \set{p}$. The standard fast
-marching method takes $\calP$ to be a lattice in $\R^n$ and $\neib(p)$
-to be each node's $2n$ neighbhors. With $\calP$ defined, we also
-define the \emph{boundary nodes}, the set $\boundary$. The set
-$\boundary$ and $D$ may not coincide; to reconcile this difference,
-the initial value of $U(p)$ for each $p \in \boundary$ must take $g$
-into account in the best way possible.
+\subsection{Results}
 
-We will give a brief description of the fast marching method. There
-are several extra pieces of information that need to be kept track of
-in order to implement the algorithm. For each node $p$, apart from the
-current value of $U(p)$, the most salient piece of information is the
-\emph{state} of each node $p$, written $p$\texttt{.state}
-$\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. The meaning
-of each of these states will become clear from the following
-high-level description of the algorithm:
+We develop a family of fast Dijkstra-like solvers for the eikonal
+equation, similar to the fast marching method or ordered upwind
+methods~\cite{sethian1996fast,sethian2003ordered}, in two- and three-
+dimensions. These solvers come about by discretizing and minimizing
+the action functional for the eikonal equation. The action functional
+is a line integral: we investigate three different quadrature rules
+for discretizing this line integral: a righthand rule (\texttt{rhr}),
+a simplified midpoint rule (\texttt{mp0}), and a midpoint rule
+(\texttt{mp1}). We also consider ways of decomposing a grid point's
+neighborhood into triangles and tetrahedra, which help us simplify and
+accelerate our solvers by avoiding redundant and unnecessary
+computations.
 
-\begin{center}
-  \begin{enumerate}[nolistsep]
-  \item For each $p \in \calP$, initially set $p$\texttt{.state} $=$
-    \texttt{far} and $U(p) = \infty$.
-  \item For each $p \in \boundary$, set $p$\texttt{.state} $=$
-    \texttt{valid}, initialize $U(p)$, and execute
-    \cref{enum:set-trial,enum:update-U}.
-  \item While there are \texttt{trial} or \texttt{far} nodes left:
-    \begin{enumerate}[nolistsep]
-    \item Let $p$ be the \texttt{trial} node with the smallest value
-      $U(p)$.
-    \item Set $p$\texttt{.state} $\gets$ \texttt{valid}.
-    \item For each $q \in \neib(p)$, set $p$\texttt{.state} $\gets$
-      \texttt{trial} if $p$\texttt{.state} $=$
-      \texttt{far}.\label{enum:set-trial}
-    \item For each $q \in \neib(\hat{p})$ such that $q$\texttt{.state}
-      $=$ \texttt{trial}, update $U(q)$.\label{enum:update-U}
-    \end{enumerate}
-  \end{enumerate}
-\end{center}
-
-The exact sequencing and details of some of these steps is
-variable. Our intent here is to give a birds-eye view of the
-algorithm---for concrete details, a suitable reference should be
-consulted (\hl{cite}).
-
-The preceding algorithm is generic in the following ways:
-\begin{itemize}
-\item There are a variety of ways to compute $\boundary$ and
-  subsequently approximate the initial value of $U$ for
-  $p \in \boundary$ using $g$ (\hl{cite}).
-\item The method of keeping track of the node with the smallest value
-  is variable: most frequently, a binary heap storing pointers to the
-  nodes is dynamically updated, leading to $O(N \log N)$ update
-  operations, where $N$ is the number of nodes.
-\item The update procedure itself can take different forms: for
-  methods based on finite differences, there are first-order methods
-  and ``almost'' higher-order methods (methods which take advantage of
-  second- and higher-order discretizations when the nodes are
-  available for them, and which default the lower order schemes
-  otherwise).
-\item Related to the foregoing point, the arrangement of the nodes
-  (into a grid or otherwise) varies; hence, the neighborhood of each
-  node varies. This naturally affects the update procedure.
-\end{itemize}
-
-\paragraph{Minimum action integral of the eikonal equation.} The
-eikonal equation \cref{eq:eikonal} is a Hamilton-Jacobi equation for
-$u$. If we let each fixed characteristic (ray) of the eikonal equation
-be parametrized by some parameter $\sigma$ and denote
-$p = x' = dx/d\sigma$, the corresponding Hamiltonian is:
-\begin{equation}
-  \label{eq:eikonal-hamiltonian}
-  H{(p, x)} = \frac{\norm{p}^2}{2} - \frac{s(x)^2}{2} = 0.
-\end{equation}
-Since $H = 0$, \cref{eq:eikonal-hamiltonian} implies
-$L = \langle p, x'\rangle = H$, where $x' = \partial_p H = p$.  From
-Hamilton's equation, $H(p, x) = \langle p, x'\rangle - L(x, x')$, we
-can see that the Lagrangian is given by:
-\begin{equation}
-  \label{eq:eikonal-lagrangian}
-  L(x, x') = \langle p, x'\rangle = \langle x', x'\rangle = \norm{x'}^2,
-\end{equation}
-i.e. $L = \norm{x'}^2$. From \cref{eq:eikonal-hamiltonian}, we can
-also see that $s(x) = \norm{p} = \norm{x'}$, since $s$ was assumed to
-be nonnegative. Substituting this into \cref{eq:eikonal-lagrangian},
-we get $L(x, x') = s(x) \norm{x'}$. By \cref{eq:eikonal-hamiltonian},
-we have $x' = p = \nabla u(x)$. Since $L > 0$, we can write:
-\begin{equation}
-  L(x, x') = \norm{x'}^2 = \abs{\langle \nabla u(x), x'\rangle} = \langle \nabla u(x), x'\rangle = u'.
-\end{equation}
-
-Let $x(\sigma)$ be a characteristic arriving at
-$\hat{x} = x(\hat\sigma)$ from $x_0 = x(0)$, which lies on the
-expanding front. Integrating from $0$ to $\hat\sigma$ and letting
-$\hat u = u(\hat x)$ and $u_0 = u(x_0)$:
-\begin{equation}
-  \label{eq:minimum-action-on-a-ray}
-  \hat u - u_0 = \int_{0}^{\hat\sigma} L(x, x') d\sigma = \int_{0}^{\hat\sigma} s(x) \norm{x'} d\sigma = \int_0^L s(x) dl,
-\end{equation}
-where $L$ is the length of the characteristic from $x_0$ to $\hat{x}$
-and $dl$ is the length element. A characteristic of \cref{eq:eikonal}
-minimizes \cref{eq:minimum-action-on-a-ray} if the path is allowed to
-vary. Then, if $\hat{x}$ is fixed and $\alpha$ is an arc-length
-parametrized curve with $\alpha(L) = \hat{x}$,
-\cref{eq:minimum-action-on-a-ray} is equivalent to:
-\begin{equation}\label{eq:eikonal-minimum-action-path}
-  \hat{u} = u(\hat{x}) = \min_\alpha \curlyb{u(\alpha(0)) + \int_\alpha s(x) dl}.
-\end{equation}
-Our update procedure is based on
-\cref{eq:eikonal-minimum-action-path}. This problem may have multiple
-local minima---$\hat{u}$ above corresponds to the first arrival, which
-is what interests us primarily in this work. Also, while the standard
-finite difference method effectively discretizes the Hamiltonian, the
-method presented here discretizes
-\cref{eq:eikonal-minimum-action-path}. In this way, we can see that it
-relates to the method of characteristics.
+To minimize the discretized action integrals, we follow two separate
+numerical approaches. In the first, the solution of a system of
+nonlinear equations is used to provide a warm start to a Newton
+iteration; in the second, a sequential quadratic program (SQP) is
+solved. We provide theoretical results establishing the validity of
+these methods and demonstrate their interrelation. From conducting
+numerical results, we find that our solvers exceed the performance of
+existing Dijkstra-like solvers in terms of error measured versus CPU
+time (i.e., for a fixed error tolerance, our solvers obtain a
+sufficiently accurate solution in less time). \hl{\textbf{TODO}}:
+\emph{add the speedup factor here once we know it.}
 
 \end{document}
 
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: t
+%%% TeX-master: "sisc-eikonal.tex"
 %%% End:

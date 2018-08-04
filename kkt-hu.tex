@@ -4,7 +4,179 @@
 
 \section{A Hierarchical Update}
 
+\begin{itemize}
+\item If we think of ourselves as tracking a single characteristic and
+  finding the location where it arrives (minimizes our cost
+  functional), then we can think of ordering our updates in a way that
+  allows us to find a reasonably good approximation to the minimizer
+  by performing fewer updates
+\item We can optimize the foregoing approach by taking advantage of
+  KKT theory to skip costly higher-dimensional updates (tetrahedron
+  updates, in particular)
+\end{itemize}
+The algorithm for updating a new trial node $\hat{p}$ is roughly like this:
 
+\begin{mdframed}
+  \begin{enumerate}[nolistsep]
+  \item Let $p_0 \in \texttt{nb}(\hat{p})$ be the node such that
+    $p\texttt{.state} = \texttt{valid}$ with the minimal degree 1 update
+    value \label{item:find-p0}
+  \item For each $p_1 \in \texttt{nb}(\hat{p})$ such that
+    $p_1\texttt{.state} = \texttt{valid}$ and
+    $\norm{p_1 - p_0} \leq \sqrt{3}$, consider the triangle update
+    with base $[p_0, p_1]$:
+    \begin{enumerate}[nolistsep]
+    \item Use KKT theory to check if $p_0$ or $p_1$ are the global
+      minimizer over $[p_0, p_1]$\label{item:kkt-tri}
+    \item If they aren't, perform the triangle
+      update\label{item:p1-tri-update}
+    \end{enumerate}\label{item:find-p1}
+  \item Let $p_1$ be the node in \cref{item:find-p1} which corresponds
+    to the minimum value triangle update in \cref{item:p1-tri-update}
+  \item For each $p_2 \in \texttt{nb}(\hat{p})$ such that
+    $p_2\texttt{.state} = \texttt{valid}$, and with at most one of the
+    pairwise distances between $p_0, p_1$, and $p_2$ being in the
+    range $(\sqrt{2}, \sqrt{3}]$ (with the others at most $\sqrt{2}$),
+    consider the tetrahedron update with characteristic emanating from
+    $\conv(\{p_0, p_1, p_2\})$:
+    \begin{enumerate}[nolistsep]
+    \item Use KKT theory check if the update needs to be performed:
+      \begin{enumerate}[nolistsep]
+      \item If necessary, compute the triangle updates corresponding
+        to $[p_0, p_2]$ and $[p_1, p_2]$
+      \item Using KKT theory, check if any of the minimizers of the
+        triangle updates corresponding to $[p_0, p_1], [p_0, p_2]$, or
+        $[p_1, p_2]$ are the global minimizers over
+        $\conv(\{p_0, p_1, p_2\})$\label{item:kkt-tetra}
+      \end{enumerate}
+    \item If necessary, perform the update
+    \end{enumerate}
+  \end{enumerate}
+\end{mdframed}
+
+\noindent Some caveats and remarks:
+\begin{itemize}[nolistsep]
+\item The choice of $p_0$ in \cref{item:find-p0} may not be unique;
+  or, there may be several candidates with solutions that are
+  extremely close. This should happen in the case of multiply arriving
+  characteristics. \textbf{TODO}: what should we say about this?
+\item The restrictions on $p_0$, $p_1$, and $p_2$ are such that once
+  $p_0$ and $p_1$ have been fixed, $p_2$ will lie in the same orthant
+  as $p_0$ and $p_1$. This can help us simplify our enumeration of
+  tetrahedra
+\item It should be possible to extend this straightforwardly to grids
+  in $\mathbb{R}^n$
+\item It seems possible to do a complexity analysis and show that the
+  update procedure should only take $O(n^3)$ FLOPs, where $n$ is the
+  dimension (e.g., for Newton's method, the number of iterations
+  should be constant with respect to $n$)
+\end{itemize}
+
+\paragraph{Skipping higher-degree updates.} This section will expand
+on the details of \cref{item:kkt-tri,item:kkt-tetra}. Consider the
+problem:
+\begin{align*}
+  \min_{\lambda} &\qquad F_i(\lambda_i) \\
+  \text{subject to} &\qquad \lambda \in \Delta^n
+\end{align*}
+This is a nonlinear program with linear inequality constraints. If
+$i = 0$, the problem is strictly convex; the same is true if $i = 1$
+and $h > 0$ is small enough. From here on, we will drop the subscript
+$i$ and write $F = F_i$ for simplicity. If we fix
+$\lambda \in \Delta^n$ and linearize the problem, we obtain the
+following inequality-constrained quadratic program:
+\begin{align*}
+  \min_{\delta\lambda} &\qquad \frac{1}{2} \delta\lambda^\top \nabla^2 F(\lambda) \delta\lambda + \nabla F(\lambda)^\top \delta\lambda \\
+  \text{subject to} &\qquad \lambda + \delta\lambda \in \Delta^n
+\end{align*}
+The constraint $\lambda + \delta\lambda \in \Delta^n$ can be written
+$A\delta\lambda \leq b - A\lambda$. For our fixed $\lambda$, if we let
+$I$ denote the set of active constraints, and let $A_j$ be the $j$th
+row of $A$, then the local problem corresponding to the active
+constraints is:
+\begin{align*}
+  \min_{\delta\lambda} &\qquad \frac{1}{2} \delta\lambda^\top \nabla^2 F(\lambda) \delta\lambda + \nabla F(\lambda)^\top \delta\lambda \\
+  \text{subject to} &\qquad A_I \delta\lambda = b_I - A_I\lambda
+\end{align*}
+The KKT system corresponding to this quadratic program is:
+\begin{align*}
+  \begin{bmatrix}
+    \nabla^2 F(\lambda) & -A_I^\top \\
+    A_I & 0
+  \end{bmatrix} \begin{bmatrix}
+    \delta \lambda^* \\
+    \mu^*
+  \end{bmatrix} = \begin{bmatrix}
+    -\nabla F(\lambda) \\
+    b_I - A_I\lambda
+  \end{bmatrix} = \begin{bmatrix}
+    -\nabla F(\lambda) \\
+    0
+  \end{bmatrix},
+\end{align*}
+where $\mu^*$ is the vector of Lagrange multipliers, and noting that
+$b_I - A_I\lambda = 0$ by definition of $I$. If we multiply the first
+equation by $A_I \nabla^2 F(\lambda)^{-1}$, matching the result with
+the second equation allows us to solve for $\mu^*$ directly, giving:
+\begin{equation}\label{eq:mu}
+  \mu^* = {(A_I \nabla^2 F(\lambda)^{-1} A_I^\top)}^{-1} A_I \nabla^2 F(\lambda)^{-1} \nabla F(\lambda).
+\end{equation}
+Computing $\mu^*$ from \cref{eq:mu} may appear onerous, but the matrix
+$A_I$ has a simple, sparse form, and conjugation by $A_I$ has the
+effect of reducing the dimensionality of the problem.
+
+Taking a tetrahedron update as an example, once we have access to
+$\mu^*$ for each triangle update corresponding to the boundary of the
+base of the update simplex, we can look at $\mu^*$ for the minimal
+triangle update. Since $\nabla^2 F$ is positive definite (again, for
+$h$ small enough), if $\mu^* < 0$, then the necessary conditions for
+optimality are violated, and the unconstrained minimum of $F$ must lie
+outside of $\Delta^2$; hence, the corresponding $\lambda^*$ is the
+global minimum of the constrained problem. On the other hand, if
+$\mu^* \geq 0$, since the minima of the other two triangle updates are
+both greater than the minimum for the triangle update under
+consideration, we can conclude that the constrained optimum must lie
+in $\Delta^2$. (\emph{Terribly worded, but I think this is the
+  argument...})
+
+When attempting to skip a triangle update, the boundary of $\Delta^1$
+is the set $\{0\} \cup \{1\}$. In this case, we can verify that the
+preceding check simplifies to looking at the signs of $F'(0)$ and
+$F'(1)$.
+
+\paragraph{A simplified rule for skipping triangle updates.} For a
+triangle update, observe that $\Delta^1$ is the set of $\lambda$ such
+that $A\lambda \geq b$, where:
+\begin{equation}
+  A = \begin{bmatrix} 1 \\ -1 \end{bmatrix}, \qquad b = \begin{bmatrix} 0 \\ -1 \end{bmatrix},
+\end{equation}
+i.e. $\Delta^1 = [0, 1]$; hence, the set of active indices $I$ can
+only equal $\set{0}$ or $\set{1}$, corresponding to $\lambda = 0$ or
+$\lambda = 1$, respectively. Let $\mu_0$ be the Lagrange multiplier
+corresponding to $\lambda = 0$; likewise, define $\mu_1$ for
+$\lambda = 1$. The vector $b$ has no bearing on computing $\mu_0$ or
+$\mu_1$. If we let $i = 0, 1$, $\lambda = i$, and $I = \set{i}$, we
+can see that $A_I = (-1)^i$ so that \cref{eq:mu} simplifies to:
+\begin{equation}
+  \mu_i = \parens{\frac{{(-1)}^{2i}}{F''(\lambda)}}^{-1} {(-1)}^{i} \frac{F'(\lambda)}{F''(\lambda)} = \begin{cases}
+    F'(0) & \mbox{if } i = 0, \\
+    -F'(1) & \mbox{if } i = 1.
+  \end{cases}
+\end{equation}
+Since we skip if $\mu > 0$, we obtain the following simple and
+intuitive rule for skipping triangle updates.
+\begin{mdframed}
+  \begin{center}
+    For a triangle update, if either $F'(0) > 0$ or $F'(1) < 0$, skip
+    the update.
+  \end{center}
+\end{mdframed}
+Unlike triangle updates, tetrahedron updates becomes more involved
+since a matrix must actually be inverted. It may be possible to obtain
+a simplified form for $\mu$ by using the Woodbury formula, but it
+seems unlikely to be that helpful for $n = 2$ since evaluating
+\cref{eq:mu} directly is cheap once $\nabla^2 F(\lambda)^{-1}$ is
+available. For larger values of $n$, it may be worth pursuing.
 
 \end{document}
 

@@ -2,14 +2,8 @@
 
 \begin{document}
 
-\section{Comparing $F_0$ and $F_1$}
-
-\textbf{TODO}: add an introduction to this section and some words
-about \texttt{mp0wr}.
-
-In what follows, we assume that $s > \smin > 0$ where $\smin$ is
-independent of $h$ and that $s$ is Lipschitz continuous with $O_h(1)$
-Lipschitz constant.
+\section{Proofs for section
+  \ref{ssec:validation}}\label{app:validation-proofs}
 
 \begin{lemma}\label{lemma:bounded-inv-hess-F1}
   There is a constant $\beta = O(h^{-1})$ such that
@@ -17,7 +11,7 @@ Lipschitz constant.
   $\lambda \in \Delta^n$.
 \end{lemma}
 
-\begin{proof}
+\begin{proof}[Proof of \cref{lemma:bounded-inv-hess-F1}]
   From \cref{eq:hess-F1}, if we temporarily define:
   \begin{equation}
     A = \frac{s^\theta_\lambda h}{l_\lambda} \delta P^\top \mathcal{P}^\perp_\lambda \delta P \mbox{ and } B = \frac{\theta h}{l_\lambda} \anticom{\delta P^\top p_\lambda, \delta s},
@@ -46,7 +40,7 @@ Lipschitz constant.
   \leq \alpha$.
 \end{lemma}
 
-\begin{proof}
+\begin{proof}[Proof of \cref{lemma:bounded-first-step}]
   From \cref{lemma:bounded-inv-hess-F1} we have
   $\norm{F_1(\lambda_0^*)^{-1}} = O(h^{-1})$, so to establish the
   result we only need to show that
@@ -77,14 +71,14 @@ Lipschitz constant.
   \end{align*}
 \end{lemma}
 
-\begin{proof}
+\begin{proof}[Proof of \cref{lemma:hess-F1-lipschitz}]
   If we restrict our attention to $\Delta^n$, we can see that:
-  $l_\lambda^{-1} \delta P^\top \mathcal{P}_\lambda^\perp \delta P$
-  and
+  $l_\lambda^{-1} \delta P^\top \mathcal{P}_\lambda^\perp \delta P$ is
+  Lipschitz continuous with $O_h(1)$ Lipschitz constant and
   $\tfrac{\theta}{l_\lambda} \anticom{\delta P^\top p_\lambda, \delta
-    s}$ are each Lipschitz continuous with Lipschitz constants that
-  are $O_h(1)$. Then, since $s^\theta_\lambda$ is Lipschitz continuous
-  with an $O_h(1)$ Lipschitz constant, it follows that
+    s}$ is Lipschitz continuous with $O(h)$ Lipschitz constant. Then,
+  since $s^\theta_\lambda$ is Lipschitz continuous with an $O_h(1)$
+  Lipschitz constant, it follows that
   $A(\lambda) = \tfrac{s^\theta h}{l_\lambda} \delta P^\top
   \mathcal{P}^\perp_\lambda \delta P$ is Lipschitz with a constant
   that is $O(h)$ over $\Delta^n$, using the notation of
@@ -96,31 +90,39 @@ Lipschitz constant.
   that is $O(h)$.
 \end{proof}
 
-\begin{theorem}\label{theorem:mp0wr-newton}
-  Let $h$ be sufficiently small so that $F_1$ is strictly
-  convex. Then, the error vector
-  $\delta\lambda^* = \lambda_1^* - \lambda_0^*$ satisfies
-  $\norm{\delta\lambda^*} = O(h)$. Additionally, if we let
-  $\lambda_0 = \lambda_0^*$ in the following iteration:
-  \begin{equation}
-    \label{eq:lam0-iter-to-lam1}
-    \lambda_{k+1} \gets \lambda_k - \nabla^2 F_1(\lambda_k)^{-1} \nabla F_1(\lambda_k), \qquad k = 0, 1, \hdots,
-  \end{equation}
-  then this iteration is well-defined, and converges quadratically to
-  $\lambda_1^*$.
-\end{theorem}
+\begin{proof}[Proof of \cref{theorem:mp0wr-newton}]
 
-\begin{proof}
+  \begin{theorem}[Theorem 5.3.2, Stoer and Bulirsch]
+    Let $C \subseteq \R^n$ be an open set, let $C_0$ be a convex set
+    with $\overline{C}_0 \subseteq C$, and let $f : C \to \mathbb{R}^n$
+    be differentiable for $x \in C_0$ and continuous for $x \in C$. For
+    $x_0 \in C_0$, let $r, \alpha, \beta, \gamma$ satisfy
+    $S_r(x_0) = \set{x : \norm{x - x_0} < r} \subseteq C_0$,
+    $\mu = \alpha\beta\gamma < 2$, $r = \alpha(1 - \mu)^{-1}$, and let
+    $f$ satisfy:
+    \begin{enumerate}[label=(\alph*)]
+    \item for all $x, y \in C_0$,
+      $\norm{D f(x) - D f(y)} \leq \gamma \norm{x - y}$,
+    \item for all $x \in C_0$, $(D f(x))^{-1}$ exists and satisfies
+      $\norm{(Df(x))^{-1}} \leq \beta$,
+    \item and $\norm{(Df(x_0))^{-1} f(x_0)} \leq \alpha$.
+    \end{enumerate}
+    Then, beginning at $x_0$, each iterate:
+    \begin{equation}
+      x_{k+1} = x_k - Df(x_k)^{-1} f(x_k), \qquad k = 0, 1, \hdots,
+    \end{equation}
+    is well-defined and satisfies $\norm{x_k - x_0} < r$ for all
+    $k \geq 0$. Furthermore, $\lim_{k \to \infty} x_k = \xi$ exists and
+    satisfies $\norm{\xi - x_0} \leq r$ and $f(\xi) = 0$.
+  \end{theorem}
+
   For our situation, Theorem 5.3.2 of Stoer and
   Burlisch~\cite{stoer2013introduction} indicates that if:
-  \begin{enumerate}
-  \item $\norm{\nabla F_1(\lambda)^{-1}} \leq \beta$,\label{item:sb-newton-1}
-  \item $\norm{\nabla F_1(\lambda_0^*)^{-1} \nabla F_1(\lambda_0^*)} \leq \alpha$,\label{item:sb-newton-2}
-  \item and
-    $\norm{\nabla F_1(\lambda) - \nabla F_1(\lambda')} \leq \gamma
-    \norm{\lambda - \lambda'}$ for each
-    $\lambda, \lambda' \in \Delta^n$,\label{item:sb-newton-3}
-  \end{enumerate}
+  \begin{align}
+    \norm{\nabla F_1(\lambda)^{-1}} &\leq \beta,\label{item:sb-newton-1} \\
+    \norm{\nabla F_1(\lambda_0^*)^{-1} \nabla F_1(\lambda_0^*)} &\leq \alpha,\label{item:sb-newton-2} \mbox{ and} \\
+    \norm{\nabla F_1(\lambda) - \nabla F_1(\lambda')} &\leq \gamma \norm{\lambda - \lambda'} \mbox{ for each } \lambda, \lambda' \in \Delta^n,\label{item:sb-newton-3}
+  \end{align}
   then with $\lambda_0 = \lambda_0^*$, the iteration
   \cref{eq:lam0-iter-to-lam1} is well-defined, with each iterate
   satisfying $\norm{\lambda_k - \lambda_0} \leq r$, where
@@ -140,21 +142,12 @@ Lipschitz constant.
   $\alpha\beta\gamma = O(h)$, hence $\alpha\beta\gamma/2 < 1$ for $h$
   small enough. We have:
   \begin{equation}
-    r = \frac{\alpha}{1 - \frac{\alpha\beta\gamma}{2}} = \alpha + \alpha^2 + \alpha^3 + \cdots = O(h),
+    r = \frac{\alpha}{1 - \frac{\alpha\beta\gamma}{2}} = \alpha \parens{1 + \frac{\alpha\beta\gamma}{2} + \frac{\alpha^2\beta^2\gamma^2}{4} + \cdots} = O(h),
   \end{equation}
   so that $\norm{\delta\lambda^*} = O(h)$, and the result follows.
 \end{proof}
 
-\begin{corollary}
-  The error incurred by the \texttt{mp0wr} method is $O(h^3)$ per
-  update; i.e.:
-  \begin{equation}
-    \label{eq:mp0wr-error}
-    \abs{F_1(\lambda_1^*) - F_1(\lambda_0^*)} = O(h^3).
-  \end{equation}
-\end{corollary}
-
-\begin{proof}
+\begin{proof}[Proof of \cref{thm:mp0wr-error}]
   From \cref{theorem:mp0wr-newton}, we have
   $\norm{\delta\lambda^*} = O(h)$. Then, Taylor expanding
   $F_1(\lambda_0^*)$, we get:
@@ -170,21 +163,4 @@ Lipschitz constant.
   which proves the result.
 \end{proof}
 
-\begin{remark}
-  If we exchange the roles of $F_0$ and $F_1$---i.e., if we start from
-  $\lambda_1^*$ and perform a Newton iteration on $\nabla F_0$---we
-  can obtain the foregoing error bound again, and possibly with less
-  effort. The main reason to start from $\lambda_0^*$ and drive to
-  $\lambda_1^*$ is that it allows us to use \texttt{mp0wr} as a means
-  of initializing \texttt{mp1}. For $d = 1, 2$, this is unimportant,
-  but in higher dimensions, minimizing $F_0$ should be
-  cheaper. Reducing the number of $F_1$ update iterations should allow
-  for a sped-up method with the same accuracy.
-\end{remark}
-
 \end{document}
-
-%%% Local Variables:
-%%% mode: latex
-%%% TeX-master: t
-%%% End:

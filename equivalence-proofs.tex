@@ -1,0 +1,124 @@
+\documentclass[sisc-eikonal.tex]{subfiles}
+
+\begin{document}
+
+\section{Proofs for section \ref{ssec:equivalence}}
+
+\begin{proof}[Proof of \cref{thm:equivalence}]
+  By stacking and subtracting \cref{eq:finite-differences} for different values of $i$, we obtain, for $i = 0, \hdots, n - 1$:
+  \begin{equation}
+    \begin{bmatrix}
+      \delta P^\top \\
+      p_i^\top
+    \end{bmatrix} \nabla \hat{U} = \begin{bmatrix}
+      \delta U \\
+      U_0 - \hat{U}
+    \end{bmatrix}.
+  \end{equation}
+  Observe that:
+  \begin{equation}
+    \begin{bmatrix}
+      \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}} Q R^{-\top} &
+      \frac{\numin}{\numin^\top p_i}
+    \end{bmatrix} \begin{bmatrix}
+      \delta P^\top \\
+      p_i^\top
+    \end{bmatrix} = QQ^\top + \frac{\numin p_i^\top}{\numin^\top p_i} \parens{I - QQ^\top} = QQ^\top + \frac{\numin \numin^\top}{\numin^\top \numin} = I.
+  \end{equation}
+  This gives us:
+  \begin{equation}
+    \nabla \hat{U} = \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}} Q R^{-\top} \delta U + \frac{U_i - \hat{U}}{\numin^\top p_i} \numin.
+  \end{equation}
+  Hence, $\|\nabla \hat{U}\|^2$ is a quadratic equation in
+  $\hat{U} - U_i$. Expanding $\|\nabla \hat{U}\|^2$, a number of
+  cancellations occur since $Q^\top \numin = 0$. We have:
+  \begin{equation}
+    \delta U^\top R^{-1} Q^\top \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}}^\top \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}} Q R^{-\top} \delta U = \norm{R^{-\top} \delta U}^2 + \frac{\parens{p_i^\top Q R^{-\top} \delta U}^2}{\norm{\pmin}^2},
+  \end{equation}
+  so that, written in standard form:
+  \begin{equation}
+    {(\hat{U} - U_i)}^2 + 2 p_i^\top Q R^{-\top} \delta U {(\hat{U} - U_i)} + \parens{p_i^\top Q R^{-\top} \delta U}^2 + \norm{\pmin}^2 \parens{\norm{R^{-\top} \delta U}^2 - \parens{s^\theta h}^2} = 0.
+  \end{equation}
+  Solving for $\hat{U} - U_i$ gives:
+  \begin{equation}
+    \hat{U} = U_i - p_i^\top Q R^{-\top} \delta U + \norm{\pmin} \sqrt{\parens{s^\theta h} - \|R^{-\top} \delta U\|^2},
+  \end{equation}
+  establishing \cref{eq:U-finite-diff}.
+
+  Next, to show that $\hat{U}' = \hat{U}$, we compute:
+  \begin{align*}
+    \hat{U}'
+    &= U_0 + \delta U^\top \lambda^* + s^\theta h l_{\lambda^*} & \cref{eq:f0-definition} \\
+    &= U_0 - \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delta U}{s^\theta h}}^\top R^{-\top} \delta U + s^\theta h l_{\lambda^*} & \cref{eq:f0-exact-lambda} \\
+    &= U_0 - p_0^\top Q R^{-\top} \delta U + s^\theta h l_{\lambda^*} \parens{1 - \norm{R^{-\top} \frac{\delta U}{s^\theta h}}^2} \\
+    &= U_0 - p_0^\top Q R^{-\top} \delta U + \norm{\pmin} \sqrt{\parens{s^\theta h}^2 - \norm{R^\top \delta U}^2} = \hat{U}. & \cref{eq:l-star-expression}
+  \end{align*}
+  To establish \cref{eq:U-from-Ui-exact}, first note that
+  $-R^{-\top} \delta U = s^\theta h Q^\top \nu_{\lambda^*}$ by
+  optimality. Substituting this into \cref{eq:U-finite-diff}, we first
+  obtain:
+  \begin{equation}
+    \hat{U} = U_i + \frac{s^\theta h}{l_{\lambda^*}} \parens{p_i^\top QQ p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top (I - QQ^\top) p_{\lambda^*}}}.
+  \end{equation}
+  Now, using the notation for weighted norms and inner products, we have:
+  \begin{equation}\label{eq:weighted-norms}
+    p_i^\top QQ^\top p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top (I - QQ^\top) p_{\lambda^*}} = \langle p_i, p_{\lambda^*} \rangle_{QQ^\top} + \norm{p_i}_{I - QQ^\top} \norm{p_{\lambda^*}}_{I - QQ^\top}.
+  \end{equation}
+  Since $I - QQ^\top$ orthogonally projects onto
+  $\range(\delta P)^\perp$, and since the dimension of this subspace
+  is 1, $(I - QQ^\top) p_i$ and $(I - QQ^\top) p_{\lambda^*}$ are
+  multiples of one another; furthermore, the angle between them is
+  since our simplex is nondegenerate. So, by Cauchy-Schwarz:
+  \begin{equation}\label{eq:cauchy-schwarz}
+    \norm{p_i}_{I - QQ^\top} \norm{p_{\lambda^*}}_{I - QQ^\top} = \langle p_i, p_{\lambda^*} \rangle_{I - QQ^\top}.
+  \end{equation}
+  Combining \cref{eq:cauchy-schwarz} with \cref{eq:weighted-norms} and
+  cancelling terms yields:
+  \begin{equation}
+    p_i^\top QQ^\top p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top QQ^\top p_{\lambda^*}} = p_i^\top p_{\lambda^*}.
+  \end{equation}
+  \Cref{eq:U-from-Ui-exact} follows.
+
+  To parametrize the characteristic found by solving the finite
+  difference problem, first note that the characteristic arriving at
+  $\hat{p}$ is tangent to $\nabla \hat{U}$. If we let $\tilde{\nu}$ be the
+  normal pointing from $\hat{p}$ in the direction of the arriving
+  characteristic, let $\tilde{p}$ be the point of intersection between
+  $p_0 + \langle \delta P \rangle$ and $\langle \tilde{\nu} \rangle$,
+  and let $\tilde{l} = \norm{\tilde{p}}$, then, since
+  $\tilde{p} - p_0 \in \langle \delta P \rangle$, we have:
+  \begin{equation}
+    \numin^\top (\tilde{p} - p_0) = 0.
+  \end{equation}
+  Rearranging this and substituting
+  $\tilde{p} = \tilde{l} \tilde{\nu}$, we get:
+  \begin{equation}
+    \tilde{l} = \frac{\numin^\top p_0}{\numin^\top \tilde{\nu}}.
+  \end{equation}
+  Now, if we assume that we can write
+  $\tilde{p} = \delta P \tilde{\lambda} + p_0$ for some
+  $\tilde{\lambda}$, then:
+  \begin{equation}
+    \tilde{\lambda} = R^{-1} Q^\top \parens{\tilde{p} - p_0} = -R^{-1} Q^\top \parens{I - \frac{\tilde{\nu} \numin^\top}{\tilde{\nu}^\top \numin}} p_0.
+  \end{equation}
+
+  To see that $\tilde{p} = p_{\lambda^*}$, note that since
+  $\tilde{\nu} = -\nabla \hat{U}/\norm{\nabla \hat{U}} = -\nabla
+  \hat{U}/(s^\theta h)$, we can write:
+  \begin{equation}
+    QQ^\top \tilde{\nu} = \frac{-QQ^\top \nabla \hat{U}}{s^\theta h} = \frac{-QR^{-\top} \delta U}{s^\theta h} = QQ^\top \nu_{\lambda^*}.
+  \end{equation}
+  Since $\tilde{\nu}$ and $\nu_{\lambda^*}$ each lie in the unit
+  sphere on the same side of the hyperplane spanned by $\delta P$, and
+  since $QQ^\top$ orthogonally projects onto $\range(\delta P)$, we
+  can see that $\tilde{\nu} = \tilde{\nu}_{\lambda^*}$. Hence,
+  $\tilde{p} = p_{\lambda^*} \in p_0 + \range(\delta P)$. The second
+  and third parts of \cref{thm:equivalence} follow.
+\end{proof}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "sisc-eikonal.tex"
+%%% End:
