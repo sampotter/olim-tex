@@ -20,7 +20,10 @@ $\boundary = \set{0}$.
   \begin{tabular}{cccc}
     Name & $u(x)$ & $s(x)$ \\
     \midrule
+    \texttt{s0} & $r$ & $1$ \\
     \texttt{s1} & $\cos(r) + r - 1$ & $1 - \sin(r)$ \\
+    \texttt{s2} & $r^2/2$ & $r$ \\
+    \texttt{s3} & $S^\top A S$ & $\alpha\norm{\operatorname{diag}(C){(A + A^\top)}S}$ \\
     \texttt{s4} & $\tfrac{1}{2} x^\top A^{1/2} x$, where $A^\top = A$ and $A \succ 0$ & $\norm{x}_A$
   \end{tabular}
 \end{center}
@@ -76,12 +79,12 @@ problem on $\Omega = [-1, 1]^3$, discretized into a grid with $n^3$
 points, where $n = 5, 9, \hdots, 129$, we \hl{\textbf{TODO}}:
 \emph{explain what we do...}
 
-\begin{table}
-  \centering
-  \input{../eikonal/misc/data/stats_table.tex}
-  \caption{Table of update statistics for~\cref{ssec:alg-comparison}.}
-  \label{tab:stats}
-\end{table}
+% \begin{table}
+%   \centering
+%   \input{../eikonal/misc/data/stats_table.tex}
+%   \caption{Table of update statistics for~\cref{ssec:alg-comparison}.}
+%   \label{tab:stats}
+% \end{table}
 
 \end{document}
 

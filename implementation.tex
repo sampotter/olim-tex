@@ -290,20 +290,21 @@ $p^\circ \in \mathbb{Z}^n$. For a point $p_\lambda$, define
 $l^\circ_\lambda = \norm{p_\lambda - p^\circ}$ and let
 $s^\circ = s(x^\circ)$. Consider the additive factorization of $U$ around $x^\circ$:
 \begin{align}
-  U(x) = T(x) + \tau(x), \qquad \text{where} \qquad T(p) = s^\circ \norm{x - x^\circ},
+  U(x) = T(x) + \tau(x), \qquad \text{where} \qquad T(x) = s^\circ \norm{x - x^\circ},
 \end{align}
-i.e. $u_\lambda = T_\lambda + \tau_\lambda$ where
+i.e.\ $u_\lambda = T_\lambda + \tau_\lambda$ where
 $T_\lambda = s^\circ h l^\circ_\lambda$. Our definition of
 $F_i^\theta$ was such that $\hat{U} = F_i^\theta(\lambda^*)$. We will
-define $G_i^\theta$ analogously. Note, e.g. for $i = 0$, that:
+define $G_i^\theta$ analogously. Note, e.g.\ for $i = 0$, that:
 \begin{equation}
   \hat{\tau} = \hat{U} - \hat{T} = \tau_\lambda + T_\lambda - \hat{T} + s^\theta h l_\lambda,
 \end{equation}
 where $\tau_\lambda$ and $T_\lambda$ are defined analogously to
 $U_\lambda$; i.e., $\tau_\lambda = \tau_0 + \delta \tau^\top \lambda$
-and $T_\lambda = T_0 + \delta T^\top \lambda$, where $\tau_i$ and
-$T_i$ are the values of $\tau$ and $T$ at $p_i$ for each $i$. So, we
-define:
+and \hl{$T_\lambda = T_0 + \delta T^\top \lambda$} (\emph{pretty sure
+  this is wrong and should be $T_\lambda = s^\circ l^\circ_\lambda$}),
+where $\tau_i$ and $T_i$ are the values of $\tau$ and $T$ at $p_i$ for
+each $i$. So, we define:
 \begin{align}
   \label{eq:Gi}
   G_0^\theta(\lambda) &= \tau_\lambda + s^\circ h l^\circ_\lambda - s^\circ h \hat{l}^\circ + s^\theta h l_\lambda, \\
@@ -313,6 +314,26 @@ where $\hat{l}^\circ = \norm{\hat{p} - p^\circ} = \norm{p^\circ}$. As
 for $F_0^\theta$ and $F_1^\theta$, the only difference between
 $G_0^\theta$ and $G_1^\theta$ is between the terms containing
 $s^\theta$ and $s^\theta_\lambda$.
+
+\begin{figure}
+  \centering
+  \includegraphics{factoring-example.eps}
+  \caption{Local factoring in action. This figure shows three steps of
+    \texttt{olim4rhr} (or, equivalently, the four-point fast marching
+    method with local factoring). Ordered clockwise from the top left,
+    the nodes are $p_{0, 0}, p_{0, 1}, p_{1, 1}$, and $p_{1, 0}$, with
+    $h = 1$ (so we assume our domain is identified with
+    $\mathbb{Z}^2$). We assume a constant slowness function:
+    $s \equiv 1$. Initially, $p^\circ = p_{1, 0}$ is the only node in
+    \texttt{bd} and is factored. The first two steps proceed exactly
+    the same as for the unfactored method, since the steps between the
+    source nodes and the updated nodes lie along characteristics of
+    the solution, $u$. In the third step, the unfactored method would
+    set $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. For the factored
+    method, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we find that
+    $U_{0,1} \gets 0 + s^\circ l^\circ_{\nicefrac{1}{2}} + s^\theta h l_{\nicefrac{1}{2}} =
+    \nicefrac{\sqrt{2}}{2} + \nicefrac{\sqrt{2}}{2} = \sqrt{2}$.}
+\end{figure}
 
 \begin{lemma}
   The gradient and Hessian of $G_i^\theta$ for $i = 0, 1$ are given
