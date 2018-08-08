@@ -164,16 +164,33 @@ checking if $B_R(\lambda_0^*)$ is contained in $\Delta^n$.
 
 \subsection[Update algorithms]{Hierarchical update algorithms}
 
+We can envision general $n$-dimensional eikonal solvers which involve
+correspondingly more complicated complexes of update simplexes. As $n$
+grows, to avoid an exponential increase in the amount of work required
+to update a node, we adopt a hierarchical algorithm which reduces the
+number of simplexes which need to be traversed. For any dimension $n$,
+we start by computing the minimal degree 1 (line) update. We then
+evaluate each degree 2 (triangle) update that contains the minimal
+node just found. Likewise for degree 3 (tetrahedron) and higher. This
+approach allows us to structure our search through a large set of
+update simplexes intelligently. An added benefit is that this approach
+allows us to take advantage of the Karush-Kuhn-Tucker (KKT) theory of
+constrained optimization to skip higher degree updates based on our
+knowledge of lower degree updates. This is described below. The
+nascent idea that led to this algorithm was first developed to
+accelerate a Dijkstra-like solver used to compute quasipotentials of
+nongradient stochastic differential equations in
+2D~\cite{dahiya2017ordered}.
+
 \begin{equation}
   L_i(\lambda, \mu) = F_i(\lambda) + {(A\lambda - b)}^\top \mu.
 \end{equation}
 
 Since \cref{eq:constrained-minimization} only has linear inequality
 constraints, and since we assume that $F_i$ is strictly convex
-according to \cref{lemma:F-strictly-convex}, checking the
-Karush-Kuhn-Tucker (KKT) conditions for
-\cref{eq:constrained-minimization} is straightforward. If
-$(\lambda^*, \mu^*)$ satisfy:
+according to \cref{lemma:F-strictly-convex}, checking the KKT
+conditions for \cref{eq:constrained-minimization} is
+straightforward. If $(\lambda^*, \mu^*)$ satisfy:
 \begin{equation}
   \label{eq:kkt}
   \begin{split}
@@ -283,12 +300,14 @@ problems that need to be solved to compute each value $\hat{U}$.
 
 \subsection{Local factoring}
 
-In this section, we will consider a single point source $x^\circ$, and
-let $\boundary = \set{x^\circ}$. Let the grid
+\hl{This section is messed up. Fix it.} In this section, we will
+consider a single point source $x^\circ$, and let
+$\boundary = \set{x^\circ}$. Let the grid
 $\calG \subseteq \mathbb{Z}^n$ be aligned so that
 $p^\circ \in \mathbb{Z}^n$. For a point $p_\lambda$, define
 $l^\circ_\lambda = \norm{p_\lambda - p^\circ}$ and let
-$s^\circ = s(x^\circ)$. Consider the additive factorization of $U$ around $x^\circ$:
+$s^\circ = s(x^\circ)$. Consider the additive factorization of $U$
+around $x^\circ$:
 \begin{align}
   U(x) = T(x) + \tau(x), \qquad \text{where} \qquad T(x) = s^\circ \norm{x - x^\circ},
 \end{align}
@@ -318,10 +337,10 @@ $s^\theta$ and $s^\theta_\lambda$.
 \begin{figure}
   \centering
   \includegraphics{factoring-example.eps}
-  \caption{Local factoring in action. This figure shows three steps of
+  \caption{Factoring in action. This figure shows three steps of
     \texttt{olim4rhr} (or, equivalently, the four-point fast marching
-    method with local factoring). Ordered clockwise from the top left,
-    the nodes are $p_{0, 0}, p_{0, 1}, p_{1, 1}$, and $p_{1, 0}$, with
+    method with factoring). Ordered clockwise from the top left, the
+    nodes are $p_{0, 0}, p_{0, 1}, p_{1, 1}$, and $p_{1, 0}$, with
     $h = 1$ (so we assume our domain is identified with
     $\mathbb{Z}^2$). We assume a constant slowness function:
     $s \equiv 1$. Initially, $p^\circ = p_{1, 0}$ is the only node in
@@ -331,8 +350,9 @@ $s^\theta$ and $s^\theta_\lambda$.
     the solution, $u$. In the third step, the unfactored method would
     set $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. For the factored
     method, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we find that
-    $U_{0,1} \gets 0 + s^\circ l^\circ_{\nicefrac{1}{2}} + s^\theta h l_{\nicefrac{1}{2}} =
-    \nicefrac{\sqrt{2}}{2} + \nicefrac{\sqrt{2}}{2} = \sqrt{2}$.}
+    $U_{0,1} \gets 0 + s^\circ l^\circ_{\nicefrac{1}{2}} + s^\theta h
+    l_{\nicefrac{1}{2}} = \nicefrac{\sqrt{2}}{2} +
+    \nicefrac{\sqrt{2}}{2} = \sqrt{2}$.}
 \end{figure}
 
 \begin{lemma}
@@ -340,12 +360,19 @@ $s^\theta$ and $s^\theta_\lambda$.
   by:
   \begin{align}
     \label{eq:G-grad-hess}
-    \nabla G_i^\theta(\lambda) &= \nabla F_i^\theta(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delta P^\top {(p_\lambda - p^\circ)} - \delta T, \\
+    \nabla G_i^\theta(\lambda) &= \nabla F_i^\theta(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delta P^\top {(p_\lambda - p^\circ)} - \delta T, \mbox{(wrong)} \\
     \nabla^2 G_i^\theta(\lambda) &= \nabla^2 F_i^\theta(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delta P^\top \calP^\perp_{p_\lambda - p^\circ} \delta P.
   \end{align}
 \end{lemma}
 
 \hl{\textbf{TODO}}: \emph{direct solution for $G_0^\theta$?}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{factoring-error-example.eps}
+  \caption{\hl{TODO}}
+  \label{fig:factoring-error-example}
+\end{figure}
 
 \end{document}
 
