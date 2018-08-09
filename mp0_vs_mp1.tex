@@ -5,7 +5,7 @@
 \section{Comparing $F_0$ and $F_1$}
 
 \textbf{TODO}: add an introduction to this section and some words
-about \texttt{mp0wr}.
+about \texttt{mp0}.
 
 In what follows, we assume that $s > \smin > 0$ where $\smin$ is
 independent of $h$ and that $s$ is Lipschitz continuous with $O_h(1)$
@@ -96,7 +96,7 @@ Lipschitz constant.
   that is $O(h)$.
 \end{proof}
 
-\begin{theorem}\label{theorem:mp0wr-newton}
+\begin{theorem}\label{theorem:mp0-newton}
   Let $h$ be sufficiently small so that $F_1$ is strictly
   convex. Then, the error vector
   $\delta\lambda^* = \lambda_1^* - \lambda_0^*$ satisfies
@@ -146,16 +146,16 @@ Lipschitz constant.
 \end{proof}
 
 \begin{corollary}
-  The error incurred by the \texttt{mp0wr} method is $O(h^3)$ per
+  The error incurred by the \texttt{mp0} method is $O(h^3)$ per
   update; i.e.:
   \begin{equation}
-    \label{eq:mp0wr-error}
+    \label{eq:mp0-error}
     \abs{F_1(\lambda_1^*) - F_1(\lambda_0^*)} = O(h^3).
   \end{equation}
 \end{corollary}
 
 \begin{proof}
-  From \cref{theorem:mp0wr-newton}, we have
+  From \cref{theorem:mp0-newton}, we have
   $\norm{\delta\lambda^*} = O(h)$. Then, Taylor expanding
   $F_1(\lambda_0^*)$, we get:
   \begin{equation*}
@@ -175,7 +175,7 @@ Lipschitz constant.
   $\lambda_1^*$ and perform a Newton iteration on $\nabla F_0$---we
   can obtain the foregoing error bound again, and possibly with less
   effort. The main reason to start from $\lambda_0^*$ and drive to
-  $\lambda_1^*$ is that it allows us to use \texttt{mp0wr} as a means
+  $\lambda_1^*$ is that it allows us to use \texttt{mp0} as a means
   of initializing \texttt{mp1}. For $d = 1, 2$, this is unimportant,
   but in higher dimensions, minimizing $F_0$ should be
   cheaper. Reducing the number of $F_1$ update iterations should allow

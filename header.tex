@@ -1,0 +1,47 @@
+\documentclass[eikonal.tex]{subfiles}
+
+\begin{document}
+
+\title{Ordered Line Integral Methods \\ for Solving the Eikonal Equation}
+\author{Samuel F.\ Potter and Maria K.\ Cameron}
+\date{\today}
+
+\maketitle
+
+\begin{abstract}
+  The eikonal equation is used to model high-frequency wave
+  propagation and solve a variety of applied problems in computational
+  science. We present a fast and accurate Dijkstra-like solver for the
+  eikonal equation and factored eikonal equation, which computes
+  solutions on a regular grid in 2D and 3D by solving local raytracing
+  problems. Our method converges linearly but computes significantly
+  more accurate solutions than competing methods. We consider a
+  variety of quadrature rules for approximately solving local
+  raytracing problems. In 3D, we consider two different hierarchical
+  algorithms which significantly reduce the number of FLOPs needed to
+  solve the eikonal equation. One method uses employs a fast
+  neighborhood search to prune unnecessary updates, and the other uses
+  Karush-Kuhn-Tucker theory to achieve the same end. We conduct
+  extensive numerical simulations and provide theoretical
+  justification for our approach. A link to a library implementing
+  these algorithms is available online at the authors' respective
+  webpages.
+\end{abstract}
+
+\begin{keywords}
+  eikonal equation, factored eikonal equation, fast marching method,
+  semi-Lagrangian method
+\end{keywords}
+
+% https://mathscinet.ams.org/msc/pdfs/classifications2010.pdf
+\begin{AMS}
+  97N40, \hl{\textbf{TODO}}: \emph{add more from
+    \href{https://mathscinet.ams.org/msc/pdfs/classifications2010.pdf}{here}.} % numerical analysis
+\end{AMS}
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "sisc-eikonal.tex"
+%%% End:

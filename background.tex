@@ -2,15 +2,26 @@
 
 \begin{document}
 
-\section{Background}\label{sec:background}
-
 \begin{figure}[t]
   \centering
   \includegraphics{overview.eps}
-  \caption{The ``expanding wavefront'' is \emph{not} constructed by
-    the algorithm.}
+  \caption{An overview of a Dijkstra-like algorithm for solving the
+    eikonal equation, \cref{eq:eikonal} (see
+    \cref{alg:dijkstra-like}). The box surrounding $p$ depicts its
+    neighborhood, \texttt{nb}$(p)$. Triangles represent updates. The
+    dashed lines depict local rays: not necessarily the true
+    minimizing rays.}
   \label{fig:overview}
 \end{figure}
+
+\section{Background}\label{sec:background}
+
+In this section, we give a brief overview of Dijkstra-like algorithms
+and fast sweeping methods for solving \cref{eq:eikonal}, and present a
+generic, high-level version of a Dijkstra-like algorithm which we will
+refer to throughout the rest of the paper to organize our
+developments. Since our focus is Dijkstra-like algorithms, our
+explanation of fast sweeping methods will be necessarily brief.
 
 \subsection{Algorithms for solving the eikonal equation}
 
@@ -41,33 +52,38 @@ algorithm for solving the eikonal equation. The idea is to order the
 solution of the eikonal equation dynamically so that new values are
 continually computed using only fixed upwind values. This is done
 using a variant of Dijkstra's algorithm for finding shortest paths in
-a network, hence the name; in principal, other algorithms can be used
-that have different complexity guarantees but which may offer other
-performance advantages---see~\cite{chacon2012fast} for a
-review. Dijkstra's algorithm is a type of \emph{label-setting method}
-for finding shortest paths in a network; there are also
+a network, hence the name. Other algorithms can be used that have
+different complexity guarantees but which may offer other performance
+advantages---see~\cite{chacon2012fast} for a review. In particular,
+Dijkstra's algorithm is a type of \emph{label-setting method} for
+finding shortest paths in a network; there are also
 \emph{label-correcting methods}.
 
 Using Dijkstra's algorithm to solve a ``continuous shortest path''
 problem has been discovered in several contexts. The earliest such
-development appears to be due to Mitchell, Mount, and Papadimitriou,
-who used this idea to approximate geodesics on triangulated
-surfaces~\cite{mitchell1987discrete} (\hl{\textbf{TODO}}: \emph{double
-  check}). This was followed by Tsitsiklis who developed a first-order
-semi-Lagrangian method for solving isotropic control problems on a
-uniform grid~\cite{tsitsiklis1995efficient}. Finally, the fast
-marching method, which uses a firs-order upwind finite difference
-scheme was developed by Sethian for isotropic front
+development appears to be a theoretical result in computational
+geometry due to Mitchell, Mount, and Papadimitriou, who used this idea
+to compute eact polyhedral shortest paths (``discrete geodesics'') on
+triangulated surfaces~\cite{mitchell1987discrete}. This was followed
+by Tsitsiklis who developed a first-order semi-Lagrangian method for
+solving isotropic control problems on a uniform
+grid~\cite{tsitsiklis1995efficient}. Finally, the fast marching
+method, which uses a first-order upwind finite difference scheme was
+developed by Sethian for isotropic front
 propagation~\cite{sethian1996fast}. Many variations of these methods
-have since been developed. Our own development most closely resembles
-Tsitsisklis's.
+have since been developed. Our own development resembles
+Tsitsisklis's, but extends it past its original formulation.
 
 There are several pieces of information that need to be kept track of
-in order to implement the algorithm. For each node $p$, apart from the
-current value of $U(p)$, the most salient piece of information is the
-\emph{state} of each node $p$, written $p$\texttt{.state}
+in order to implement the algorithm. A data structure we call
+\texttt{front} that keeps track of an expanding wavefront is
+maintained throughout the algorithm's excecution. For each node $p$,
+apart from the current value of $U(p)$, the most salient piece of
+information is the \emph{state} of each node $p$, written
+$p$\texttt{.state}
 $\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. The meaning
-of each of these states will become clear from the following
+of each of these states and each node's interaction with the
+\texttt{front} data structure will become clear from the following
 high-level description of the algorithm:
 
 \begin{algorithm}
@@ -103,16 +119,15 @@ high-level description of the algorithm:
 Computing $\hat{U}$ in \cref{enum:update-U} is left intentionally
 vague. Specifying this step involves indicating how nodes in
 $\neib(\hat{p})$ are to be used to compute $\hat{U}$. In the fast
-marching method, an upwind finite difference stencil is used in the
-sense that only nodes that are \texttt{valid} propagate information;
-variations where \texttt{trial} nodes contribute have also been
-considered but do not appear to improve the error in all
-cases. Semi-Lagrangian methods like Tsitsiklis's group nodes in
-\texttt{valid} into sets whose convex hulls partition an approximation
-to the surface of the expanding wavefront and then solve local
-raytracing problems involving each such group. The method presented
-here operates in the same way, so this local ray-tracing idea is
-depicted in \cref{fig:overview}.
+marching method, an upwind finite difference scheme where only
+\texttt{valid} nodes propagate information is used; variations where
+\texttt{trial} nodes contribute have also been considered but do not
+appear to improve the error in all cases. Semi-Lagrangian methods like
+Tsitsiklis's group nodes in \texttt{valid} into sets whose convex
+hulls approximate the surface of the expanding wavefront and then
+solve local raytracing problems involving each such group. The method
+presented here operates in the same way (again, see
+\cref{fig:overview})
 
 The exact sequencing and details of some of the steps of
 \cref{alg:dijkstra-like} is variable. Our intent here is to give a
@@ -123,17 +138,18 @@ the following ways:
 \begin{itemize}
 \item As we mentioned before, there are different ways of computing
   $\boundary$ and subsequently approximating the initial value of $U$
-  for $p \in \boundary$ using $g$ (\hl{cite}), the initial value for
-  $\left. s \right|_D$.
+  for $p \in \boundary$ using $g$, the initial value for
+  $\left. s \right|_D$ (\hl{cite}).
 \item How we keep track of the node with the smallest value is
   variable: most frequently, as in Dijkstra's algorithm, a heap
   storing pointers to the nodes is used, leading to $O(N \log N)$
   update operations overall, where $N$ is the number of nodes.
 \item Related to the foregoing point, the arrangement of the nodes
   (into a grid or otherwise) varies; hence, the neighborhood of each
-  node varies. This naturally affects the update
-  procedure. Dijkstra-like methods have been extended to manifolds and
-  unstructured meshes~\cite{sethian2000fast}.
+  node varies. This naturally affects the update procedure. A regular
+  grid is simple to deal with, but Dijkstra-like methods have been
+  extended to manifolds and unstructured meshes, where things are more
+  involved~\cite{kimmel1998computing,sethian2000fast,bronstein2008numerical}.
 \end{itemize}
 Still other problems can be solved using Dijkstra-like algorithms: the
 Hamilton-Jacobi equation, an isotropic generalization of the eikonal
@@ -155,7 +171,7 @@ guarantee cannot be bound a priori and depends heavily on the geometry
 of the problem. Fast sweeping methods have been extended to
 Hamilton-Jacobi equations~\cite{kao2004lax,tsai2003fast}, and hybrid
 methods combining the fast sweeping method with a Dijkstra-like method
-have been introduced~\cite{chacon2012fast,chacon2015parallel}.
+have also been introduced~\cite{chacon2012fast,chacon2015parallel}.
 
 \end{document}
 

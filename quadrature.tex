@@ -57,7 +57,7 @@ parametrization of
 $[p_\lambda, 0] = \operatorname{conv}(\set{0, p_\lambda})$. We
 consider two approximations to \cref{eq:hat-u-variational}: the
 difference between the two pertains to the way we incorporate the
-speed function $s$. Let $\theta \in [0, 1]$ and define
+slowness function $s$. Let $\theta \in [0, 1]$ and define
 $l_\lambda = \norm{p_\lambda}_2$. Then, we define:
 \begin{align*}
   F_0(\lambda; \theta) &:= u_\lambda + h s^{\theta} l_\lambda = u_\lambda + h \squareb{(1-\theta)\hat{s} + \frac{\theta}{d + 1} \sum_{i=0}^d s_i} l_\lambda, \\
@@ -74,7 +74,7 @@ stands for ``midpoint''.
 
 \begin{figure}
   \centering
-  \includegraphics{speed-tetra.eps}
+  \includegraphics{slowness-tetra.eps}
   \caption{A depiction of the different quantities related to
     $s^{\theta}$ and $s^{\theta}_\lambda$ for the case of $d = 2$, a
     tetrahedron update. Both of $s^\theta$ and $s^\theta_\lambda$ live

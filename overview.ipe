@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20180715145816" modified="D:20180715163828"/>
+<info created="D:20180715145816" modified="D:20180808153537"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -371,5 +371,15 @@ h
 176 728 l
 </path>
 <text matrix="1 0 0 1 -36 -52" transformations="translations" pos="140 756" stroke="black" type="minipage" width="68" height="18.866" depth="13.9" valign="top" style="center">direction of wavefront expansion</text>
+<text matrix="1 0 0 1 -2.65192 4.98733" transformations="translations" pos="96 640" stroke="black" type="minipage" width="64" height="5.958" depth="0.96" valign="top" style="center">wavefront</text>
+<path stroke="black" arrow="normal/normal">
+316 576 m
+304 604 l
+</path>
+<path stroke="black" arrow="normal/normal">
+324 576 m
+336 604 l
+</path>
+<text transformations="translations" pos="256 572" stroke="black" type="minipage" width="128" height="18.866" depth="13.9" valign="top" style="center">hulls of \texttt{valid} nodes approximate expanding wavefront piecewise</text>
 </page>
 </ipe>

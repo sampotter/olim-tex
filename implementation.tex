@@ -120,11 +120,11 @@ the active set method for solving
   \end{enumerate}
 \end{algorithm}
 
-Using \cref{theorem:mp0wr-newton,thm:f0-exact}, we can avoid the use
+Using \cref{theorem:mp0-newton,thm:f0-exact}, we can avoid the use
 of an algorithm for constrained optimized by first computing
 $\lambda_0^*$ using \cref{thm:f0-exact} and then setting
 $\lambda_0 = \lambda_0^*$ in an unconstrained Newton iteration
-minimizing $F_1$. \Cref{theorem:mp0wr-newton,thm:f0-exact} give us
+minimizing $F_1$. \Cref{theorem:mp0-newton,thm:f0-exact} give us
 conditions for determing when this be done: in particular, we first
 check if $\norm{R^{-\top} \delta U} < s^\theta h$, then check if
 $\lambda_1^*$ inside $\Delta^n$. If this isn't the case, we can
@@ -132,7 +132,7 @@ default to \cref{alg:proj-newton}. \hl{\textbf{TODO}}: \emph{use
   $\lambda_0^*$ to initialize the projected Newton method when this
   happens.}
 
-In the proof of \cref{theorem:mp0wr-newton}, $\lambda_1^*$ lies in the
+In the proof of \cref{theorem:mp0-newton}, $\lambda_1^*$ lies in the
 closed ball $B_r(\lambda_0^*)$, where:
 \begin{equation}
   r \leq R = \frac{\alpha}{1 - \alpha/2}, \mbox{ and } \alpha = \norm{\nabla^2 F_1(\lambda_0^*)^{-1} \nabla F_1(\lambda_0^*)}.
@@ -266,6 +266,12 @@ algorithm for computing $\hat{U}$.
 
 In practice, \cref{alg:proj-newton} is converges rapidly and is
 efficient in terms of its implementation.
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=0.85\linewidth]{hu-neighborhoods.eps}
+  \caption{hi}
+\end{figure}
 
 Let $\calC_d$ be the set of degree $d$ update simplices for $\hat{p}$
 such that each update vertex is \texttt{valid}. Since

@@ -54,18 +54,18 @@
   \rangle$. So, we can see that
   $\mathcal{P}^\perp_{p_\lambda} \delta P \mu = 0$ only if $\mu = 0$,
   from which we can conclude
-  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P \succ 0$.
+  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P \succ 0$. That
+  $\nabla^2 F_0$ is positive definite follows from combining this with
+  the fact that $\smin$ is assumed to be positive.
 \end{proof}
 
 \begin{proof}[Proof of \cref{lemma:F-strictly-convex}]
-  The fact that $F_0$ is strictly convex follows immediately from
-  \cref{lemma:dPt-cprojp-dP-pd} and by noting that
-  ${(s^\theta h)}/l_\lambda > 0$. To show that $\nabla^2 F_1$ is
-  positive definite for $h$ small enough, note that from
-  \cref{eq:hess-F1} $\nabla^2 F_1$ is the sum of a positive definite
-  matrix and a small, indefinite perturbation. To use this fact, note
-  that since $\delta P^\top \mathcal{P}^\perp_\lambda \delta P$ is
-  symmetric positive definite, it has an eigenvalue decomposition
+  To show that $\nabla^2 F_1$ is positive definite for $h$ small
+  enough, note from \cref{eq:hess-F1} that $\nabla^2 F_1$ is the sum
+  of a positive definite matrix and a small, indefinite
+  perturbation. To use this fact, note that since
+  $\delta P^\top \mathcal{P}^\perp_\lambda \delta P$ is symmetric
+  positive definite, it has an eigenvalue decomposition
   $Q \Lambda Q^\top$ where $\Lambda_{ii} > 0$ for all $i$. Since
   $\delta P^\top \mathcal{P}^\perp_\lambda \delta P$ doesn't depend on
   $h$, for a fixed set of vectors $p_0, \hdots, p_n$, we can expect
@@ -78,13 +78,20 @@
   provided that $s > \smin > 0$, as assumed. This gives us a bound for
   the positive definite part of $\nabla F_1^2$.
 
-  Now, considering the indefinite perturbation, we can easily see
-  that:
+  Now, considering the indefinite perturbation,
+  $B = \set{\delta P^\top \nu_\lambda, \theta h \delta s}$, we can
+  easily see that:
   \begin{equation}
-    \lambda_{\max}(B) = \norm{\tfrac{\theta h}{l_\lambda} \anticom{\delta P^\top p_\lambda,
-        \delta s}} = O(h^2).
+    \lambda_{\max}(B) = \norm{\anticom{\delta P^\top \nu_\lambda,
+        \theta h \delta s}} \leq \theta h \sqrt{n} \norm{\anticom{\delta P^\top \nu_\lambda, \delta s}}_\infty = O(h^2),
   \end{equation}
-  Letting $z \neq 0$, we compute:
+  where we use the fact that the Lipschitz constant of $s$ is
+  $K \leq C n^{-1/2}$, so that:
+  \begin{equation}
+    |\delta s_i| = |s_i - s_0| \leq K |x_i - x_0| \leq K h \sqrt{n}
+    \leq Ch,
+  \end{equation}
+  for each $i$. Letting $z \neq 0$, we compute:
   \begin{equation}
     z^\top \nabla^2 F_1 z = z^\top A z + z^\top B z \geq \lambda_{\min}(A) z^\top z + z^\top B z \geq Ch z^\top z + z^\top B z.
   \end{equation}
@@ -93,12 +100,12 @@
   z^\top z$, where $D$ is some positive constant, we can see that for
   $h$ small enough, it must be the case that
   $Ch z^\top z + z^\top B z > 0$; i.e., that $\nabla^2 F_1$ is
-  positive definite.
+  positive definite; consequently, $F_1$ is strictly convex in this case.
 \end{proof}
 
 \end{document}
 
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "<none>"
+%%% TeX-master: "sisc-eikonal"
 %%% End:
