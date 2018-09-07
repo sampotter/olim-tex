@@ -2,9 +2,10 @@
 
 \begin{document}
 
-\section{Proofs for section \ref{ssec:quadrature}}
+\section{Proofs for section
+  \ref{ssec:minimization-problem}}\label{sec:minimization-proofs}
 
-\begin{proof}[Proof of \cref{lemma:F0-grad-and-Hess}]
+\begin{proof}[Proof of \cref{prop:F0-grad-and-Hess}]
   For the gradient, we have:
   \begin{equation*}
     \nabla_\lambda F_0(\lambda; \theta) = \delta u + \frac{s^{\theta} h}{2 l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda = \delta u + \frac{s^{\theta} h}{l_\lambda} \delta P^\top p_\lambda,
@@ -19,7 +20,7 @@
   from which the result follows.
 \end{proof}
 
-\begin{proof}[Proof of \cref{lemma:F1-grad-and-Hess}]
+\begin{proof}[Proof of \cref{prop:F1-grad-and-Hess}]
   Since $F_1(\lambda; \theta) = u_\lambda + h s^{\theta}_\lambda l_\lambda$, for the gradient we have:
   \begin{equation*}
     \nabla_\lambda F_1(\lambda; \theta) = \delta u + h \parens{\theta l_\lambda \delta s + \frac{s^{\theta}_\lambda}{2l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda} = \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda^\top p_\lambda \delta s + s^{\theta} \delta P^\top p_\lambda},
@@ -32,31 +33,41 @@
 \end{proof}
 
 \begin{proof}[Proof of \cref{lemma:dPt-cprojp-dP-pd}]
-  To show that $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$
-  is positive semidefinite, we simply note that since
-  $\mathcal{P}^\perp_{p_\lambda}$ is an orthogonal projector, it is
-  positive semidefinite, and its singular value decomposition can be
-  written $UU^\top$, where $U \in \mathbb{R}^{n+1 \times n}$. Then:
-  \begin{equation}\label{eq:dPt-cprojp-dP-gram}
-    \delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P = {(U^\top \delta P)}^\top {(U^\top \delta P)}.
+  % To show that $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$
+  % is positive semidefinite, we simply note that since
+  % $\mathcal{P}^\perp_{p_\lambda}$ is an orthogonal projector, it is
+  % positive semidefinite, and its singular value decomposition can be
+  % written $UU^\top$, where $U \in \mathbb{R}^{n+1 \times n}$. Then:
+  % \begin{equation}\label{eq:dPt-cprojp-dP-gram}
+  %   \delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P = {(U^\top \delta P)}^\top {(U^\top \delta P)}.
+  % \end{equation}
+  % From the factorization in \cref{eq:dPt-cprojp-dP-gram}, we can see
+  % that $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$ is a
+  % Gram matrix, hence positive semidefinite.
+
+  Let $\nu_\lambda = p_\lambda/l_\lambda \in \mathbb{R}^n$ be the unit
+  vector in the direction of $p_\lambda$, and assume that
+  $Q = \begin{bmatrix} \nu_\lambda & U \end{bmatrix} \in \mathbb{R}^{n
+    \times n}$ is orthonormal. Then:
+  \begin{equation}
+    \delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P = \delta P^\top {(I - \nu_\lambda \nu_\lambda^\top)} \delta P = \delta P^\top {(QQ^\top - \nu_\lambda \nu_\lambda^\top)} \delta P = \delta P^\top U U^\top \delta P.
   \end{equation}
-  From the factorization in \cref{eq:dPt-cprojp-dP-gram}, we can see
-  that $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$ is a
-  Gram matrix, hence positive semidefinite.
+  Hence, $\delta P^\top \mathcal{P}^\perp \delta P$ is a Gram matrix
+  and positive semidefinite.
 
   Next, since $\Delta^n$ is nondegenerate, the vectors $p_i$ for
-  $i = 0, \hdots, n$ are linearly independent. Since the $i$th column
-  of $\delta P$ is $\delta p_i = p_i - p_0$, we can see that the
-  vector $p_0$ is not in the range of $\delta P$; hence, there is no
-  vector $\mu$ such that $\delta P \mu = \alpha p_\lambda$, for any
+  $i = 0, \hdots, n - 1$ are linearly independent. Since the $i$th
+  column of $\delta P$ is $\delta p_i = p_i - p_0$, we can see that
+  the vector $p_0$ is not in the range of $\delta P$; hence, there is
+  no vector $\mu$ such that $\delta P \mu = \alpha p_\lambda$, for any
   $\alpha \neq 0$. What's more, by definition,
   $\text{ker}(\mathcal{P}_{p_\lambda}^\perp) = \langle p_\lambda
   \rangle$. So, we can see that
   $\mathcal{P}^\perp_{p_\lambda} \delta P \mu = 0$ only if $\mu = 0$,
   from which we can conclude
-  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P \succ 0$. That
-  $\nabla^2 F_0$ is positive definite follows from combining this with
-  the fact that $\smin$ is assumed to be positive.
+  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P \succ
+  0$. Altogether, bearing in mind that $\smin$ is assumed to be
+  positive, we conclude that $\nabla^2 F_0$ is positive definite.
 \end{proof}
 
 \begin{proof}[Proof of \cref{lemma:F-strictly-convex}]
@@ -78,18 +89,18 @@
   provided that $s > \smin > 0$, as assumed. This gives us a bound for
   the positive definite part of $\nabla F_1^2$.
 
-  Now, considering the indefinite perturbation,
-  $B = \set{\delta P^\top \nu_\lambda, \theta h \delta s}$, we can
-  easily see that:
+  Now, consider the indefinite perturbation,
+  $B = \set{\delta P^\top \nu_\lambda, \theta h \delta s}$. Since
+  $\norm{\delta s} = O(h)$, we find that:
   \begin{equation}
     \lambda_{\max}(B) = \norm{\anticom{\delta P^\top \nu_\lambda,
-        \theta h \delta s}} \leq \theta h \sqrt{n} \norm{\anticom{\delta P^\top \nu_\lambda, \delta s}}_\infty = O(h^2),
+        \theta h \delta s}}_2 \leq \theta h \sqrt{n} \norm{\anticom{\delta P^\top \nu_\lambda, \delta s}}_\infty = O(h^2),
   \end{equation}
   where we use the fact that the Lipschitz constant of $s$ is
-  $K \leq C n^{-1/2}$, so that:
+  $K \leq C$, so that:
   \begin{equation}
     |\delta s_i| = |s_i - s_0| \leq K |x_i - x_0| \leq K h \sqrt{n}
-    \leq Ch,
+    \leq Ch \sqrt{n},
   \end{equation}
   for each $i$. Letting $z \neq 0$, we compute:
   \begin{equation}

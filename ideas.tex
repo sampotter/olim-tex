@@ -38,11 +38,29 @@ algorithm.
 
 \emph{See Steffensen's method on Wikipedia.}
 
-\section{Compute one eikonal for all frequencies? [HF acoustics]}
+We should compare this with the $O(N)$ algorithm based on Dial's
+algorithm.
 
-Is the eikonal frequency-independent? If it is, is there a way we can
-just solve for all frequencies simultaneously? This might be a good
-way to introduce parallelism if so.
+\section{Adaptive line integral methods (``smartmeshing'')}
+
+The key issue with smartmeshing is how to propagate neighborhoods from
+the parent mesh to the child mesh after subdividing. Here's one
+plausible way of doing it:
+\begin{center}
+  \includegraphics{recursive-neighborhoods.eps}
+\end{center}
+The idea is:
+\begin{itemize}
+\item After updating, each node will know the direction they were
+  updated from---i.e. they will have a linear approximation to the
+  characteristic arriving there. 
+\item At intersecting nodes, we look to
+  these nodes and use the convex hull of these characteristics.
+\item The key issue here is the logic used to determine which nodes to
+  look at. We can probably come up with something based on the order
+  of the nodes' solution and the directions of the neighboring
+  characteristics.
+\end{itemize}
 
 \section{Numerical study of other queueing methods}
 

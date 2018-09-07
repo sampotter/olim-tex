@@ -90,7 +90,7 @@ of $F_0$ and $F_1$. These quantities are easy to compute, but we have
 found a particular form for them to be appropriate. We compute these
 quantities here.
 
-\begin{lemma}\label{lemma:F0-grad-and-Hess}
+\begin{lemma}\label{prop:F0-grad-and-Hess}
   The gradient and Hessian of $F_0(\lambda; \theta)$ satisfy:
   \begin{align}
     \nabla_\lambda F_0(\lambda; \theta) &= \delta u + \frac{s^{\theta} h}{l_\lambda} \delta P^\top p_\lambda, \\
@@ -117,7 +117,7 @@ quantities here.
   from which the result follows.
 \end{proof}
 
-\begin{lemma}\label{lemma:F1-grad-and-Hess}
+\begin{lemma}\label{prop:F1-grad-and-Hess}
   The gradient and Hessian of $F_1(\lambda; \theta)$ satisfy:
   \begin{align}
     \nabla_\lambda F_1(\lambda; \theta) &= \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda \delta s^\top + s^{\theta}_\lambda \delta P}^\top p_\lambda, \\
@@ -238,7 +238,7 @@ quantities here.
 \end{proof}
 
 \paragraph{Which simplex should we minimize over?}
-\Cref{lemma:F0-grad-and-Hess,lemma:F1-grad-and-Hess} can be formulated
+\Cref{prop:F0-grad-and-Hess,prop:F1-grad-and-Hess} can be formulated
 slightly differently. If we take $\Delta^d$ to be the set of $\lambda$
 lying in the nonnegative orthant of $\R^{d+1}$ such that
 $\sum_{i=0}^d \lambda_i = 1$, then, letting

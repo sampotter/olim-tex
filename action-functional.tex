@@ -13,18 +13,14 @@ $p = x' = dx/d\sigma$, the corresponding Hamiltonian is:
   H{(p, x)} = \frac{\norm{p}^2}{2} - \frac{s(x)^2}{2} = 0.
 \end{equation}
 Since $H = 0$, \cref{eq:eikonal-hamiltonian} implies
-$L = \langle p, x'\rangle = H$, where $x' = \partial_p H = p$.  From
-Hamilton's equation, $H(p, x) = \langle p, x'\rangle - L(x, x')$, we
-can see that the Lagrangian is given by:
+$L = \sup_p (\langle p, x' \rangle - H) = s(x) \norm{x'}$. Since
+$x' = \partial_p H = p$ and $\norm{p} = s(x)$, the Lagrangian is given
+by:
 \begin{equation}
   \label{eq:eikonal-lagrangian}
   L(x, x') = \langle p, x'\rangle = \langle x', x'\rangle = \norm{x'}^2,
 \end{equation}
-i.e. $L = \norm{x'}^2$. From \cref{eq:eikonal-hamiltonian}, we can
-also see that $s(x) = \norm{p} = \norm{x'}$, since $s$ was assumed to
-be nonnegative. Substituting this into \cref{eq:eikonal-lagrangian},
-we get $L(x, x') = s(x) \norm{x'}$. By \cref{eq:eikonal-hamiltonian},
-we have $x' = p = \nabla u(x)$. Since $L > 0$, we can write:
+since $x' = p $. Hence, we can write:
 \begin{equation}
   L(x, x') = \norm{x'}^2 = \abs{\langle \nabla u(x), x'\rangle} = \langle \nabla u(x), x'\rangle = u'.
 \end{equation}

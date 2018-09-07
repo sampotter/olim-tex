@@ -2,21 +2,22 @@
 
 \begin{document}
 
-\section{Numerical Results}\label{sec:numerical-results}
+\section{Numerical Results}\label{sec:numerical-results} In this
+section, we collect our numerical tests. We first test our factored
+method on several different slowness functions with available exact
+solutions for point source data. We also test our method on a linear
+speed function (reciprocal of slowness) which has been shown to be
+amenable to local factoring. Finally, we present some statistics on
+the number of different types of updates performed by
+\cref{alg:bottom-up,alg:top-down} to give a more precise understanding
+of the types of updates that make up the majority of each method's
+runtime.
 
 \subsection[Single point source]{Nonsymmetric slowness functions with
   a single point source}\label{ssec:point-source-problems}
 
-Using \cref{eq:eikonal}, a simple recipe to create pairs of slowness
-functions $s$ and solutions $u$ is to prescribe a solution $u$ and
-compute $s(x) = \norm{\nabla u(x)}_2$. In general, $u$ may be
-discontinuous due to rarefaction fans and shocks in the solution, so
-some care must be taken with this. Although it's possible to use this
-recipe with complicated choices of $\boundary$, we limit ourselves to
-considering a single point source at the origin---i.e.,
-$\boundary = \set{0}$.
-
-\begin{center}
+\begin{table}
+  \centering
   \begin{tabular}{cccc}
     Name & $u(x)$ & $s(x)$ \\
     \midrule
@@ -24,16 +25,63 @@ $\boundary = \set{0}$.
     \texttt{s1} & $\cos(r) + r - 1$ & $1 - \sin(r)$ \\
     \texttt{s2} & $r^2/2$ & $r$ \\
     \texttt{s3} & $S^\top A S$ & $\alpha\norm{\operatorname{diag}(C){(A + A^\top)}S}$ \\
-    \texttt{s4} & $\tfrac{1}{2} x^\top A^{1/2} x$, where $A^\top = A$ and $A \succ 0$ & $\norm{x}_A$
+    \texttt{s4} & $\tfrac{1}{2} x^\top A^{1/2} x$, where $A$ is symmetric positive definite & $\norm{x}_A = \sqrt{x^\top A x}$
   \end{tabular}
-\end{center}
+  \caption{Slowness functions used in point source tests. For these
+    definitions, we assume that $x \in \Omega = [-1, 1]^n$, where
+    $n = 2, 3$. Each definition is for $n = 2$ and $n = 3$. We also
+    define $r = \norm{x}$, $S = (\sin(\alpha x_i))_{i=1}^n$, and
+    $C = (\cos(\alpha x_i))_{i=1}^n$. \hl{\textbf{TODO}}:
+    \emph{\texttt{s2}--\texttt{s4} don't have a singularity like
+        \texttt{s0} and \texttt{s1} do and don't need to be factored. We
+        could make these better examples by adding $r$ to \texttt{s2}
+        and replacing \texttt{s3} and \texttt{s4} with their square
+        roots.}}\label{table:slowness-functions}
+\end{table}
 
-A simple recipe for generating \texttt{s4} is to compute a random
-orthogonal matrix $Q$ using the QR decomposition, letting
-$\Lambda = \operatorname{diag}(\lambda_i)$ where $\lambda_i > 0$ be a
-diagonal matrix, and setting $A = Q\Lambda Q^\top$.
+Using \cref{eq:eikonal} directly, a simple recipe to create pairs of
+slowness functions $s$ and solutions $u$ is to prescribe a solution
+$u$ and compute $s(x) = \norm{\nabla u(x)}_2$. See
+\cref{table:slowness-functions} for slowness function definitions. In
+2D, the matrices we use for \texttt{s3} and \texttt{s4} are:
+\begin{equation}
+  A_{\texttt{s3}} = \begin{bmatrix}
+    2 & 1 \\
+    1 & \nicefrac{1}{2}
+  \end{bmatrix}, \qquad A^{1/2}_{\texttt{s4}} = \begin{bmatrix}
+    \nicefrac{2}{3} & \nicefrac{-1}{2} \\
+    \nicefrac{-1}{2} & 1
+  \end{bmatrix},
+\end{equation}
+and in 3D:
+\begin{equation}
+  A_{\texttt{s3}} = \begin{bmatrix}
+    1 & \nicefrac{1}{4} & \nicefrac{1}{8} \\
+    \nicefrac{1}{4} & 1 & \nicefrac{1}{4} \\
+    \nicefrac{1}{8} & \nicefrac{1}{4} & 1
+  \end{bmatrix} = A_{\texttt{s4}}^{1/2}
+\end{equation}
+Plots collecting our numerical results are contained in
+\cref{sec:point-source-plots}. For the algorithms listed in
+\cref{ssec:specific-algorithms}, we include plots of relative $\ell_2$
+and $\ell_\infty$ error plotted versus problem size and time.
 
-\subsection{Slotnick's slowness function}\label{ssec:slotnick}
+\subsection{A linear speed function}\label{ssec:slotnick}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{qv_plots_2d.eps}
+  \caption{Comparing factoring using a linear speed function: relative
+    error plots in 2D for \cref{ssec:slotnick}. For these plots,
+    $\Omega = [0, 1]^2$, and $N$ is the number of grid points that
+    each side of the square $\Omega$ is discretized into. There are
+    two point sources at $(0, 0)$ and $(0.8, 0)$. The disks of radius
+    $\rfac = 0.1$ around each point are factored. We note that in this
+    example, the errors due to the linear interpolation and the use of
+    the \texttt{rhr} quadrature rule partially compensate each
+    other. \hl{\textbf{TODO}}: \emph{extend these plots to a larger
+      size on the cluster before submitting.}}\label{fig:qv-2d}
+\end{figure}
 
 We consider a problem that has an analytical ray tracing solution and
 is used as a test problem elsewhere for solvers for the factored
@@ -65,10 +113,31 @@ we can see that $s_j(x_i) = s_i(x_j)$, that shifting the point source
 from $x_i$ to $x_j$ is equivalent to changing the parameter $s_i$ to
 $s_j$, and that $u_j(x)$ is defined analogously to
 \cref{eq:slotnick-single-source-solution}. The solution for multiple
-point sources $\set{x_i}$ is then given by:
+point sources $\set{x_i}$ is then given
+by~\cite{fomel2009fast,qi2018corner}:
 \begin{equation}
   u(x) = \min_i u_i(x).
 \end{equation}
+
+\begin{figure}[t]
+  \centering
+  \includegraphics[width=\linewidth]{qv_plots_3d.eps}
+  \caption{Comparing factoring using a linear speed function: relative
+    error plots in 3D for \cref{ssec:slotnick}. For these plots,
+    $\Omega = [0, 1]^3$, and $N$ is the number of grid points that
+    each side of the square $\Omega$ is discretized into. There are
+    two point sources at $(0, 0, 0)$ and $(0.8, 0, 0)$. The disks of
+    radius $\rfac = 0.1$ around each point are factored. Compared to
+    the example in \cref{fig:qv-2d}, we simply add a third dimension
+    and keep the rest of the problem the same. The same comments
+    regarding the quadrature rule \texttt{rhr} apply
+    here. \hl{\textbf{TODO}}: \emph{extend these plots to a larger
+      size on the cluster before submitting.}}\label{fig:qv-3d}
+\end{figure}
+
+We compare relative $\ell_2$ and $\ell_\infty$ errors in for each of
+our OLIMs in 2D and 3D for this slowness function. See
+\cref{fig:qv-2d,fig:qv-3d}.
 
 \subsection{Comparison of hierarchical algorithms}\label{ssec:alg-comparison}
 
@@ -76,15 +145,32 @@ point sources $\set{x_i}$ is then given by:
 number of updates of different degree that they
 perform. In~\cref{tab:stats}, for our usual single point source
 problem on $\Omega = [-1, 1]^3$, discretized into a grid with $n^3$
-points, where $n = 5, 9, \hdots, 129$, we \hl{\textbf{TODO}}:
-\emph{explain what we do...}
+points, where $n = 5, 9, \hdots, 129$, we run \texttt{olim6},
+\texttt{olim18}, \texttt{olim26}, and \texttt{olimhu}, using the
+\texttt{rhr} quadrature rule for each (the choice of quadrature rule
+has no bearing on this experiment). For each algorithm, we compute the
+average number of times each node is visited, and the average number
+of line, triangle, and tetrahedron updates that are performed. For the
+triangle and tetrahedron updates, we count the number of updates that
+are ``nondegenerate''---i.e, which have an interior point solution and
+contribute information to the solution. From these statistics, we can
+see numerically that the total number of updates of each type is
+$O(N)$, which matches our expectations. Further, we can see that a
+reasonably small number of updates is performed.
 
-% \begin{table}
-%   \centering
-%   \input{../eikonal/misc/data/stats_table.tex}
-%   \caption{Table of update statistics for~\cref{ssec:alg-comparison}.}
-%   \label{tab:stats}
-% \end{table}
+\begin{table}
+  \centering
+  \input{stats_table.tex}
+  \caption{Table of update statistics
+    for~\cref{ssec:alg-comparison}. All numbers are averages per grid
+    point. Above, ``nondeg.'' is ``nondegenerate''. As $N$ increases,
+    the average number of updates of each type per grid point
+    approaches a constant. It's clear that only $O(N)$ updates of each
+    type should be performed total---this gives numerical evidence
+    that the constant in this $O(N)$ is small and a minimal number of
+    updates of each type are evaluated.}
+  \label{tab:stats}
+\end{table}
 
 \end{document}
 

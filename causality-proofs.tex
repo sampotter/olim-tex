@@ -9,7 +9,7 @@
   equivalent to $\min_i(\hat{U} - U_i) \geq 0$. From
   \cref{eq:U-finite-diff}, we have:
   \begin{equation}
-    \min_i \parens{\hat{U} - U_i} = \min_i \min_{\lambda \in \Delta^n} \frac{s^\theta h}{l_\lambda} p_i^\top p_\lambda = s^\theta h \min_i \min_{\lambda \in \Delta^n} \norm{p_i} \nu_i^\top \nu_{\lambda} = s^\theta h \min_{i, j} \norm{p_i} \nu_i^\top \nu_j.
+    \min_i \parens{\hat{U} - U_i} = \min_i \min_{\lambda \in \Delta^n} \frac{s^\theta h}{l_\lambda} p_i^\top p_\lambda = s^\theta h \min_i \min_{\lambda \in \Delta^n} \frac{\nu_i^\top \nu_{\lambda}}{\norm{p_\lambda}} = s^\theta h \min_{i, j} \frac{\nu_i^\top \nu_j}{\norm{p_i}} \geq 0.
   \end{equation}
   The last equality follows because minimizing the cosine between two
   unit vectors is equivalent to maximizing the angle between them;
@@ -35,19 +35,21 @@
     F_0^\theta(\lambda_1^*) = F_0^\theta(\lambda_0^*) + \nabla F_0^\theta(\lambda_0^*)^\top \delta \lambda^* + \frac{1}{2} {\delta \lambda^*}^\top \nabla^2 F_0^\theta(\lambda_0^*) \delta \lambda^* + R \geq R,
   \end{equation}
   where $\abs{R} = O(h^3)$ by \cref{theorem:mp0-newton}. Let
-  $\hat{U}_i = F_i^\theta(\lambda_i^*)$. Since $F_0^\theta$ is causal,
+  $\hat{U} = F_1^\theta(\lambda_1^*)$. Since $F_0^\theta$ is causal,
   we can write:
   \begin{equation}
-    \hat{U}_1 \geq \max_i U_i + R + \theta \parens{s_0 + \delta s^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^*}.
+    \hat{U} \geq \max_i U_i + R + \theta \parens{s_0 + \delta s^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^*}.
   \end{equation}
-  Since $s$ is Lipschitz, the last term is $O(h^2)$; hence, because
-  the gap $\min_i(\hat{U}_1 - U_i)$ is of order $h$, we can see that
-  $\hat{U}_1 \geq \max_i U_i$ as $h \to 0$.
+  Since $s$ is Lipschitz, the last term is $O(h^2)$---in particular,
+  $\norm{\delta s} = O(h)$ and $\norm{s_0 - \overline{s}} = O(h)$
+  since $s_0$ and $\overline{s}$ lie in the same simplex, whose
+  diameter is $O(h)$. So, because the gap $\min_i(\hat{U} - U_i)$ is
+  $O(h^2)$, we can see that $\hat{U} \geq \max_i U_i$ as $h \to 0$.
 \end{proof}
 
 \end{document}
 
 %%% Local Variables:
 %%% mode: latex
-%%% TeX-master: "<none>"
+%%% TeX-master: "sisc-eikonal"
 %%% End:

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20180521115358" modified="D:20180624103200"/>
+<info created="D:20180521115358" modified="D:20180831135726"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -291,14 +291,14 @@ h
 <text matrix="1 0 0 1 -5.7115 -4.67058" transformations="translations" pos="426.417 547.658" stroke="black" type="label" width="65.819" height="7.473" depth="2.49" valign="baseline" style="math">p_0 + \mbox{range}(\delta P)</text>
 <text matrix="1 0 0 1 -4.72068 -2.85991" transformations="translations" pos="392.972 675.541" stroke="black" type="label" width="44.161" height="7.473" depth="2.49" valign="baseline" style="math">\mbox{range}(\delta P)</text>
 <text matrix="1 0 0 1 -7.32663 4.36636" transformations="translations" pos="295.315 430.607" stroke="black" type="label" width="50.886" height="8.459" depth="2.49" valign="baseline" style="math">\mbox{range}(\delta P)^\perp</text>
-<text matrix="1 0 0 1 -5.86104 -6.50256" transformations="translations" pos="209.304 647.198" stroke="black" type="label" width="36.787" height="8.465" depth="1.93" valign="baseline" style="math">QQ^\top \nu_{\lambda^*}</text>
+<text matrix="1 0 0 1 -5.86104 -6.50256" transformations="translations" pos="209.304 647.198" stroke="black" type="label" width="31.756" height="6.812" depth="1.49" valign="baseline" style="math">\mathcal{P}_{\delta P} \nu_{\lambda^*}</text>
 <use name="mark/disk(sx)" pos="225.125 632.286" size="large" stroke="black"/>
 <path matrix="1 0 0 1 20.631 -81.9727" stroke="black" pen="heavier">
 225.032 632.264 m
 255.844 640.019 l
 </path>
 <use name="mark/disk(sx)" pos="276.487 558.06" size="large" stroke="black"/>
-<text matrix="1 0 0 1 46.0281 -8.70858" transformations="translations" pos="285.454 569.785" stroke="black" type="label" width="61.873" height="8.459" depth="2.49" valign="baseline" style="math">(I - QQ^\top) \nu_{\lambda^*}</text>
+<text matrix="1 0 0 1 46.0281 -8.70858" transformations="translations" pos="285.454 569.785" stroke="black" type="label" width="31.756" height="8.46" depth="2.82" valign="baseline" style="math">\mathcal{P}^\perp_{\delta P} \nu_{\lambda^*}</text>
 <path stroke="black" arrow="normal/small">
 330.531 572.441 m
 303.184 608.575

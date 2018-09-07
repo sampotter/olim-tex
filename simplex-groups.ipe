@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20180617123345" modified="D:20180617130039"/>
+<info created="D:20180617123345" modified="D:20180810132955"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -254,8 +254,22 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<group layer="alpha" matrix="1 0 0 1 96 0">
-<path stroke="black">
+<path layer="alpha" stroke="black" dash="dashed">
+384 544 m
+400 536 l
+416 512 l
+</path>
+<path stroke="black" dash="dashed">
+400 536 m
+432 568 l
+</path>
+<path stroke="black" dash="dashed">
+320 544 m
+336 536 l
+352 512 l
+</path>
+<group matrix="1 0 0 1 96 0">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -265,12 +279,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -282,20 +296,20 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 96 0" stroke="black" fill="pink">
+<path matrix="1 0 0 1 96 0" stroke="black" fill="pink" pen="heavier">
 144 568 m
 128 512 l
 144 536 l
 144 568 l
 </path>
-<path matrix="1 0 0 1 96 0" stroke="black" fill="pink">
+<path matrix="1 0 0 1 96 0" stroke="black" fill="pink" pen="heavier">
 112 536 m
 144 568 l
 128 512 l
 112 536 l
 </path>
 <group matrix="1 0 0 1 160 0">
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -305,12 +319,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -322,19 +336,19 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 160 64" stroke="black" fill="violet">
+<path matrix="1 0 0 1 160 64" stroke="black" fill="violet" pen="heavier">
 112 504 m
 128 448 l
 144 504 l
 112 504 l
 </path>
-<path matrix="1 0 0 1 160 64" stroke="black" fill="violet">
+<path matrix="1 0 0 1 160 64" stroke="black" fill="violet" pen="heavier">
 112 472 m
 128 448 l
 112 504 l
 </path>
 <group matrix="1 0 0 1 224 0">
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -344,12 +358,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -361,14 +375,14 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 224 128" stroke="black" fill="lightblue">
+<path matrix="1 0 0 1 224 128" stroke="black" fill="lightblue" pen="heavier">
 112 440 m
 96 384 l
 144 440 l
 112 440 l
 </path>
 <group matrix="1 0 0 1 288 0">
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -378,12 +392,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -395,14 +409,14 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 224 64" stroke="black" fill="turquoise">
+<path matrix="1 0 0 1 224 64" stroke="black" fill="turquoise" pen="heavier">
 176 504 m
 208 472 l
 160 448 l
 176 504 l
 </path>
 <group matrix="1 0 0 1 288 -68">
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -412,12 +426,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -429,14 +443,14 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 224 60" stroke="black" fill="turquoise">
+<path matrix="1 0 0 1 224 60" stroke="black" fill="turquoise" pen="heavier">
 208 440 m
 160 416 l
 192 384 l
 208 440 l
 </path>
 <group matrix="1 0 0 1 96 -68">
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -446,12 +460,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -463,20 +477,20 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 -32 -4" stroke="black" fill="darkorange">
+<path matrix="1 0 0 1 -32 -4" stroke="black" fill="darkorange" pen="heavier">
 240 504 m
 256 480 l
 272 504 l
 240 504 l
 </path>
-<path matrix="1 0 0 1 -32 -4" stroke="black" fill="darkorange">
+<path matrix="1 0 0 1 -32 -4" stroke="black" fill="darkorange" pen="heavier">
 256 480 m
 240 472 l
 240 504 l
 </path>
 <use matrix="1 0 0 1 -32 -4" name="mark/disk(sx)" pos="256 480" size="small" stroke="black"/>
 <group matrix="1 0 0 1 160 -68">
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -486,12 +500,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -503,25 +517,25 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 32 60" stroke="black" fill="gold">
+<path matrix="1 0 0 1 32 60" stroke="black" fill="gold" pen="heavier">
 240 440 m
 272 408 l
 248 416 l
 240 440 l
 </path>
-<path matrix="1 0 0 1 32 60" stroke="black" fill="gold">
+<path matrix="1 0 0 1 32 60" stroke="black" fill="gold" pen="heavier">
 240 440 m
 240 408 l
 248 416 l
 </path>
-<path matrix="1 0 0 1 32 60" stroke="black" fill="gold">
+<path matrix="1 0 0 1 32 60" stroke="black" fill="gold" pen="heavier">
 240 408 m
 272 408 l
 248 416 l
 </path>
 <use matrix="1 0 0 1 32 60" name="mark/disk(sx)" pos="248 416" size="small" stroke="black"/>
 <group matrix="1 0 0 1 224 -68">
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 544 m
 96 512 l
 128 512 l
@@ -531,12 +545,12 @@ h
 96 544 l
 96 544 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 512 m
 112 536 l
 144 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 112 568 m
 112 536 l
 </path>
@@ -548,19 +562,19 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 224 124" stroke="black" fill="gold">
+<path matrix="1 0 0 1 224 124" stroke="black" fill="gold" pen="heavier">
 144 376 m
 128 320 l
 128 352 l
 144 376 l
 </path>
-<path matrix="1 0 0 1 224 124" stroke="black" fill="gold">
+<path matrix="1 0 0 1 224 124" stroke="black" fill="gold" pen="heavier">
 112 344 m
 128 352 l
 144 376 l
 112 344 l
 </path>
-<path matrix="1 0 0 1 224 124" stroke="black" fill="gold">
+<path matrix="1 0 0 1 224 124" stroke="black" fill="gold" pen="heavier">
 112 344 m
 128 320 l
 128 352 l
@@ -575,7 +589,7 @@ h
 <text matrix="1 0 0 1 125 8" transformations="translations" pos="80 420" stroke="black" type="label" width="6.91" height="6.127" depth="0" valign="baseline" size="small">V</text>
 <text matrix="1 0 0 1 125 0" transformations="translations" pos="140 428" stroke="black" type="label" width="14.844" height="6.127" depth="0" valign="baseline" size="small">VIa</text>
 <text matrix="1 0 0 1 117 -4" transformations="translations" pos="212 432" stroke="black" type="label" width="15.356" height="6.227" depth="0" valign="baseline" size="small">VIb</text>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 64 448 m
 128 448 l
 160 496 l
@@ -584,21 +598,21 @@ h
 64 512 l
 64 448 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 560 m
 96 496 l
 64 448 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 96 496 m
 160 496 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 64 512 m
 128 512 l
 128 448 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 128 512 m
 160 560 l
 </path>
@@ -617,7 +631,7 @@ h
 <text matrix="1 0 0 1 2.96856 -0.407021" transformations="translations" pos="52 440" stroke="black" type="label" width="4.608" height="5.778" depth="0" valign="baseline" size="small" style="math">4</text>
 <text matrix="1 0 0 1 5.9674 -4.62187" transformations="translations" pos="48 516" stroke="black" type="label" width="4.608" height="5.778" depth="0" valign="baseline" size="small" style="math">5</text>
 <text matrix="1 0 0 1 -10.6952 -8.20601" transformations="translations" pos="144 516" stroke="black" type="label" width="4.608" height="5.778" depth="0" valign="baseline" size="small" style="math">6</text>
-<text matrix="1 0 0 1 -1.66677 -1.71218" transformations="translations" pos="100 488" stroke="black" type="label" width="4.626" height="6.23" depth="1.74" valign="baseline" size="small" style="math">\hat{p}</text>
+<text matrix="1 0 0 1 -15.8202 1.56698" transformations="translations" pos="100 488" stroke="black" type="label" width="4.626" height="6.23" depth="1.74" valign="baseline" size="small" style="math">\hat{p}</text>
 <use name="mark/disk(sx)" pos="240 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="240 536" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="224 512" size="small" stroke="black"/>
@@ -640,25 +654,126 @@ h
 <use name="mark/disk(sx)" pos="208 468" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="208 500" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="240 500" size="small" stroke="black"/>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 272 568 m
 272 536 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 208 500 m
 208 468 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 208 500 m
 224 476 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 272 500 m
 280 476 l
 </path>
-<path stroke="black">
+<path stroke="black" pen="heavier">
 272 468 m
 280 476 l
 </path>
+<path stroke="black" dash="dashed">
+64 512 m
+96 496 l
+</path>
+<path stroke="black" dash="dashed">
+96 496 m
+160 560 l
+</path>
+<path stroke="black" dash="dashed">
+96 496 m
+128 448 l
+</path>
+<path stroke="black" dash="dashed">
+192 544 m
+208 536 l
+</path>
+<path stroke="black" dash="dashed">
+192 476 m
+208 468 l
+</path>
+<path stroke="black" dash="dashed">
+208 468 m
+224 444 l
+</path>
+<path stroke="black" dash="dashed">
+288 444 m
+272 468 l
+256 476 l
+</path>
+<path stroke="black" dash="dashed">
+320 476 m
+336 468 l
+</path>
+<path stroke="black" dash="dashed">
+256 544 m
+272 536 l
+</path>
+<use name="mark/disk(sx)" pos="64 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="96 560" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="96 496" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="128 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="160 560" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="160 496" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="128 448" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="64 448" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="192 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="192 476" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="208 468" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="224 476" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="208 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="240 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="240 468" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="224 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="208 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="192 544" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="208 536" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="192 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="224 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="240 536" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="240 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="272 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="256 544" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="272 536" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="256 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="288 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="304 536" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="304 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="320 544" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="336 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="368 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="368 536" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="352 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="320 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="304 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="272 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="280 476" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="272 468" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="256 476" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="256 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="288 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="304 468" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="320 476" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="336 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="336 468" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="352 476" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="368 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="368 468" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="352 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="320 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="400 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="384 544" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="384 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="416 512" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="432 536" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="432 568" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="432 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="400 500" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="384 476" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="384 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="416 444" size="normal" stroke="black"/>
+<use name="mark/disk(sx)" pos="432 468" size="normal" stroke="black"/>
 </page>
 </ipe>

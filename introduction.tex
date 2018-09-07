@@ -5,11 +5,17 @@
 \section{Introduction}\label{sec:introduction}
 
 In this work, we are interested in solving the \emph{eikonal
-  equation}, a nonlinear hyperbolic PDE encountered in wave
-propagation and the modeling of a wide variety of problems in
-computational and applied
-science~\cite{sethian1999level}. \hl{\textbf{TODO}}: \emph{add more
-  background.}
+  equation}, a nonlinear hyperbolic PDE encountered in high frequency
+wave propagation~\cite{engquist2003computational} and the modeling of
+a wide variety of problems in computational and applied
+science~\cite{sethian1999level}, such as photorealistic
+rendering~\cite{ihrke2007eikonal}, and others. Our primary interest
+stems from solving problems in high frequency acoustics
+acoustics~\cite{prislan2016ray}, which are key to enabling a higher
+degree of verisimilitude in virtual reality simulations
+(see~\cite{raghuvanshi2014parametric,raghuvanshi2018parametric} for a
+cutting-edge time-domain approach); higher accuracy leads to more
+faithful results, and fast algorithms allow for more economical use.
 
 \subsection{The eikonal equation}
 
@@ -51,22 +57,49 @@ this algorithm to handle the locally factored eikonal equation using
 an additive factorization~\cite{luo2012fast, qi2018corner}.
 
 In 3D, to minimize the number of FLOPs required to solve
-\cref{eq:eikonal}, we develope two separate hierarchical
-algorithms. In the first, the solution of a system of nonlinear
-equations is used to provide a warm start to a Newton iteration; this
-is combined with a search for updates that starts with low-dimensional
+\cref{eq:eikonal}, we develop two different hierarchical
+algorithms. In the first---our so-called \emph{bottom-up} algorithm,
+denoted \texttt{olimhu} in the text---we either solve a system of
+nonlinear equations or apply a simple Newton iteration to minimize the
+action functional, depending on the quadrature rule used; this is
+combined with a search for updates that starts with low-dimensional
 updates and proceeds to higher ones, using information from
 lower-dimensional updates to structure the search. In the second
-algorithm, we come up with a way to quickly enumerate neighboring
-simplexes and solve a collection of sequential quadratic programs
-(SQPs) over the base of each. We provide theoretical results
-establishing the validity of these methods and demonstrate their
-interrelation. We conduct extensive numerical experiments, which
-demonstrate that our solvers exceed the performance of existing
-Dijkstra-like solvers in terms of error measured versus CPU time
-(i.e., for a fixed error tolerance, our solvers obtain a sufficiently
-accurate solution in less time). \hl{\textbf{TODO}}: \emph{add the
-  speedup factor here once we know it.}
+algorithm (our \emph{top-down} algorithms, denoted \texttt{olim6},
+\texttt{olim18}, and \texttt{olim26}), we quickly enumerate
+neighboring simplexes and solve a collection of sequential quadratic
+programs (SQPs) over the base of each.
+
+Our main results are as follows:
+\begin{itemize}
+\item This work was done in tandem with work constructing ordered line
+  integral methods for computing the quasipotential for nongradient
+  stochastic differential equations
+  (SDEs)~\cite{dahiya2017ordered,yang2018computing,dahiya2018ordered}. Unlike
+  the quasipotential, the eikonal equation is simple enough to allow
+  for analysis justifying our algorithms. We show how our quadrature
+  rule relate, giving a rigorous justification of the \texttt{mp0}
+  rule, establishing it as superior to \texttt{mp1} in most
+  cases.
+\item We provide justification for \texttt{olimhu}, showing that it
+  doesn't propagate error in simple cases.
+\item We conduct extensive numerical tests on a variety of problems,
+  including point source problems for different slowness (index of
+  refraction) functions, and multiple point source problems with
+  linear speed. These problems have analytical solutions, which we use
+  for comparison.
+\item \textbf{\hl{TODO}}: \emph{add specific speedup factors and
+    figures here once we have them}.
+\end{itemize}
+
+% We provide theoretical results establishing the validity of
+% these methods and demonstrate their interrelation. We conduct
+% extensive numerical experiments, which demonstrate that our solvers
+% exceed the performance of existing Dijkstra-like solvers in terms of
+% error measured versus CPU time (i.e., for a fixed error tolerance, our
+% solvers obtain a sufficiently accurate solution in less
+% time). \hl{\textbf{TODO}}: \emph{add the speedup factor here once we
+%   know it.}
 
 \end{document}
 

@@ -2,6 +2,8 @@
 
 \begin{document}
 
+\section{Background}\label{sec:background}
+
 \begin{figure}[t]
   \centering
   \includegraphics{overview.eps}
@@ -14,16 +16,12 @@
   \label{fig:overview}
 \end{figure}
 
-\section{Background}\label{sec:background}
-
 In this section, we give a brief overview of Dijkstra-like algorithms
 and fast sweeping methods for solving \cref{eq:eikonal}, and present a
 generic, high-level version of a Dijkstra-like algorithm which we will
 refer to throughout the rest of the paper to organize our
 developments. Since our focus is Dijkstra-like algorithms, our
-explanation of fast sweeping methods will be necessarily brief.
-
-\subsection{Algorithms for solving the eikonal equation}
+explanation of fast sweeping methods will be brief.
 
 To numerically solve \cref{eq:eikonal}, first let
 $\calG = \{p_i\} \subseteq \Omega$ be the set or grid of \emph{nodes}
@@ -38,10 +36,10 @@ the set of \emph{boundary nodes}, $\boundary \subseteq \calG$. It may
 happen that the set $\boundary$ and $D$ do not coincide (e.g., $D$
 could be a curve which does not intersect $\calG$); to reconcile this
 difference, the initial value of $U(p)$ for each $p \in \boundary$
-must take $g$ into account in the best way possible. This problem has
-been approached in different ways, and is not the focus of the present
-work (\hl{cite}). Throughout, we will assume
-$\boundary = D \subseteq \calG$.
+must take $g = \left. u \right|_D \geq 0$ into account in the best way
+possible. This problem has been approached in different ways, and is
+not the focus of the present work~\cite{chopp2001some}. Throughout, we
+will assume $\boundary = D \subseteq \calG$.
 
 Broadly speaking, there are two competing families of solvers for the
 eikonal equation: Dijkstra-like methods and fast sweeping methods. 
@@ -63,7 +61,7 @@ Using Dijkstra's algorithm to solve a ``continuous shortest path''
 problem has been discovered in several contexts. The earliest such
 development appears to be a theoretical result in computational
 geometry due to Mitchell, Mount, and Papadimitriou, who used this idea
-to compute eact polyhedral shortest paths (``discrete geodesics'') on
+to compute exact polyhedral shortest paths (``discrete geodesics'') on
 triangulated surfaces~\cite{mitchell1987discrete}. This was followed
 by Tsitsiklis who developed a first-order semi-Lagrangian method for
 solving isotropic control problems on a uniform
@@ -77,7 +75,7 @@ Tsitsisklis's, but extends it past its original formulation.
 There are several pieces of information that need to be kept track of
 in order to implement the algorithm. A data structure we call
 \texttt{front} that keeps track of an expanding wavefront is
-maintained throughout the algorithm's excecution. For each node $p$,
+maintained throughout the algorithm's execution. For each node $p$,
 apart from the current value of $U(p)$, the most salient piece of
 information is the \emph{state} of each node $p$, written
 $p$\texttt{.state}
@@ -95,11 +93,10 @@ high-level description of the algorithm:
   \item For each $p \in \boundary$, set $p$\texttt{.state} $=$
     \texttt{valid}, initialize $U(p)$, and execute
     \cref{enum:set-trial,enum:update-U}.
-  \item At this point, each $p \in \boundary$ is sorted by $U(p)$ in
+  \item At this point, the set of trial points is sorted by $U(p)$ in
     increasing order into a generic list or data structure called
     \texttt{front}.
-  \item While there are \texttt{trial} or \texttt{far} nodes left in
-    $\calG$:
+  \item While there are \texttt{trial} nodes left in $\calG$:
     \begin{enumerate}[nolistsep]
     \item Let $p$ be the \texttt{trial} node in \texttt{front} with
       the smallest value $U(p)$.
@@ -120,44 +117,47 @@ Computing $\hat{U}$ in \cref{enum:update-U} is left intentionally
 vague. Specifying this step involves indicating how nodes in
 $\neib(\hat{p})$ are to be used to compute $\hat{U}$. In the fast
 marching method, an upwind finite difference scheme where only
-\texttt{valid} nodes propagate information is used; variations where
-\texttt{trial} nodes contribute have also been considered but do not
-appear to improve the error in all cases. Semi-Lagrangian methods like
-Tsitsiklis's group nodes in \texttt{valid} into sets whose convex
-hulls approximate the surface of the expanding wavefront and then
-solve local raytracing problems involving each such group. The method
-presented here operates in the same way (again, see
-\cref{fig:overview})
+\texttt{valid} nodes propagate information is used. Semi-Lagrangian
+methods like Tsitsiklis's group nodes in \texttt{valid} into sets
+whose convex hulls approximate the surface of the expanding wavefront
+and then solve local raytracing problems involving each such
+group. The method presented here operates in the same way (again, see
+\cref{fig:overview}).
 
 The exact sequencing and details of some of the steps of
 \cref{alg:dijkstra-like} is variable. Our intent here is to give a
 birds-eye view of the algorithm---for concrete details, a suitable
-reference should be consulted~\cref{sethian1999level}. In addition to
+reference should be consulted~\cite{sethian1999level}. In addition to
 \cref{enum:update-U}, algorithm \cref{alg:dijkstra-like} is generic in
 the following ways:
 \begin{itemize}
 \item As we mentioned before, there are different ways of computing
   $\boundary$ and subsequently approximating the initial value of $U$
-  for $p \in \boundary$ using $g$, the initial value for
-  $\left. s \right|_D$ (\hl{cite}).
+  for $p \in \boundary$ using
+  $g = \left. u \right|_D$~\cite{chopp2001some}.
 \item How we keep track of the node with the smallest value is
   variable: most frequently, as in Dijkstra's algorithm, a heap
   storing pointers to the nodes is used, leading to $O(N \log N)$
-  update operations overall, where $N$ is the number of nodes.
+  update operations overall, where $N$ is the number of nodes. In
+  fact, there are $O(N)$ variations using Dial's algorithm (a bucketed
+  version of Dijkstra's algorithm), but these have not been used as
+  extensively as Dijkstra-like
+  algorithms~\cite{tsitsiklis1995efficient,kim2001calo}.
 \item Related to the foregoing point, the arrangement of the nodes
   (into a grid or otherwise) varies; hence, the neighborhood of each
   node varies. This naturally affects the update procedure. A regular
   grid is simple to deal with, but Dijkstra-like methods have been
-  extended to manifolds and unstructured meshes, where things are more
+  extended to manifolds and unstructured meshes, where the situation
+  is more
   involved~\cite{kimmel1998computing,sethian2000fast,bronstein2008numerical}.
 \end{itemize}
-Still other problems can be solved using Dijkstra-like algorithms: the
-Hamilton-Jacobi equation, an isotropic generalization of the eikonal
+Other problems can be solved using Dijkstra-like algorithms: the
+Hamilton-Jacobi equation, an anisotropic generalization of the eikonal
 equation, can be solved using the ordered upwind
 method~\cite{sethian2003ordered}, and the quasipotential of a
 nongradient stochastic differential equation can be computed using the
-ordered line integral method~\cite{dahiya2017ordered}. This latter
-approach is the progenitor of the current work.
+ordered line integral
+method~\cite{dahiya2017ordered,dahiya2018ordered,yang2018computing}.
 
 \subsection{Fast sweeping methods} Another approach to solving a
 discretized version of \cref{eq:eikonal} is the fast sweeping
