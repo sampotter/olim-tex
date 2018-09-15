@@ -2,6 +2,24 @@
 
 \begin{document}
 
+\section{Exact solution for other slowness functions}
+
+There are other slowness functions (linear slowness, linear speed,
+...?) which have exact solutions for rays. We could try coming up with
+ordered line integral methods which solve local ray-tracing problems
+where the solutions take these forms.
+
+\section{Solving the discrete geodesic problem}
+
+When we globally factor the eikonal equation, it computes the exact
+set distance. We could try doing this on a triangle mesh (or
+tetrahedron mesh). We could try using this as a means of solving the
+discrete geodesic problem. One problem here is computing the distance
+for the correct term $T$. To do this, we would need to dynamically
+compute the discrete geodesics starting along line segments as we
+go. This might be tricky, but in any case, it's the quantity we're
+after for solving the problem.
+
 \section{Solving a sequence of nonlinear equations}
 
 As a label-setting method proceeds, at any given point in time, there
