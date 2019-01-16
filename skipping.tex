@@ -11,7 +11,7 @@ We are interested in when:
 When the two disagree, we can safely skip over triangle updates.
 
 \begin{lemma}\label{lemma:positive-second-derivative-of-F}
-  If $\delta p$ and $p_0$ are linearly independent, then
+  If $\delp$ and $p_0$ are linearly independent, then
   $F''_0(\lambda; \theta) > 0$ for all $\lambda, \theta \in [0, 1]$.
 \end{lemma}
 
@@ -25,7 +25,7 @@ When the two disagree, we can safely skip over triangle updates.
   $2q(\lambda)q''(\lambda) - {(q'(\lambda))}^2 > 0$. This is the same
   as $4a(a\lambda^2 + 2b\lambda + c) - 4(a\lambda + b)^2 > 0$, which
   is satisfied if $ac > b^2$. This is equivalent to the Gram matrix
-  for $\set{\delta p, p_0}$ being nonsingular. Since a Gram matrix is
+  for $\set{\delp, p_0}$ being nonsingular. Since a Gram matrix is
   nonsingular if and only if the associated Gram vectors are linearly
   independent, the result follows.
 \end{proof}
@@ -38,16 +38,16 @@ the interval $[0, 1]$. Since $F'_0$ is strictly increasing, we just
 check if $F'_0(0; \theta) > 0$ or $F'_0(1; \theta) < 0$.
 
 \begin{lemma}
-  Let $\alpha = -\delta u/(s_\theta h)$. Then,
-  $(\delta p, p_0)/\norm{p_0}_2 \leq \alpha \leq (\delta p,
+  Let $\alpha = -\delU/(s_\theta h)$. Then,
+  $(\delp, p_0)/\norm{p_0}_2 \leq \alpha \leq (\delp,
   p_1)/\norm{p_1}_2$ implies
   \cref{eq:constrained-and-unconstrained-tri-agrees}.
 \end{lemma}
 
 \begin{proof}
-  Since $q'(\lambda) = 2(\delta p, p_\lambda)$, we have:
+  Since $q'(\lambda) = 2(\delp, p_\lambda)$, we have:
   \begin{align*}
-    F_0'(\lambda; \theta) = \delta u + s_\theta h \frac{(\delta p, p_\lambda)}{\norm{p_\lambda}}
+    F_0'(\lambda; \theta) = \delU + s_\theta h \frac{(\delp, p_\lambda)}{\norm{p_\lambda}}
   \end{align*}
   Stiuplating that $F'_0(0; \theta) \leq 0$ and
   $F'(0; \theta) \geq 0$, we get the result.
@@ -69,12 +69,12 @@ containing the path of the line integral to be minimized.
 Let $\lambda_0 = 1 - 1^\top \lambda$. The point $p_\lambda$ denotes
 the convex combination of the points $p_0, \hdots, p_d$ with convex
 coefficients $\lambda_0, \hdots, \lambda_d$. Defining
-$\delta p_i = p_i - p_0$ and the matrix
-$\delta P \in \mathbb{R}^{d + 1 \times d}$ by:
+$\delp_i = p_i - p_0$ and the matrix
+$\delP \in \mathbb{R}^{d + 1 \times d}$ by:
 \begin{align*}
-  \delta P = \begin{bmatrix} \delta p_1 & \cdots & \delta p_d \end{bmatrix},
+  \delP = \begin{bmatrix} \delp_1 & \cdots & \delp_d \end{bmatrix},
 \end{align*}
-we can see that $p_\lambda = \delta P \lambda + p_0$, which gives us a
+we can see that $p_\lambda = \delP \lambda + p_0$, which gives us a
 useful means of converting between the two spaces (this is just a
 parametrization of the dimension $d - 1$ affine hull of the points
 $p_0, \hdots, p_d$ in terms of the convex coefficients
@@ -91,7 +91,7 @@ $l(\lambda) = \sqrt{Q(\lambda)} = \sqrt{p_\lambda^\top
 \cref{lemma:positive-second-derivative-of-F}.
 
 \begin{theorem}
-  If $\set{p_0, \delta p_1, \hdots, \delta p_d}$ are linearly
+  If $\set{p_0, \delp_1, \hdots, \delp_d}$ are linearly
   independent, then $\nabla^2 F > 0$ for all $\lambda$.
 \end{theorem}
 
@@ -102,30 +102,30 @@ $l(\lambda) = \sqrt{Q(\lambda)} = \sqrt{p_\lambda^\top
   \end{align*}
   Since $l > 0$, we have $\nabla^2 F > 0$ if
   $2 Q \nabla^2 Q > \nabla Q \nabla Q^\top$ holds. Since we can write
-  $\nabla^2 Q = 2 \delta P^\top \delta P$ and
-  $\nabla Q = 2 \delta P^\top p_\lambda$, it follows that
-  $p_\lambda^\top p_\lambda \delta P^\top \delta P > \delta P^\top
-  p_\lambda p_\lambda^\top \delta P$ implies $\nabla^2 F > 0$. Now,
+  $\nabla^2 Q = 2 \delP^\top \delP$ and
+  $\nabla Q = 2 \delP^\top p_\lambda$, it follows that
+  $p_\lambda^\top p_\lambda \delP^\top \delP > \delP^\top
+  p_\lambda p_\lambda^\top \delP$ implies $\nabla^2 F > 0$. Now,
   consider the following Gram matrix:
   \begin{align*}
     \begin{bmatrix}
-      \delta P^\top \delta P & \delta P^\top p_\lambda \\
-      p_\lambda^\top \delta P & p_\lambda^\top p_\lambda
+      \delP^\top \delP & \delP^\top p_\lambda \\
+      p_\lambda^\top \delP & p_\lambda^\top p_\lambda
     \end{bmatrix} = \begin{bmatrix}
-      \delta P & p_\lambda
+      \delP & p_\lambda
     \end{bmatrix}^\top \begin{bmatrix}
-      \delta P & p_\lambda
+      \delP & p_\lambda
     \end{bmatrix}.
   \end{align*}
   Gram matrices are positive definite if and only if the corresponding
   Gram vectors form a basis. Since
-  $p_\lambda \in p_0 + \langle \delta p_1, \hdots, \delta p_d \rangle$
-  and since $\set{p_0, \delta p_1, \hdots, \delta p_d}$ are linearly
+  $p_\lambda \in p_0 + \langle \delp_1, \hdots, \delp_d \rangle$
+  and since $\set{p_0, \delp_1, \hdots, \delp_d}$ are linearly
   independent by assumption, we can see that this Gram matrix is
   indeed positive definite. Hence, the Schur complement of this matrix
   with respect to $p_\lambda^\top p_\lambda$ satisfies:
   \begin{align*}
-    \delta P^\top \delta P - \frac{\delta P^\top p_\lambda p_\lambda^\top \delta P}{p_\lambda^\top p_\lambda} > 0,
+    \delP^\top \delP - \frac{\delP^\top p_\lambda p_\lambda^\top \delP}{p_\lambda^\top p_\lambda} > 0,
   \end{align*}
   giving us the result.
 \end{proof}
@@ -168,14 +168,14 @@ $\Delta^d$, we need a short lemma.
 \end{proof}
 
 \begin{theorem}
-  Let $\alpha_i = -\delta u_i/(s_{\theta}h)$ and
+  Let $\alpha_i = -\delU_i/(s_{\theta}h)$ and
   $\alpha = (\alpha_1, \hdots, \alpha_m)$. Then:
   \begin{align*}
     \arg\min_{\lambda \in \Delta^m} F_0(\lambda; \theta) = \arg\min_{\lambda \in \R^m} F_0(\lambda; \theta)
   \end{align*}
   if and only if:
   \begin{align*}
-    \delta P^\top \frac{p_0}{\norm{p_0}} \leq \alpha \leq \delta P^\top \frac{\overline{p}}{\norm{\overline{p}}}
+    \delP^\top \frac{p_0}{\norm{p_0}} \leq \alpha \leq \delP^\top \frac{\overline{p}}{\norm{\overline{p}}}
   \end{align*}
   where $\overline{p} = (p_1 + \cdots + p_m)/m$.
 \end{theorem}
@@ -186,17 +186,17 @@ $\Delta^d$, we need a short lemma.
   $p_{e_i} = p_i$ and $l(e_i) = \norm{p_i}$ for $i = 0, \hdots,
   m$. Hence:
   \begin{align*}
-    \nabla F(e_i) = \delta u + \frac{s_\theta h}{\norm{p_i}} \delta P^\top p_i.
+    \nabla F(e_i) = \delU + \frac{s_\theta h}{\norm{p_i}} \delP^\top p_i.
   \end{align*}
   For $i = 0$, we require $\nabla F(e_0) \leq 0$ componentwise, giving:
   \begin{align*}
-    \delta u - s_\theta h \delta P^\top p_0/\norm{p_0} \leq 0  \iff -\alpha \leq \delta P^\top p_0/\norm{p_0}
+    \delU - s_\theta h \delP^\top p_0/\norm{p_0} \leq 0  \iff -\alpha \leq \delP^\top p_0/\norm{p_0}
   \end{align*}
   For $i, j = 1, \hdots, d$, we find
-  $\nabla F(e_i)^\top e_j = \delta u_j + s_\theta h \delta p_i^\top
+  $\nabla F(e_i)^\top e_j = \delU_j + s_\theta h \delp_i^\top
   p_j$ for $i, j = 1, \hdots, d$. Further, if
   $\nabla F(e_i)^\top e_j \leq 0$, this gives
-  $\delta P^\top p_i \leq \alpha$ for $i = 1, \hdots, d$.
+  $\delP^\top p_i \leq \alpha$ for $i = 1, \hdots, d$.
 \end{proof}
 
 \end{document}

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20180617123345" modified="D:20180810132955"/>
+<info created="D:20180617123345" modified="D:20180911125527"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -409,7 +409,7 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 224 64" stroke="black" fill="turquoise" pen="heavier">
+<path matrix="1 0 0 1 224 64" stroke="black" fill="darkcyan" pen="heavier">
 176 504 m
 208 472 l
 160 448 l
@@ -562,19 +562,19 @@ h
 <use name="mark/disk(sx)" pos="112 568" size="small" stroke="black"/>
 <use name="mark/disk(sx)" pos="96 544" size="small" stroke="black"/>
 </group>
-<path matrix="1 0 0 1 224 124" stroke="black" fill="gold" pen="heavier">
+<path matrix="1 0 0 1 224 124" stroke="black" fill="yellow" pen="heavier">
 144 376 m
 128 320 l
 128 352 l
 144 376 l
 </path>
-<path matrix="1 0 0 1 224 124" stroke="black" fill="gold" pen="heavier">
+<path matrix="1 0 0 1 224 124" stroke="black" fill="yellow" pen="heavier">
 112 344 m
 128 352 l
 144 376 l
 112 344 l
 </path>
-<path matrix="1 0 0 1 224 124" stroke="black" fill="gold" pen="heavier">
+<path matrix="1 0 0 1 224 124" stroke="black" fill="yellow" pen="heavier">
 112 344 m
 128 320 l
 128 352 l

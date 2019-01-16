@@ -193,7 +193,7 @@ solve an unconstrained problem by first computing $\lambda_0^*$ from
 initial iterate of an unconstrained Newton iteration minimizing
 $F_1$. \Cref{theorem:mp0-newton,thm:f0-exact} give us conditions for
 determing when this be done: in particular, we first check if
-$\norm{R^{-\top} \delta U} < s^\theta h$, then check if $\lambda_1^*$
+$\norm{R^{-\top} \delU} < s^\theta h$, then check if $\lambda_1^*$
 is inside $\Delta^n$. If this isn't the case, we can always default to
 a constrained solver (described below). To check if
 $\lambda_1^* \in \Delta^n$, we can use the proof of
@@ -211,7 +211,7 @@ straightforward and inexpensive.
     \cref{eq:constrained-minimization} with
     $F_i = F_1$.}\label{alg:warm-start-newton}
   \begin{enumerate}[nolistsep]
-  \item Compute the reduced QR decomposition $\delta P = QR$. Since we
+  \item Compute the reduced QR decomposition $\delP = QR$. Since we
     only deal with a small, fixed number of simplexes, all QR
     decompositions can be procomputed.
   \item Let $\lambda_0 = \lambda^*$ in \cref{eq:f0-exact-lambda}.
@@ -234,10 +234,10 @@ Our second algorithm is a projected Newton's method, which is
 standard~\cite{bertsekas1999nonlinear,nocedal2006numerical}. We use
 this algorithm for the top-down strategy. Minimizing $F_i(\lambda)$,
 if we let $\lambda_k$ ($k = 0, 1, \hdots$) be a sequence of iterates
-and $\lambda_{k+1} = \lambda_k + \delta\lambda_k$, we can Taylor
+and $\lambda_{k+1} = \lambda_k + \dellam_k$, we can Taylor
 expand:
 \begin{equation}
-  F_i(\lambda_k + \delta\lambda_k) = F_i(\lambda_k) + \nabla F_i(\lambda_k)^\top \delta\lambda_k + \frac{1}{2} \delta\lambda_k^\top \nabla^2 F_i(\lambda_k) \delta\lambda_k + O(\norm{\delta\lambda_k}^3).
+  F_i(\lambda_k + \dellam_k) = F_i(\lambda_k) + \nabla F_i(\lambda_k)^\top \dellam_k + \frac{1}{2} \dellam_k^\top \nabla^2 F_i(\lambda_k) \dellam_k + O(\norm{\dellam_k}^3).
 \end{equation}
 A common method of minimizing a nonlinear function is to minimize a
 sequence of local quadratic approximations, known as a sequential
@@ -286,7 +286,7 @@ can be found in standard references~\cite{nocedal2006numerical}.
     \item Perturb $H_k$ by a small multiple of $I$ if $H_k$ isn't
       positive definite (optional, depending on $h$).
     \item Set $g_k = \nabla F_1(\lambda_k) - H_k \lambda_k$.
-    \item Compute $p_k = \delta \lambda_k$ by solving
+    \item Compute $p_k = \dellam_k$ by solving
       $p_k = \argmin_{Ap \geq b - A\lambda_k} p^\top H_k p + g_k^\top
       p$ using the active set method.
     \item Compute a step size $\gamma_k$ using line search.
@@ -302,7 +302,7 @@ as $h \to 0$---this algorithm only requires around 3--5 iterations to
 converge, and frequently converges in one iteration, even if
 $\lambda_0$ is initialized to the centroid of $\Delta^n$. This is
 optimal, given that Newton's method converges quadratically, and that
-$\norm{\delta \lambda_k} \leq \sqrt{d}$ since our iterates are
+$\norm{\dellam_k} \leq \sqrt{d}$ since our iterates are
 constrained to lie in $\Delta^n$.
 
 \begin{figure}[t]
@@ -388,18 +388,18 @@ indexed by $I$. Consider the equality-constrained quadratic program:
 \begin{equation}
   \label{eq:active-set-EQP}
   \begin{split}
-    \min_{\delta \lambda} &\qquad \frac{1}{2} \delta \lambda^\top \nabla^2 F_i^\theta (\lambda) \delta \lambda + \nabla F_i^\theta(\lambda)^\top \delta \lambda \\
-    \text{subject to} &\qquad A_I \delta \lambda = b_I - A_I \lambda,
+    \min_{\dellam} &\qquad \frac{1}{2} \dellam^\top \nabla^2 F_i^\theta (\lambda) \dellam + \nabla F_i^\theta(\lambda)^\top \dellam \\
+    \text{subject to} &\qquad A_I \dellam = b_I - A_I \lambda,
   \end{split}
 \end{equation}
-which determines a descent step $\delta \lambda^*$. The KKT system
+which determines a descent step $\dellam^*$. The KKT system
 corresponding to \cref{eq:active-set-EQP} is:
 \begin{equation}
   \begin{bmatrix}
     \nabla^2 F_i (\lambda) & -A_I^\top \\
     A_I & 0
   \end{bmatrix} \begin{bmatrix}
-    \delta\lambda^* \\ \mu^*
+    \dellam^* \\ \mu^*
   \end{bmatrix} = \begin{bmatrix}
     -\nabla F_i(\lambda) \\ 0
   \end{bmatrix}.
@@ -554,7 +554,7 @@ i.e.\ $u_\lambda = T_\lambda + \tau_\lambda$ where
 $T_\lambda = s^\circ h l^\circ_\lambda$. Our original definition of
 $F_i^\theta$ was such that $\hat{U} = F_i^\theta(\lambda^*)$. We will
 define $G_i^\theta$ analogously. Letting
-$\tau_\lambda = \tau_0 + \delta \tau^\top \lambda$, where $\tau_i$ and
+$\tau_\lambda = \tau_0 + \deltau^\top \lambda$, where $\tau_i$ and
 $T_i$ are the values of $\tau$ and $T$ at $p_i$ for each $i$, we
 define:
 \begin{align}
@@ -582,8 +582,8 @@ and Hessian for $F_i$.
   by:
   \begin{align}
     \label{eq:G-grad-hess}
-    \nabla G_i(\lambda) &= \nabla F_i(\lambda) - \delta \tau + \frac{s^\circ h}{l^\circ_\lambda} \delta P^\top {(p_\lambda - p^\circ)}, \\
-    \nabla^2 G_i(\lambda) &= \nabla^2 F_i(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delta P^\top \calP^\perp_{p_\lambda - p^\circ} \delta P.
+    \nabla G_i(\lambda) &= \nabla F_i(\lambda) - \deltau + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top {(p_\lambda - p^\circ)}, \\
+    \nabla^2 G_i(\lambda) &= \nabla^2 F_i(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top \calP^\perp_{p_\lambda - p^\circ} \delP.
   \end{align}
 \end{lemma}
 
@@ -616,3 +616,5 @@ is recovered. See~\cref{fig:factoring-error-example}.
 %%% mode: latex
 %%% TeX-master: "sisc-eikonal.tex"
 %%% End:
+
+

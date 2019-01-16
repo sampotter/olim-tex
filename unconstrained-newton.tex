@@ -7,33 +7,33 @@
 \section{Unconstrained Minimization of $F_0$ and $F_1$}
 
 \begin{lemma}
-  Let $\set{\delta p_1, \cdots, \delta p_d, p_0}$ be linearly
+  Let $\set{\delp_1, \cdots, \delp_d, p_0}$ be linearly
   independent. Then:
   \begin{align*}
-    \nabla_\lambda^2 F_0(\lambda; \theta)^\dagger \nabla F_0(\lambda; \theta) = \nabla_\lambda^2 F_0(\lambda; \theta)^\dagger \delta u.
+    \nabla_\lambda^2 F_0(\lambda; \theta)^\dagger \nabla F_0(\lambda; \theta) = \nabla_\lambda^2 F_0(\lambda; \theta)^\dagger \delU.
   \end{align*}
 \end{lemma}
 
 \begin{proof}
   Using \cref{prop:F0-grad-and-Hess} and the linear independence
-  of $\set{\delta p_1, \cdots, \delta p_2, p_0}$:
+  of $\set{\delp_1, \cdots, \delp_2, p_0}$:
   \begin{align*}
-    \nabla^2_\lambda F_0(\lambda; \theta)^\dagger \nabla_\lambda F_0(\lambda; \theta) = \frac{l_\lambda}{s_\theta h} \delta P^\dagger \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}}^\dagger \parens{\delta P^{\top}}^\dagger \parens{\delta u + \frac{s_\theta h}{l_\lambda} \delta P^\top p_\lambda}.
+    \nabla^2_\lambda F_0(\lambda; \theta)^\dagger \nabla_\lambda F_0(\lambda; \theta) = \frac{l_\lambda}{s_\theta h} \delP^\dagger \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}}^\dagger \parens{\delP^{\top}}^\dagger \parens{\delU + \frac{s_\theta h}{l_\lambda} \delP^\top p_\lambda}.
   \end{align*}
   Since $I - p_\lambda p_\lambda^\top/(p_\lambda^\top p_\lambda)$ is a
   projector, it is its own pseudoinverse. Then, again using linear
   independence:
   \begin{align*}
-    \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} \parens{\delta P^{\top}}^\dagger \delta P^\top p_\lambda = 0,
+    \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} \parens{\delP^{\top}}^\dagger \delP^\top p_\lambda = 0,
   \end{align*}
   from which we can conclude the result.
 \end{proof}
 
 \begin{lemma}
-  Let $g = \nabla^2_\lambda F_0(\lambda; \theta)^\dagger \delta u$ and
+  Let $g = \nabla^2_\lambda F_0(\lambda; \theta)^\dagger \delU$ and
   let $\beta_\lambda$ be given by:
   \begin{align*}
-    \beta_\lambda = \frac{1}{\parens{s_\theta h}^2} \norm{\parens{\delta P^\top}^\dagger \delta u}^2_{\calP^\perp_{p_\lambda}}.
+    \beta_\lambda = \frac{1}{\parens{s_\theta h}^2} \norm{\parens{\delP^\top}^\dagger \delU}^2_{\calP^\perp_{p_\lambda}}.
   \end{align*}
   Then, $t^* = \arg\min_{t \leq 0} \nabla F_0(\lambda + t g; \theta)$
   is given by $t^* = -1/\sqrt{1 - \beta_\lambda}$.
@@ -42,27 +42,27 @@
 \begin{proof}
   Then:
   \begin{align}\label{eq:F0-line-deriv}
-    \frac{d}{dt} \curlyb{F_0\parens{\lambda + t g; \theta}} &= \parens{\delta u + \frac{s_\theta h}{l_{\lambda + t g}} \delta P^\top p_{\lambda + t g}}^\top \frac{l_\lambda}{s_\theta h} \delta P^\dagger \calP^\perp_{p_\lambda} \parens{\delta P^\top}^\dagger \delta u.
+    \frac{d}{dt} \curlyb{F_0\parens{\lambda + t g; \theta}} &= \parens{\delU + \frac{s_\theta h}{l_{\lambda + t g}} \delP^\top p_{\lambda + t g}}^\top \frac{l_\lambda}{s_\theta h} \delP^\dagger \calP^\perp_{p_\lambda} \parens{\delP^\top}^\dagger \delU.
   \end{align}
-  Since $p_{\lambda + tg} = p_\lambda + t \delta P g$, we have:
+  Since $p_{\lambda + tg} = p_\lambda + t \delP g$, we have:
   \begin{align}\label{eq:plam_t_g_simplified}
-    p_{\lambda + t g}^\top \delta P \delta P^\dagger \mathcal{P}^\perp_{p_\lambda} &= \parens{p_\lambda + t \delta P g}^\top \mathcal{P}^\perp_{p_\lambda} = t g^\top \delta P^\top \calP^\perp_{p_\lambda} \\
-                                                                                   &= \frac{t l_\lambda}{s_\theta h} \delta u^\top \delta P^\dagger \calP^\perp_{p_\lambda} \parens{\delta P^\top}^\dagger \delta P^\top \calP^\perp_{p_\lambda} = \frac{t l_\lambda}{s_\theta h} \squareb{\parens{\delta P^\top}^\dagger \delta u}^\top \calP^\perp_{p_\lambda}.
+    p_{\lambda + t g}^\top \delP \delP^\dagger \mathcal{P}^\perp_{p_\lambda} &= \parens{p_\lambda + t \delP g}^\top \mathcal{P}^\perp_{p_\lambda} = t g^\top \delP^\top \calP^\perp_{p_\lambda} \\
+                                                                                   &= \frac{t l_\lambda}{s_\theta h} \delU^\top \delP^\dagger \calP^\perp_{p_\lambda} \parens{\delP^\top}^\dagger \delP^\top \calP^\perp_{p_\lambda} = \frac{t l_\lambda}{s_\theta h} \squareb{\parens{\delP^\top}^\dagger \delU}^\top \calP^\perp_{p_\lambda}.
   \end{align}
   Writing
-  $[(\delta P^\top)^\dagger \delta u]^\top \calP^\perp_{p_\lambda}
-  (\delta P^\top)^\dagger \delta u = ||(\delta P^\top)^\dagger \delta
+  $[(\delP^\top)^\dagger \delU]^\top \calP^\perp_{p_\lambda}
+  (\delP^\top)^\dagger \delU = ||(\delP^\top)^\dagger \delta
   u||^2_{\calP^\perp_{p_\lambda}}$, and applying
   \cref{eq:plam_t_g_simplified} to \cref{eq:F0-line-deriv} gives:
   \begin{align*}
-    \frac{d}{dt} \curlyb{F_0\parens{\lambda + t g; \theta}} &= \frac{l_\lambda}{s_\theta h} \parens{1 - t \frac{l_\lambda}{l_{\lambda + t g}}} \norm{\parens{\delta P^\top}^\dagger \delta u}^2_{\calP^\perp_{p_\lambda}}
+    \frac{d}{dt} \curlyb{F_0\parens{\lambda + t g; \theta}} &= \frac{l_\lambda}{s_\theta h} \parens{1 - t \frac{l_\lambda}{l_{\lambda + t g}}} \norm{\parens{\delP^\top}^\dagger \delU}^2_{\calP^\perp_{p_\lambda}}
   \end{align*}
   So, without loss of generality, if we set this derivative equal to
   zero and solve for $t$, it is sufficient to solve
   $l_{\lambda + t g} = t l_\lambda$ for $t$. Squaring both sides gives
   $Q(\lambda + t g) = t^2 Q(\lambda)$. Furthermore:
   \begin{align*}
-    Q(\lambda + tg) = Q(\lambda) + 2tg^\top \delta P^\top p_\lambda + t^2 g^\top \delta P^\top \delta P g = Q(\lambda) \squareb{1 + \frac{t^2}{{(s_\theta h)}^2} \norm{\parens{\delta P^\top}^\dagger \delta u}^2_{\calP^\perp_{p_\lambda}}}.
+    Q(\lambda + tg) = Q(\lambda) + 2tg^\top \delP^\top p_\lambda + t^2 g^\top \delP^\top \delP g = Q(\lambda) \squareb{1 + \frac{t^2}{{(s_\theta h)}^2} \norm{\parens{\delP^\top}^\dagger \delU}^2_{\calP^\perp_{p_\lambda}}}.
   \end{align*}
   Hence, since $Q(\lambda) > 0$, we get $1 + t^2 \beta_\lambda =
   t^2$. Solving for $t$ and noting that $t \leq 0$ is required gives

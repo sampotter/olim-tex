@@ -2,6 +2,91 @@
 
 \begin{document}
 
+\section{Second order Eikonal OLIM}
+
+I was a little confused about how to derive this, but I think the
+thing to do is:
+\begin{itemize}
+\item Start with the 2nd order fast marching method Hamiltonian
+\item Apply the Legendre transform
+\item Consider the form of the resulting Lagrangian, and see if it's
+  obvious how to derive the general Lagrangian that we would need for
+  the second order OLIM
+\end{itemize}
+
+\section{High-frequency Helmholtz solver}
+
+For a paper about the high-frequency Helmholtz solver, here are some
+things that would be good to include:
+\begin{itemize}
+\item Algorithms for computing penumbra in 2D and 3D
+\item Approaches to dealing with diffraction
+\end{itemize}
+And some applications:
+\begin{itemize}
+\item Some nice domains with complicated obstacles, e.g. the stuff for
+  the multiple reflections problems
+\item Measuring HRTFs of heads by emitting from ears (for
+  Ramani)... This would be a great application! Since there would be
+  boundaries etc.
+\end{itemize}
+
+\section{Fast olim4qpot updates}
+
+It's not clear to me that the quasipotential OLIM solver doesn't have
+complexity $O(N^{2d} + N^d \log N)$. Speeding this solver up to truly
+have complexity $O(N^d \log N)$ or $O(N^d)$ would be a fun
+challenge. Since a big set of update candidates has to be searched
+over, it seems like it would be possible to come up with some clever
+searching procedure along the lines of what we're doing before to do
+this.
+
+\section{SIMD olim4eikonal}
+
+Is it possible to do each update phase using SIMD operations? There
+are a small number of them, but, e.g., for olim4 or standard FMM, it
+seems like it could be possible to just do all of the updates in
+parallel and mask the ones which are valid. This might save on FLOPs.
+
+\section{Domain decomposition}
+
+\begin{center}
+  \includegraphics{domains.eps}
+\end{center}
+
+\paragraph{Questions:}
+\begin{itemize}
+\item Is the heap cell method relevant here?
+\item Can we define an Dijkstra-like solver or sweeping method
+  recursively?
+\item What about ``block causality'': can we implement a Dial-like
+  solver? This might actually be quite useful in this context, since
+  large problems are getting to be of the size where distributing each
+  problem across threads or even nodes would make sense.
+\item How do we deal with hanging nodes?
+\item How much can we simplify things for large blocks when the
+  slowness or speed function is simple? E.g., constant slowness/speed
+  or linear slowness or linear speed, where the characteristics are
+  known exactly.
+\end{itemize}
+
+\section{Relationship between eikonal equation and anisotropic eikonal
+  equation}
+
+\paragraph{Eikonal $\to$ anisotropic eikonal.} Under a smooth,
+nonlinear transformation that's locally invertible, an eikonal
+equation that is to be solved on an unstructured grid can be
+transformed into an anisotropic eikonal equation defined on a regular
+grid. This could also transform an eikonal equation defined on an
+unstructured grid into a structured grid, but the interpolation
+problem is a little simpler in the former case.
+
+\paragraph{Anisotropic eikonal $\to$ eikonal (lifting).} Another idea:
+starting with an anisotropic eikonal equation to be solved on a grid
+(say, in $\mathbb{R}^d$, $d = 2, 3$), add another dimension and solve
+an eikonal equation on a $d$-dimensional surface (that's a graph of a
+function) embedded in $\mathbb{R}^{d + 1}$.
+
 \section{Solving a sequence of nonlinear equations}
 
 As a label-setting method proceeds, at any given point in time, there
@@ -123,16 +208,16 @@ problem; i.e., we minimize:
 \end{equation}
 Then, for $i = 0$, we have:
 \begin{align*}
-  \nabla_\lambda F_0 &= \delta u + s^\theta h \delta P^\top \nu_\lambda, \\
-  \nabla_\lambda^2 F_0 &= \frac{s^\theta h}{l_\lambda} \delta P^\top \mathcal{P}_\lambda^\perp \delta P, \\
-  \frac{\partial F_0}{\partial \theta} &= \delta \overline{s} h \delta P^\top \nu_\lambda, \\
+  \nabla_\lambda F_0 &= \delU + s^\theta h \delP^\top \nu_\lambda, \\
+  \nabla_\lambda^2 F_0 &= \frac{s^\theta h}{l_\lambda} \delP^\top \mathcal{P}_\lambda^\perp \delP, \\
+  \frac{\partial F_0}{\partial \theta} &= \delta \overline{s} h \delP^\top \nu_\lambda, \\
   \frac{\partial^2 F_0}{\partial \theta^2} &= 0, \\
   \nabla^2 F_0 &= \begin{bmatrix}
     \nabla_\lambda^2 F_0 & \frac{\partial F_0}{\partial \theta} \\
     \frac{\partial F_0}{\partial \theta}^\top & 0
   \end{bmatrix} = \begin{bmatrix}
-    \frac{s^\theta h}{l_\lambda} \delta P^\top \mathcal{P}_\lambda^\perp \delta P & \delta \overline{s} h \delta P^\top \nu_\lambda \\
-    \delta \overline{s} h \nu_\lambda^\top \delta P  & 0
+    \frac{s^\theta h}{l_\lambda} \delP^\top \mathcal{P}_\lambda^\perp \delP & \delta \overline{s} h \delP^\top \nu_\lambda \\
+    \delta \overline{s} h \nu_\lambda^\top \delP  & 0
   \end{bmatrix}.
 \end{align*}
 In this case, $\nabla^2 F_0$ is indefinite, so our minimization

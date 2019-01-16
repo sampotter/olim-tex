@@ -14,57 +14,57 @@
 
 \begin{proof}[Proof of \cref{thm:f0-exact}]
   We proceed by reasoning geometrically; \cref{fig:f0-exact} depicts
-  the geometric setup. First, letting $\delta P = QR$ be the reduced
-  QR decomposition of $\delta P$, and writing
+  the geometric setup. First, letting $\delP = QR$ be the reduced
+  QR decomposition of $\delP$, and writing
   $\nu_{\lambda^*} = p_{\lambda^*}/l_{\lambda^*}$, we note that since:
   \begin{equation}
-    \nabla F_0(\lambda^*) = \delta u + s^\theta h \delta P^\top \nu_{\lambda^*} = 0,
+    \nabla F_0(\lambda^*) = \delU + s^\theta h \delP^\top \nu_{\lambda^*} = 0,
   \end{equation}
   the optimum $\lambda^*$ satisfies:
   \begin{equation}\label{eq:Qt-n}
-    - R^{-\top} \frac{\delta u}{s^\theta h} = Q^\top \nu_{\lambda^*}
+    - R^{-\top} \frac{\delU}{s^\theta h} = Q^\top \nu_{\lambda^*}
   \end{equation}
-  Let $\mathcal{P}_{\delta P} = QQ^\top$ denote the orthogonal
-  projector onto $\range \delta P$, and
-  $\mathcal{P}^\perp_{\delta P} = I - QQ^\top$ the projector onto its
+  Let $\mathcal{P}_{\delP} = QQ^\top$ denote the orthogonal
+  projector onto $\range \delP$, and
+  $\mathcal{P}^\perp_{\delP} = I - QQ^\top$ the projector onto its
   orthogonal complement. We can try to write $p_{\lambda^*}$ by
-  splitting it into a component that lies in $\range(\delta P)$ and
-  one that lies in $\range(\delta P)^\perp$. Letting $\pmin$ be the
-  point in $p_0 + \range(\delta P)$ with the smallest 2-norm, we
+  splitting it into a component that lies in $\range(\delP)$ and
+  one that lies in $\range(\delP)^\perp$. Letting $\pmin$ be the
+  point in $p_0 + \range(\delP)$ with the smallest 2-norm, we
   write:
   \begin{equation}\label{eq:plam-decomp}
     p_{\lambda^*} = (p_{\lambda^*} - \pmin) + \pmin,
   \end{equation}
-  where $p_{\lambda^*} - \pmin \in \range(\delta P)$ and
-  $\pmin \in \range(\delta P)^\perp$. The vector $\pmin$ corresponds to
+  where $p_{\lambda^*} - \pmin \in \range(\delP)$ and
+  $\pmin \in \range(\delP)^\perp$. The vector $\pmin$ corresponds to
   $p_{\lambdamin}$ where $\lambdamin$ satisfies:
   \begin{equation}
-    0 = \delta P^\top (\delta P \lambdamin + p_0) = R^\top R \lambdamin + R^\top Q^\top p_0,
+    0 = \delP^\top (\delP \lambdamin + p_0) = R^\top R \lambdamin + R^\top Q^\top p_0,
   \end{equation}
   hence $\lambdamin = -R^{-1} Q^\top p_0$, giving us:
   \begin{equation}\label{eq:pmin}
-    \pmin = p_0 + \delta P \lambdamin = \mathcal{P}^\perp_{\delta P} p_0.
+    \pmin = p_0 + \delP \lambdamin = \mathcal{P}^\perp_{\delP} p_0.
   \end{equation}
   This vector is easily obtained. For $p_{\lambda^*} - \pmin$, we note
-  that $\mathcal{P}_{\delta P} \nu_{\lambda^*}$ is proportional to
+  that $\mathcal{P}_{\delP} \nu_{\lambda^*}$ is proportional to
   $p_{\lambda^*} - \pmin$, suggesting that we determine the ratio
   $\alpha$ satisfying
-  $p_{\lambda^*} - \pmin = \alpha \mathcal{P}_{\delta P}
+  $p_{\lambda^*} - \pmin = \alpha \mathcal{P}_{\delP}
   \nu_{\lambda^*}$. In particular, from the similarity of the
   triangles
-  $(\hat{p}, \nu_{\lambda^*}, \mathcal{P}^\perp_{\delta P}
+  $(\hat{p}, \nu_{\lambda^*}, \mathcal{P}^\perp_{\delP}
   \nu_{\lambda^*})$ and $(\hat{p}, p_{\lambda^*}, \pmin)$ in
   \cref{fig:f0-exact}, we have, using \cref{eq:Qt-n,eq:pmin}:
   \begin{equation}\label{eq:alpha-solve}
-    \alpha = \frac{\norm{\pmin}}{\norm{\mathcal{P}^\perp_{\delta P} \nu_{\lambda^*}}} = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delta P} p_0}{1 - \norm{Q^\top \nu_{\lambda^*}}^2}} = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delta P} p_0}{1 - \norm{R^{-\top} \frac{\delta u}{s^\theta h}}^2}}.
+    \alpha = \frac{\norm{\pmin}}{\norm{\mathcal{P}^\perp_{\delP} \nu_{\lambda^*}}} = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{Q^\top \nu_{\lambda^*}}^2}} = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}}.
   \end{equation}
   At the same time, since:
   \begin{equation}
-    \nu_{\lambda^*}^\top \mathcal{P}^\perp_{\delta P} \nu_{\lambda^*} = \frac{{(\mathcal{P}^\perp_{\delta P} p_{\lambda^*})}^\top {(\mathcal{P}^\perp_{\delta P} p_{\lambda^*})}}{l_{\lambda_*}^2} = \frac{\pmin^\top \pmin}{l_{\lambda^*}^2} = \frac{p_0^\top \mathcal{P}^\perp_{\delta P} p_0}{l_{\lambda^*}^2}
+    \nu_{\lambda^*}^\top \mathcal{P}^\perp_{\delP} \nu_{\lambda^*} = \frac{{(\mathcal{P}^\perp_{\delP} p_{\lambda^*})}^\top {(\mathcal{P}^\perp_{\delP} p_{\lambda^*})}}{l_{\lambda_*}^2} = \frac{\pmin^\top \pmin}{l_{\lambda^*}^2} = \frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{l_{\lambda^*}^2}
   \end{equation}
   we can conclude that:
   \begin{equation}
-    l_{\lambda^*} = \alpha = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delta P} p_0}{1 - \norm{R^{-\top} \frac{\delta u}{s^\theta h}}^2}},
+    l_{\lambda^*} = \alpha = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},
   \end{equation}
   giving us \cref{eq:l-star-expression}, proving the first part of
   \cref{thm:f0-exact}.
@@ -72,11 +72,11 @@
   Next, combining
   \cref{eq:Qt-n,eq:plam-decomp,eq:pmin,eq:alpha-solve}, we get:
   \begin{equation}\label{eq:plam-final}
-    p_{\lambda^*} = \mathcal{P}^\perp_{\delta P} p_0 - \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delta P} p_0}{1 - \norm{R^{-\top} \frac{\delta u}{s^\theta h}}^2}} Q R^{-\top} \frac{\delta u}{s^\theta h}.
+    p_{\lambda^*} = \mathcal{P}^\perp_{\delP} p_0 - \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}} Q R^{-\top} \frac{\delU}{s^\theta h}.
   \end{equation}
   This expression for $p_{\lambda^*}$ can be computed from our problem
-  data and $\delta P$. Now, note that
-  $p_{\lambda^*} = p_0 + \delta P \lambda^*$ implies:
+  data and $\delP$. Now, note that
+  $p_{\lambda^*} = p_0 + \delP \lambda^*$ implies:
   \begin{equation}\label{eq:lambda-1}
     \lambda^* = R^{-1} Q^\top (p_{\lambda^*} - p_0).
   \end{equation}
@@ -88,16 +88,16 @@
   $\lambda^*$, our expression for $\nabla F_0$ (\cref{eq:F0-grad} of
   \cref{prop:F0-grad-and-Hess}) gives:
   \begin{equation}
-    \delta U = -s^\theta h \frac{\delta P^\top p_{\lambda^*}}{l_{\lambda^*}}.
+    \delU = -s^\theta h \frac{\delP^\top p_{\lambda^*}}{l_{\lambda^*}}.
   \end{equation}
   This lets us write:
   \begin{equation}\label{eq:delta-U-dot-lambda-star}
-    \delta U^\top \lambda^* = -\frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top \delta P^\top \lambda^* = \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})}.
+    \delU^\top \lambda^* = -\frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top \delP^\top \lambda^* = \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})}.
   \end{equation}
   Combining \cref{eq:delta-U-dot-lambda-star} with our definition of
   $F_0$ yields:
   \begin{equation}
-    \hat{U} = F_0(\lambda^*) = U_0 + \delta U^\top \lambda^* + s^\theta h l_{\lambda^*} = U_0 + \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})} + \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top p_{\lambda^*},
+    \hat{U} = F_0(\lambda^*) = U_0 + \delU^\top \lambda^* + s^\theta h l_{\lambda^*} = U_0 + \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})} + \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top p_{\lambda^*},
   \end{equation}
   which gives \cref{eq:f0-exact}, completing the final part of the
   proof.

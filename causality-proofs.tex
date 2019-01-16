@@ -19,29 +19,29 @@
 
   For $F_1$, first rewrite $s_\lambda^\theta$ as follows:
   \begin{equation}
-    s_\lambda^\theta = s^\theta + \theta (s_0 + \delta s^\top \lambda - \overline{s}),
+    s_\lambda^\theta = s^\theta + \theta (s_0 + \dels^\top \lambda - \overline{s}),
   \end{equation}
   where $\overline{s} = n^{-1} \sum_{i=0}^{n-1} s_i$. If
   $\lambda_0^\star$ and $\lambda_1^\star$ are the minimizing arguments
   for $F_0$ and $F_1$, respectively, and if
-  $\delta \lambda^* = \lambda_1^* - \lambda_0^*$, then we have:
+  $\dellam^* = \lambda_1^* - \lambda_0^*$, then we have:
   \begin{equation}
-    F_1^\theta(\lambda_1^*) = F_0^\theta(\lambda_1^*) + \theta \parens{s_0 + \delta s^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^\star}.
+    F_1^\theta(\lambda_1^*) = F_0^\theta(\lambda_1^*) + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^\star}.
   \end{equation}
   By the optimality of $\lambda_0^*$ and strict convexity of
   $F_0^\theta$ (\cref{lemma:F-strictly-convex}), we can Taylor expand
   and write:
   \begin{equation}
-    F_0^\theta(\lambda_1^*) = F_0^\theta(\lambda_0^*) + \nabla F_0^\theta(\lambda_0^*)^\top \delta \lambda^* + \frac{1}{2} {\delta \lambda^*}^\top \nabla^2 F_0^\theta(\lambda_0^*) \delta \lambda^* + R \geq R,
+    F_0^\theta(\lambda_1^*) = F_0^\theta(\lambda_0^*) + \nabla F_0^\theta(\lambda_0^*)^\top \dellam^* + \frac{1}{2} {\dellam^*}^\top \nabla^2 F_0^\theta(\lambda_0^*) \dellam^* + R \geq R,
   \end{equation}
   where $\abs{R} = O(h^3)$ by \cref{theorem:mp0-newton}. Let
   $\hat{U} = F_1^\theta(\lambda_1^*)$. Since $F_0^\theta$ is causal,
   we can write:
   \begin{equation}
-    \hat{U} \geq \max_i U_i + R + \theta \parens{s_0 + \delta s^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^*}.
+    \hat{U} \geq \max_i U_i + R + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^*}.
   \end{equation}
   Since $s$ is Lipschitz, the last term is $O(h^2)$---in particular,
-  $\norm{\delta s} = O(h)$ and $\norm{s_0 - \overline{s}} = O(h)$
+  $\norm{\dels} = O(h)$ and $\norm{s_0 - \overline{s}} = O(h)$
   since $s_0$ and $\overline{s}$ lie in the same simplex, whose
   diameter is $O(h)$. So, because the gap $\min_i(\hat{U} - U_i)$ is
   $O(h^2)$, we can see that $\hat{U} \geq \max_i U_i$ as $h \to 0$.

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20180830145120" modified="D:20180830153528"/>
+<info created="D:20180830145120" modified="D:20180911125528"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -254,7 +254,25 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<path layer="alpha" matrix="1 0 0 1 136 0" stroke="black" pen="heavier">
+<path layer="alpha" stroke="black" fill="darkcyan" pen="heavier">
+76 688 m
+108 668 l
+136 692 l
+76 688 l
+</path>
+<path stroke="black" fill="darkcyan" pen="heavier">
+108 748 m
+80 724 l
+76 688 l
+108 748 l
+</path>
+<path stroke="black" fill="darkcyan" pen="heavier">
+108 748 m
+140 728 l
+136 692 l
+108 748 l
+</path>
+<path matrix="1 0 0 1 136 0" stroke="black" pen="heavier">
 80 764 m
 136 732 l
 </path>
@@ -368,27 +386,9 @@ h
 112 744 l
 168 712 l
 </path>
-<path stroke="black" fill="turquoise" pen="heavier">
+<path stroke="black" fill="darkcyan" pen="heavier">
 108 748 m
 76 688 l
-136 692 l
-108 748 l
-</path>
-<path stroke="black" fill="turquoise" pen="heavier">
-76 688 m
-108 668 l
-136 692 l
-76 688 l
-</path>
-<path stroke="black" fill="turquoise" pen="heavier">
-108 748 m
-80 724 l
-76 688 l
-108 748 l
-</path>
-<path stroke="black" fill="turquoise" pen="heavier">
-108 748 m
-140 728 l
 136 692 l
 108 748 l
 </path>
@@ -416,73 +416,73 @@ h
 216 764 l
 184 704 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 216 764 m
 244 748 l
 212 728 l
 216 764 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 216 764 m
 276 768 l
 244 748 l
 216 764 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 244 748 m
 212 728 l
 272 732 l
 244 748 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 272 732 m
 276 768 l
 244 748 l
 272 732 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 184 704 m
 212 688 l
 212 728 l
 184 704 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 212 728 m
 240 672 l
 212 688 l
 212 728 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 184 704 m
 212 648 l
 212 688 l
 184 704 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 212 648 m
 240 672 l
 212 688 l
 212 648 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 240 672 m
 272 732 l
 272 692 l
 240 672 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 240 672 m
 272 652 l
 272 692 l
 240 672 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 272 732 m
 272 692 l
 304 712 l
 272 732 l
 </path>
-<path stroke="black" fill="gold" pen="heavier">
+<path stroke="black" fill="pink" pen="heavier">
 272 692 m
 272 652 l
 304 712 l

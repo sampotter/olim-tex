@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20180715145816" modified="D:20180810132957"/>
+<info created="D:20180715145816" modified="D:20180909215555"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -326,7 +326,7 @@ h
 256 672 l
 </path>
 <use name="mark/disk(sx)" pos="256 672" size="tiny" stroke="black"/>
-<text matrix="1 0 0 1 -17.8512 10.9607" transformations="translations" pos="296 632" stroke="black" type="label" width="5.012" height="4.297" depth="1.93" valign="baseline" style="math">p</text>
+<text matrix="1 0 0 1 -3.45866 13.41" transformations="translations" pos="296 632" stroke="black" type="label" width="5.012" height="4.297" depth="1.93" valign="baseline" style="math">p</text>
 <text matrix="1 0 0 1 -2.35495 5.73064" transformations="translations" pos="264 664" stroke="black" type="label" width="5.012" height="6.926" depth="1.93" valign="baseline" style="math">\hat{p}</text>
 <path stroke="black" pen="heavier">
 224 640 m
@@ -350,7 +350,7 @@ h
 308 608 m
 320 640 l
 </path>
-<text matrix="1 0 0 1 44.1612 -21.4066" transformations="translations" pos="264 664" stroke="black" type="label" width="7.808" height="7.497" depth="1.93" valign="baseline" style="math">\hat{p}&apos;</text>
+<text matrix="1 0 0 1 45.6443 -19.0442" transformations="translations" pos="264 664" stroke="black" type="label" width="7.808" height="7.497" depth="1.93" valign="baseline" style="math">\hat{p}&apos;</text>
 <use name="mark/cross(sx)" pos="384 608" size="large" stroke="black"/>
 <path stroke="black" dash="dotted" pen="heavier">
 160 640 m
@@ -381,5 +381,15 @@ h
 336 604 l
 </path>
 <text transformations="translations" pos="256 572" stroke="black" type="minipage" width="128" height="18.866" depth="13.9" valign="top" style="center">hulls of \texttt{valid} nodes approximate expanding wavefront piecewise</text>
+<path stroke="black" pen="heavier">
+256 640 m
+288 640 l
+256 672 l
+</path>
+<path stroke="black" pen="heavier">
+320 640 m
+288 640 l
+288 608 l
+</path>
 </page>
 </ipe>

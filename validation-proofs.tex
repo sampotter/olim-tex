@@ -19,13 +19,13 @@ Bulirsch~\cite{stoer2013introduction}, from which
 \begin{proof}[Proof of \cref{lemma:bounded-inv-hess-F1}]
   From \cref{eq:hess-F1}, if we temporarily define:
   \begin{equation}
-    A = \frac{s^\theta_\lambda h}{l_\lambda} \delta P^\top \mathcal{P}^\perp_\lambda \delta P \mbox{ and } B = \frac{\theta h}{l_\lambda} \anticom{\delta P^\top p_\lambda, \delta s},
+    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \mathcal{P}^\perp_\lambda \delP \mbox{ and } B = \frac{\theta h}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels},
   \end{equation}
   we can see that:
   \begin{equation}
-    \norm{A^{-1} B} = \frac{\theta}{s^\theta_\lambda} \norm{\parens{\delta P^\top \mathcal{P}^\perp_\lambda \delta P}^{-1} \anticom{\delta P^\top p_\lambda, \delta s}} = O(h),
+    \norm{A^{-1} B} = \frac{\theta}{s^\theta_\lambda} \norm{\parens{\delP^\top \mathcal{P}^\perp_\lambda \delP}^{-1} \anticom{\delP^\top p_\lambda, \dels}} = O(h),
   \end{equation}
-  since $1/s \leq 1/\smin$ and $\norm{\delta s} = O(h)$. Hence,
+  since $1/s \leq 1/\smin$ and $\norm{\dels} = O(h)$. Hence,
   $\norm{A^{-1} B} < 1$ for $h$ small enough, and we can Taylor
   expand:
   \begin{equation}
@@ -53,17 +53,17 @@ Bulirsch~\cite{stoer2013introduction}, from which
   $\underline{\lambda} = {(n + 1)}^{-1} \m{1}_{n \times 1}$ (i.e., the
   centroid of $\Delta^n$, where $s^\theta$ is evaluated). Then,
   recalling \cref{fig:slowness-tetra},
-  $s^\theta_\lambda = s^\theta + \delta s^\top (\lambda -
+  $s^\theta_\lambda = s^\theta + \dels^\top (\lambda -
   \underline{\lambda})$ so that, for a general $\lambda$:
   \begin{equation}
     \label{eq:grad-F1-in-terms-of-grad-F0}
-    \nabla F_1(\lambda) = l_\lambda h \delta s + \delta u + \frac{s^\theta + \delta s^\top (\lambda - \underline{\lambda})}{l_\lambda} h \delta P^\top p_\lambda = l_\lambda h \delta s + \nabla F_0(\lambda) + \frac{\delta s^\top {(\lambda - \underline{\lambda})}}{l_\lambda} h \delta P^\top p_\lambda.
+    \nabla F_1(\lambda) = l_\lambda h \dels + \delU + \frac{s^\theta + \dels^\top (\lambda - \underline{\lambda})}{l_\lambda} h \delP^\top p_\lambda = l_\lambda h \dels + \nabla F_0(\lambda) + \frac{\dels^\top {(\lambda - \underline{\lambda})}}{l_\lambda} h \delP^\top p_\lambda.
   \end{equation}
   Since $\nabla F_0(\lambda_0^*) = 0$ by optimality, we can conclude
   using \cref{eq:grad-F1-in-terms-of-grad-F0} and
-  $\norm{\delta s} = O(h)$ that:
+  $\norm{\dels} = O(h)$ that:
   \begin{equation}
-    \norm{\nabla F_1(\lambda_0^*)} = h \norm{l_{\lambda_0^*} \delta s + \frac{\delta s^\top {(\lambda - \underline{\lambda})}}{l_{\lambda_0^*}} \delta P^\top p_\lambda} = O(h^2),
+    \norm{\nabla F_1(\lambda_0^*)} = h \norm{l_{\lambda_0^*} \dels + \frac{\dels^\top {(\lambda - \underline{\lambda})}}{l_{\lambda_0^*}} \delP^\top p_\lambda} = O(h^2),
   \end{equation}
   which proves the result.
 \end{proof}
@@ -79,18 +79,18 @@ Bulirsch~\cite{stoer2013introduction}, from which
 
 \begin{proof}[Proof of \cref{lemma:hess-F1-lipschitz}]
   If we restrict our attention to $\Delta^n$, we can see that:
-  $l_\lambda^{-1} \delta P^\top \mathcal{P}_\lambda^\perp \delta P$ is
+  $l_\lambda^{-1} \delP^\top \mathcal{P}_\lambda^\perp \delP$ is
   Lipschitz continuous with $O(1)$ Lipschitz constant and
-  $\tfrac{\theta}{l_\lambda} \anticom{\delta P^\top p_\lambda, \delta
-    s}$ is Lipschitz continuous with $O(h)$ Lipschitz constant. Then,
-  since $s^\theta_\lambda$ is Lipschitz continuous with an $O(1)$
-  Lipschitz constant, it follows that
-  $A(\lambda) = \tfrac{s^\theta_\lambda h}{l_\lambda} \delta P^\top
-  \mathcal{P}^\perp_\lambda \delta P$ is Lipschitz with a constant
-  that is $O(h)$ over $\Delta^n$, using the notation of
+  $\tfrac{\theta}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels}$ is
+  Lipschitz continuous with $O(h)$ Lipschitz constant. Then, since
+  $s^\theta_\lambda$ is Lipschitz continuous with an $O(1)$ Lipschitz
+  constant, it follows that
+  $A(\lambda) = \tfrac{s^\theta_\lambda h}{l_\lambda} \delP^\top
+  \mathcal{P}^\perp_\lambda \delP$ is Lipschitz with a constant that
+  is $O(h)$ over $\Delta^n$, using the notation of
   \cref{lemma:bounded-inv-hess-F1}; the same is true of
-  $B(\lambda) = \tfrac{\theta h}{l_\lambda} \anticom{\delta P^\top
-    p_\lambda, \delta s}$. Since
+  $B(\lambda) = \tfrac{\theta h}{l_\lambda} \anticom{\delP^\top
+    p_\lambda, \dels}$. Since
   $\nabla^2 F_1(\lambda) = A(\lambda) + B(\lambda)$, we can see
   immediately that it is also Lipschitz on $\Delta^n$ with a constant
   that is $O(h)$.
@@ -141,7 +141,7 @@ Bulirsch~\cite{stoer2013introduction}, from which
   quadratically; we note that since $F_1$ is strictly convex, the
   limit of the iteration must be $\lambda_1^*$, so the theorem also
   gives us
-  $\norm{\delta\lambda^*} = \norm{\lambda_1^* - \lambda_0^*} \leq r$.
+  $\norm{\dellam^*} = \norm{\lambda_1^* - \lambda_0^*} \leq r$.
 
   Now, we note that
   \cref{item:sb-newton-1,item:sb-newton-2,item:sb-newton-3} correspond
@@ -154,19 +154,19 @@ Bulirsch~\cite{stoer2013introduction}, from which
   \begin{equation}
     r = \frac{\alpha}{1 - \frac{\alpha\beta\gamma}{2}} = \alpha \parens{1 + \frac{\alpha\beta\gamma}{2} + \frac{\alpha^2\beta^2\gamma^2}{4} + \cdots} = O(h),
   \end{equation}
-  so that $\norm{\delta\lambda^*} = O(h)$, and the result follows.
+  so that $\norm{\dellam^*} = O(h)$, and the result follows.
 
   To obtain the $O(h^3)$ error bound, from \cref{theorem:mp0-newton},
-  we have $\norm{\delta\lambda^*} = O(h)$. Then, Taylor expanding
+  we have $\norm{\dellam^*} = O(h)$. Then, Taylor expanding
   $F_1(\lambda_0^*)$, we get:
   \begin{equation*}
     F_1(\lambda_0^*)
-    = F_1(\lambda_1^* - \delta \lambda^*) = F_1(\lambda_1^*) - \nabla F_1(\lambda_1^*)^\top \delta\lambda^* + \frac{1}{2} \delta\lambda^* \nabla F_1^2(\lambda_1^*) \delta\lambda^* + R,
+    = F_1(\lambda_1^* - \dellam^*) = F_1(\lambda_1^*) - \nabla F_1(\lambda_1^*)^\top \dellam^* + \frac{1}{2} \dellam^* \nabla F_1^2(\lambda_1^*) \dellam^* + R,
   \end{equation*}
-  where $\abs{R} = O(\norm{\delta\lambda^*}^3)$. Since $\lambda_1^*$
+  where $\abs{R} = O(\norm{\dellam^*}^3)$. Since $\lambda_1^*$
   is optimum, $\nabla F_1(\lambda_1^*) = 0$. Hence:
   \begin{equation*}
-    \abs{F_1(\lambda_1^*) - F_1(\lambda_0^*)} \leq \frac{1}{2} \norm{\nabla F_1^2(\lambda_1^*)} \norm{\delta\lambda^*}^2 + O(\norm{\delta\lambda^*}^3) = O(h^3),
+    \abs{F_1(\lambda_1^*) - F_1(\lambda_0^*)} \leq \frac{1}{2} \norm{\nabla F_1^2(\lambda_1^*)} \norm{\dellam^*}^2 + O(\norm{\dellam^*}^3) = O(h^3),
   \end{equation*}
   which proves the result.
 \end{proof}

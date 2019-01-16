@@ -27,98 +27,113 @@ $\hat{U} = U(\hat{p})$ in \cref{enum:update-U} of
 instances of \cref{eq:action-functional}; details of this procedure
 will be discussed in \cref{sec:implementation}. In this section, we
 focus on a single instance of the discretized version of
-\cref{eq:action-functional}. We first present notation, derive
-prelimary results, describe the different quadrature rules we use,
-detail useful exact solutions to the approximate minimization of
-\cref{eq:action-functional}, and present theoretical results.
+\cref{eq:action-functional}, presenting our notation, deriving
+prelimary results, and describing the different quadrature rules we
+use, detailing useful exact solutions to the approximate minimization
+of \cref{eq:action-functional}. We then present theoretical results.
 
 \begin{figure}
   \centering
-  \begin{subfigure}{.4\textwidth}
+  \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{tri-diagram.eps}
-    \caption{An example with $d = 1$ (a triangle
-      update).}\label{fig:tri-diagram}
+    \includegraphics[width=\linewidth]{slowness-tetra.eps}
+    \caption{A depiction of the different quantities related to
+      $s^{\theta}$ and $s^{\theta}_\lambda$ for the case of $d = 2$, a
+      tetrahedron update. Both of $s^\theta$ and $s^\theta_\lambda$ live
+      on the $\theta$-section of the simplex
+      $\conv(\set{\hat{p}, p_0, p_1, p_2})$. The function
+      $s^\theta_\lambda$ is a linear combination of $\hat{s}, s_0, s_1$,
+      and $s_2$; the value $s^\theta$ is $s^\theta_\lambda$ evaluated at
+      the centroid of the $\theta$-section.}\label{fig:slowness-tetra}
   \end{subfigure}%
-  \begin{subfigure}{.4\textwidth}
+  \hspace{.05\linewidth}
+  \begin{subfigure}{.44\textwidth}
     \centering
     \includegraphics[width=\linewidth]{simplex-diagram.eps}
-    \caption{An example with $d = 2$ (a tetrahedron
-      update).}\label{fig:tetra-diagram}
+    \caption{An example showing an update interval for $d = 2$ (a
+      tetrahedron update).}\label{fig:tetra-diagram}
   \end{subfigure}
   \caption{Characteristics emanate from the set
-    $p_0 + \delta P \Delta^d = \set{p_0 + \lambda_1 \delta p_1 +
-      \cdots + \lambda_d \delta p_d}$, which approximates the front of
-    the numerical solution.}\label{fig:simplex-diagrams}
+    $p_0 + \delP \Delta^d = \set{p_0 + \lambda_1 \delp_1 + \cdots +
+      \lambda_d \delp_d}$, which approximates the front of the
+    numerical solution. These figures depict the quantities involved
+    in a tetrahedron update.}\label{fig:simplex-diagrams}
 \end{figure}
 
 \subsection{Notation}
 
-When numerically minimizing action functional
-\cref{eq:action-functional}, we minimize a line integral whose path is
-constrained to lie in a simplex (lines, triangles, and tetrahedra in
-2D and 3D). This is depicted in \cref{fig:simplex-diagrams}; in
-particular, the range of $\left. \alpha \right|_{[0, 1]}$ is
-$[\hat{p}, p_{\lambda}]$. Since we solve \cref{eq:eikonal} on a
-regular grid, there are only a small number of distinct simplexes that
-we need to treat in our implementation, each with fixed geometry but
-varying data. It ends up being beneficial to rescale their vertices to
-$\mathbb{Z}^n$ and translate each so that $\hat{p} = 0$.
+When numerically minimizing \cref{eq:action-functional}, we minimize a
+line integral whose starting point is constrained to lie on the base
+of a simplex (lines, triangles, and tetrahedra in 2D and 3D). This is
+depicted in \cref{fig:simplex-diagrams}. Since we solve
+\cref{eq:eikonal} on a regular grid, there are only a small number of
+distinct simplexes that we need to treat in our implementation, each
+with fixed geometry but varying data. Because of this, it is
+beneficial for us to rescale the vertices of each simplex to lie in
+$\mathbb{Z}^n$ and translate each so that the point being updated lies
+at the origin.
 
-Let $n \geq 2$ be the dimension of the space and assume
-$d \in \set{0, \hdots, n - 1}$. Let
+Let $n$ and $d$ be integers such that $n \geq 2$ and $0 \leq d <
+n$. We think of $n$ as the ambient dimension and $d$ as the affine
+dimension of the facet of the simplex where the line integral
+originates (e.g., $d = 2$ for a tetrahedron). Let
 $p_0, \hdots, p_d \in \Z^n \backslash \set{0}$ be linearly
-independent. Together with $\hat{p} = 0$, these vectors are the
-vertices of a simplex with affine dimension $d + 1$ (the affine
-dimension of $\set{p_0, \hdots, p_d}$ is $d$). In this work, we will
-also only consider vectors $p_i$ for which $\norm{p_i}_\infty = 1$;
-i.e., each $p_i$ must be a vertex of one of the $2^n$ orthants
-surrounding the origin $\hat{p}$. For each $i = 0, \hdots, d$, we also
-define $x_i$ to be the preimage of $p_i$ before scaling and
-translation is performed (that is, each $x_i$ lies in $h \Z^n$). The
-numerical solution $U$ and the slowness function $s$ are evaluated at
-the points $x_i$; we write $U_i = U(x_i)$ and $s_i = s(x_i)$. For
-fixed $n$, it will be necessary to solve minimization problems
-corresponding to simplexes of all dimensions up to and including
-$n - 1$. We will cover this in more detail in
+independent. Together with the update point $\hat{p} = 0$, these
+vectors are the vertices of a simplex with affine dimension $d$. In
+this work, since we focus on the eikonal equation, we only consider
+vectors $p_i$ which satisfy $\norm{p_i}_\infty = 1$ (larger
+neighborhoods may be required for a Hamilton-Jacobi solver). For each
+$i = 0, \hdots, d$, we also define $x_i$ to be the preimage of $p_i$
+before scaling and translation is performed (i.e., $x_i$ lies in
+$h \Z^n$). The numerical solution $U$ and the slowness function $s$
+are evaluated at the points $x_i$; we write $U_i = U(x_i)$ and
+$s_i = s(x_i)$. For a fixed update, we ``forget'' $x_i$ and think of
+$U_i$ and $s_i$ being ``evaluated'' at $p_i$. For a given $n$, it is
+necessary to do updates for simplexes with affine dimension up to and
+including $n$. We will cover this in more detail in
 \cref{sec:implementation}; presently, we will derive the updates for
-general dimension since there is no need to specialize. Along these
-lines, unless we have reason to distinguish the dimension $d$ of the
-update simplex, we will simply assume that $d = n - 1$.
+general dimension since there is no need to specialize. So, for this
+section, we simply assume that $d = n - 1$. Nothing important is lost
+when we make this simplification.
 
-Next, define the set $\Delta^d$ by:
-\begin{equation}
-  \Delta^d = \set{(\lambda_1, \hdots, \lambda_d) : \lambda_i \geq 0 \mbox{ for } i = 1, \hdots, d \mbox{ and } \sum_{i=1}^d \lambda_i \leq 1}.
+We define the set $\Delta^d$, the parameter space for the simplex, by:
+\begin{equation}\label{eq:Delta-set}
+  \Delta^d = \big\{(\lambda_1, \hdots, \lambda_d) : \lambda_i \geq 0 \mbox{ for } i = 1, \hdots, d \mbox{ and } \lambda_1 + \cdots + \lambda_d \leq 1\big\}.
+\end{equation}
+We will also occasionally write $\Delta^d$ as a linear matrix inequality:
+\begin{equation}\label{eq:Delta-LMI}
+  \lambda \in \Delta^d \iff A\lambda \leq b, \hspace{1em} \mbox{where } A = \begin{bmatrix}
+    -I_d \\ \m{1}_{1 \times d}
+  \end{bmatrix} \in \mathbb{R}^{d + 1 \times d}, \hspace{1em} \mbox{and }
+  b = \begin{bmatrix} \m{0}_{d \times 1} \\ 1 \end{bmatrix} \in \mathbb{R}^{d + 1}.
 \end{equation}
 For each $\lambda = (\lambda_1, \hdots, \lambda_d) \in \Delta^d$, we
 will write $\lambda_0 = 1 - \lambda_1 - \cdots - \lambda_d$. Then,
 $\sum_{i=0}^d \lambda_i p_i$ lies in the convex hull of
-$\set{p_0, \hdots, p_d}$. We denote this vector by $p_\lambda$---see
-\cref{fig:simplex-diagrams}. Defining $\delta p_i = p_i - p_0$, we can
-also write $p_\lambda = p_0 + \sum_{i=1}^d \lambda_i \delta p_i$ and
-define the matrix:
+$\set{p_0, \hdots, p_d}$. We denote this vector by $p_\lambda$ (see
+\cref{fig:simplex-diagrams}). Defining $\delp_i = p_i - p_0$, we
+can also write $p_\lambda = p_0 + \sum_{i=1}^d \lambda_i \delp_i$
+and define the matrix:
 \begin{equation}
-  \delta P = \begin{pmatrix} \delta p_1 & \cdots & \delta p_d \end{pmatrix} \in \R^{n \times d},
+  \delP = \begin{bmatrix} \delp_1 & \cdots & \delp_d \end{bmatrix} \in \R^{n \times d},
 \end{equation}
-so that we can write $p_\lambda = \delta P \lambda + p_0$. Along the
-same lines, $U_\lambda = U_0 + \delta U^\top \lambda$, where
-$\delta U_i = U_i - U_0$; we also define
-$s_\lambda = s_0 + \delta s^\top \lambda$, where
-$\delta s_i = s_i - s_0$. Observe that the role of the points $x_i$ is
-obscured here: each update can be parametrized by the vectors
-$\set{p_i}$ and the problem data $(U, s, h)$. We also mention here
-that although the slowness function $s$ may be available to us in
-analytic form, we assume that it is only available on the nodes in
-$\calG$ to reflect the realities of likely use cases.
+so that we can write $p_\lambda = \delP \lambda + p_0$. Along the
+same lines, $U_\lambda = U_0 + \delU^\top \lambda$, where
+$\delU_i = U_i - U_0$; we also define
+$s_\lambda = s_0 + \dels^\top \lambda$, where
+$\dels_i = s_i - s_0$. Although the slowness function $s$ may be
+available to us in analytic form, we assume that it is only available
+on the nodes in $\calG$ to reflect use in real-world applications
+(e.g., $s$ will most likely be presented to use on a grid as some
+form.
 
 \subsection{Quadrature}\label{ssec:quadrature}
 
 To minimize \cref{eq:action-functional}, we assume that $\alpha$ is a
 line segment parametrized by arc length and then apply several
-different one-point quadrature rules to the resulting integral.
-
-If $\alpha$ is a line segment connecting $p_\lambda$ and
-$\hat{p} = 0$, then:
+different one-point quadrature rules to the resulting integral. If
+$\alpha$ is a line segment connecting $p_\lambda$ and $\hat{p} = 0$,
+then:
 \begin{equation}
   \label{eq:action-functional-line-segment}
   \hat{U} = U(\hat{p}) = \min_{\lambda \in \Delta^d} \set{U_\lambda + h \int_{[p_\lambda, 0]} s(\alpha(t))dt}.
@@ -145,43 +160,30 @@ quadrature rule for each of $F_0$ and $F_1$, named \texttt{mp0} and
 \texttt{mp1}, respectively. The case of \texttt{mp0} requires special
 care and is handled in \cref{ssec:validation}.
 
-\begin{figure}[t]
-  \centering
-  \includegraphics{slowness-tetra.eps}
-  \caption{A depiction of the different quantities related to
-    $s^{\theta}$ and $s^{\theta}_\lambda$ for the case of $d = 2$, a
-    tetrahedron update. Both of $s^\theta$ and $s^\theta_\lambda$ live
-    on the $\theta$-section of the simplex
-    $\conv \set{\hat{p}, p_0, p_1, p_2}$. The function
-    $s^\theta_\lambda$ is a linear combination of $\hat{s}, s_0, s_1$,
-    and $s_2$; the value $s^\theta$ is $s^\theta_\lambda$ evaluated at
-    the centroid of the $\theta$-section.}\label{fig:slowness-tetra}
-\end{figure}
-
 \subsection{The minimization problem}\label{ssec:minimization-problem}
 
-With $F_0$ and $F_1$ so defined, we can pose our minimization problem
-which approximately solves
+With $F_0$ and $F_1$ so defined, the minimization problem which
+approximately solves
 \cref{eq:action-functional,eq:action-functional-line-segment} to
-compute $\hat{U}$ for a fixed update simplex:
+compute $\hat{U}$ for a fixed update simplex is:
 \begin{equation}
   \label{eq:constrained-minimization}
   \hat{U} = \min_{\lambda \in \Delta^d} F_i(\lambda).
 \end{equation}
 This is a nonlinear, constrained optimization problem with linear
-inequality constraints and no equality constraints. We will find the
-gradient and Hessian of $F_0$ and $F_1$ to be useful in our algorithms
-and analysis. These quantities are easy to compute, but we have found
-a particular form for them to be appropriate. The proofs of these
-propositions and the rest of the results in
+inequality constraints and no equality constraints (cf.\@
+\cref{eq:Delta-LMI}). We require the gradient and Hessian of $F_0$ and
+$F_1$ for our algorithms and analysis. These are easy to compute, but
+we have found a particular form for them to be appropriate. The proofs
+of these propositions and the rest of the results in
 \cref{ssec:minimization-problem} are found in
 \cref{sec:minimization-proofs}.
 
 \begin{proposition}\label{prop:F0-grad-and-Hess}
   The gradient and Hessian of $F_0(\lambda; \theta)$ satisfy:
   \begin{align}
-    \nabla F_0(\lambda) &= \delta U + s^{\theta} h \delta P^\top \nu_\lambda,\label{eq:F0-grad} \\
-    \nabla^2 F_0(\lambda) &= \frac{s^{\theta} h}{l_\lambda} \delta P^\top \calP^\perp_{p_\lambda} \delta P,
+    \nabla F_0(\lambda) &= \delU + s^{\theta} h \delP^\top \nu_\lambda,\label{eq:F0-grad} \\
+    \nabla^2 F_0(\lambda) &= \frac{s^{\theta} h}{l_\lambda} \delP^\top \calP^\perp_{p_\lambda} \delP,
   \end{align}
   where $\nu_\lambda = p_\lambda/l_\lambda$ is the unit vector in the
   direction $p_\lambda$,
@@ -194,34 +196,35 @@ propositions and the rest of the results in
 \begin{proposition}\label{prop:F1-grad-and-Hess}
   The gradient and Hessian of $F_1(\lambda; \theta)$ satisfy:
   \begin{align}
-    \nabla F_1(\lambda) &= \delta U + \theta h l_\lambda \delta s + s^{\theta}_\lambda h \delta P^\top \nu_\lambda, \\
-    \nabla^2 F_1(\lambda) &= \set{\delta P^\top \nu_\lambda, \theta h \delta s} + \frac{s^\theta_\lambda h}{l_\lambda} \delta P^\top \calP^\perp_{p_\lambda} \delta P, \label{eq:hess-F1}
+    \nabla F_1(\lambda) &= \delU + \theta h l_\lambda \dels + s^{\theta}_\lambda h \delP^\top \nu_\lambda, \\
+    \nabla^2 F_1(\lambda) &= \set{\delP^\top \nu_\lambda, \theta h \dels} + \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \calP^\perp_{p_\lambda} \delP, \label{eq:hess-F1}
   \end{align}
   where $\set{a, b} = ab^\top + ba^\top$ is the anticommutator of two
   vectors.
 \end{proposition}
 
-Since our task will be to minimize nonlinear functions $F_0$ and $F_1$
-over a convex set, $\Delta^n$, we are interested in determining
-whether $F_0$ and $F_1$ are convex themselves. The next two lemmas
-address this point. There is some question as to whether $F_0$ and
-$F_1$ are strictly convex or just convex. This relates to the
-definiteness of their Hessians, computed above. The conditions that
-$p_0, \hdots, p_d$ span a nondegenerate simplex---i.e, $\set{p_i}$ is
-linearly independent---and that $\smin = \min_\calG s > 0$ are
-sufficient in this case.
+Since our task will be to minimize $F_0$ and $F_1$ over a convex set,
+$\Delta^n$, we are interested in determining whether $F_0$ and $F_1$
+are convex themselves. The next two lemmas address this point. There
+is some question as to whether $F_0$ and $F_1$ are strictly convex or
+just convex. This relates to the definiteness of their Hessians,
+computed above. The conditions that $\hat{p}, p_0, \hdots, p_d$
+correspond to a nondegenerate simplex---i.e, $\set{p_i}$ is linearly
+independent---and that $\smin = \min_\calG s > 0$ are sufficient in
+this case.
 
 \begin{lemma}\label{lemma:dPt-cprojp-dP-pd}
-  Let $\set{p_i}$ form a nondegenerate update simplex together with
-  $\hat{p}$ and assume that $\smin > 0$. Then, $\nabla^2 F_0$ is
-  positive definite and $F_0$ is strictly convex.
+  Let $\set{p_i}$ form a nondegenerate simplex together with $\hat{p}$
+  and assume that $\smin > 0$. Then, $\nabla^2 F_0$ is positive
+  definite and $F_0$ is strictly convex.
 \end{lemma}
 
 For $F_1$, we can only obtain convexity (let alone strict convexity)
 as $h \to 0$. For large enough $h$, we will encounter nonconvex
 updates. To obtain convexity, we need to stipulate that the slowness
 function $s$ be Lipschitz continuous on $\Omega$ with a Lipschitz
-constant that is constant independent of $h$.
+constant that is constant independent of $h$. In practice, we have not
+found this to be much of a restriction.
 
 \begin{lemma}\label{lemma:F-strictly-convex}
   Again, assume that the update simplex is nondegenerate and
@@ -231,41 +234,39 @@ constant that is constant independent of $h$.
   definite as $h \to 0$; hence, $F_1$ is strictly convex as $h \to 0$.
 \end{lemma}
 
-In practice, we have found that all \texttt{mp1} updates become
-strictly convex quite rapidly as $h \to 0$, and there is no issue of
-convergence. Despite this, our solvers are designed to be robust to
-this problem---see \cref{sec:implementation}.
+We have found that all \texttt{mp1} updates become strictly convex
+problems rapidly as $h \to 0$.
 
 \subsection{Validation of \texttt{mp0}}\label{ssec:validation}
 
 If we consider an update simplex defined by the nodes
-$p_0, \hdots, p_{n-1}$, each subset of these nodes defines another
-valid update simplex. For example, consider the three triangle updates
-forming the boundary of a single tetrahedron update. We expect the
-values of $F_i$ to be the same when defined on one or another update
-simplex, and to be continuous as we transfer between simplexes that
-share a common boundary. For $F_1$ this is the case, but for $F_0$
-with $\theta \neq 0$, the function $F_0$ may not be well-defined at
-boundaries or continuous from simplex to simplex. This problem leads
-to inconsistent and divergent solvers. A heuristic fix is to first
-minimize \cref{eq:constrained-minimization} for $F_0$ with nonzero
-$\theta$ to obtain the minimizing argument $\lambda^*_0$, then set
-$\hat{U} = F_1(\lambda_0^*)$; i.e., we replace $F_0$ with $F_1$ for
-the purposes of evaluation.
+$p_0, \hdots, p_{n-1}$, each subset of these nodes defines another,
+lower-dimensional update simplex. For example, the three triangle
+updates forming the boundary of a single tetrahedron update. We expect
+the values of $F_i$ to be the same when defined on one or another
+update simplex, and to be continuous as we transfer between simplexes
+that share a common boundary. For $F_1$ this is the case, but for
+$F_0$ with $\theta \neq 0$, the function $F_0$ may not be well-defined
+at boundaries or continuous from simplex to simplex. This problem can
+lead to inconsistent and divergent solvers. A heuristic fix is to
+first minimize \cref{eq:constrained-minimization} for $F_0$ with
+nonzero $\theta$ to obtain the minimizing argument $\lambda^*_0$, then
+set $\hat{U} = F_1(\lambda_0^*)$; i.e., to replace $F_0$ with $F_1$
+for the purposes of evaluation.
 
-If we apply Newton's method to the minimization of $F_1^\theta$,
-starting at $\lambda_0^*$ and letting $\lambda_1^*$ denote the optimum
-of \cref{eq:constrained-minimization} where $i = 1$, then we can use
-use the attendant theory of Newton's method to prove the following
+If we apply Newton's method to the minimization of $F_1$, starting at
+$\lambda_0^*$ and letting $\lambda_1^*$ denote the optimum of
+\cref{eq:constrained-minimization} with $i = 1$, then we can use use
+the convergence theory of Newton's method to prove the following
 result which bounds the distance between $\lambda_0^*$ and
-$\lambda_1^*$, thereby bounding the error incurred by \texttt{mp0}
-over \texttt{mp1}~\cite{stoer2013introduction}.
+$\lambda_1^*$, thereby bounding the error incurred by using
+\texttt{mp0} instead of \texttt{mp1}~\cite{stoer2013introduction}.
 
 \begin{theorem}\label{theorem:mp0-newton}
   Let $h$ be sufficiently small so that $F_1$ is strictly convex by
-  \cref{lemma:F-strictly-convex}. Then, the error vector
-  $\delta\lambda^* = \lambda_1^* - \lambda_0^*$ satisfies
-  $\norm{\delta\lambda^*} = O(h)$. Additionally, if we let
+  \cref{lemma:F-strictly-convex}. Then, the perturbation
+  $\dellam^* = \lambda_1^* - \lambda_0^*$ satisfies
+  $\norm{\dellam^*} = O(h)$. Additionally, if we let
   $\lambda_0 = \lambda_0^*$ in the following Newton iteration:
   \begin{equation}
     \label{eq:lam0-iter-to-lam1}
@@ -281,8 +282,8 @@ over \texttt{mp1}~\cite{stoer2013introduction}.
 \end{theorem}
 
 \begin{proof}
-  The proof of \cref{theorem:mp0-newton} relies on some technical
-  lemmas which are detailed in \cref{app:validation-proofs}.
+  The proof of \cref{theorem:mp0-newton} is detailed in
+  \cref{app:validation-proofs}.
 \end{proof}
 
 This bound is satisfactory in the following way: if we assume that our
@@ -300,33 +301,35 @@ we start from $\lambda_1^*$ and perform a Newton iteration on
 $\nabla F_0$---we can obtain the foregoing error bound again, and
 possibly with less effort. The main reason to start from $\lambda_0^*$
 and drive to $\lambda_1^*$ is that it allows us to use \texttt{mp0} to
-initialize \texttt{mp1}. For $d = 0, 1$, this is unimportant, but in
-higher dimensions especially, minimizing $F_0$ should be
-cheaper. Reducing the number of $F_1$ update iterations suggests a
-sped-up method with the same accuracy.
+initialize \texttt{mp1}. Indeed, in the next section, we will see that
+it is possible to perform \texttt{mp0} updates without resorting to a
+nonlinear solver, but that this is not the case for \texttt{mp1}. For
+$d = 0, 1$, this is unimportant, but in higher dimensions especially,
+minimizing $F_0$ should be cheaper. Reducing the number of $F_1$
+update iterations leads to a sped-up method with the same accuracy.
 
 \subsection{Exact solution for \texttt{rhr} and \texttt{mp0}}\label{ssec:exact-soln}
 
 Since $F_0$ is strictly convex, $\nabla F_0(\lambda) = 0$ is
 sufficient for optimality of $\lambda$. The system of nonlinear
 equations defined by $\nabla F_0(\lambda) = 0$ can be solved exactly
-without appealing to an iterative solver. Instead, we can compute the
-solution from the reduced QR decomposition of $\delta P$ and geometric
+without appealing to an iterative solver. We can compute the solution
+from the reduced QR decomposition of $\delP$ and some geometric
 consideration of the minimization problem. This is captured by the
-following theorem, and the geometry of the problem is depicted in
+following theorem, with the geometry of the problem is depicted in
 \cref{fig:f0-exact}.
 
 \begin{theorem}\label{thm:f0-exact}
-  Let $\delta P = QR$ be the reduced QR decomposition of $\delta P$;
+  Let $\delP = QR$ be the reduced QR decomposition of $\delP$;
   i.e., such that
   $Q \in \mathbb{R}^{n \times d}, R \in \mathbb{R}^{d \times d},
-  Q^\top Q = I_d$, and such that $R$ is upper triangular. For fixed
-  problem data $s^\theta, h$, and $U$, if
+  Q^\top Q = I_d$, and such that $R$ is upper triangular. For
+  $s^\theta, h$, and $U$ fixed, if
   $\lambda^* = \argmin_{\lambda \in \mathbb{R}^n}
   F_0^\theta(\lambda)$, we have:
   \begin{align}
-    l_{\lambda^*} &= \sqrt{\frac{p_0^\top {(I - QQ^\top)} p_0}{1 - \norm{R^{-\top} \frac{\delta U}{s^\theta h}}^2}},\label{eq:l-star-expression} \\
-    \lambda^* &= -R^{-1} \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delta U}{s^\theta h}},\label{eq:f0-exact-lambda} \\ 
+    l_{\lambda^*} &= \sqrt{\frac{p_0^\top {(I - QQ^\top)} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},\label{eq:l-star-expression} \\
+    \lambda^* &= -R^{-1} \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delU}{s^\theta h}},\label{eq:f0-exact-lambda} \\ 
     \hat{U} &= U_0 + \frac{s^\theta h}{l_{\lambda^*}} p_0^\top p_{\lambda^*}.\label{eq:f0-exact}
   \end{align}
 \end{theorem}
@@ -358,18 +361,18 @@ in a sense made precise by the following theorem.
 \begin{theorem}[Equivalence of upwind finite difference scheme and $F_0$]\label{thm:equivalence}
   Let $\hat{U}$ by the finite difference solution and let
   $\hat{U}' = \min_{\lambda \in \R^n} F_0(\lambda)$. Then, $\hat{U}$
-  exists if and only if $\|R^{-\top} \delta U\| \leq s^\theta h$
+  exists if and only if $\|R^{-\top} \delU\| \leq s^\theta h$
   holds; when this is the case, $\hat{U}$ can be computed from:
   \begin{equation}
     \label{eq:U-finite-diff}
-    \hat{U} = U_i - p_i^\top Q R^{-\top} \delta U + \norm{\pmin} \sqrt{{(s^\theta h)}^2 - \norm{R^{-\top} \delta U}^2},
+    \hat{U} = U_i - p_i^\top Q R^{-\top} \delU + \norm{\pmin} \sqrt{{(s^\theta h)}^2 - \norm{R^{-\top} \delU}^2},
   \end{equation}
   where $\pmin = (I - QQ^\top) p_i$ (for any $i$, see
   \cref{fig:f0-exact} in \cref{sec:exact-soln-proofs}) and the
   following properties hold:
   \begin{enumerate}
   \item The finite difference solution and line integral solution
-    coincide: $\hat{U} = \hat{U}'$ can be computed from:
+    coincide. That is, $\hat{U} = \hat{U}'$ can be computed from:
     \begin{equation}
       \label{eq:U-from-Ui-exact}
       \hat{U} = U_i + s^\theta h p_i^\top \nu_{\lambda^*},
@@ -380,7 +383,7 @@ in a sense made precise by the following theorem.
     problem and minimizing $F_i$ coincide and are given by
     $[p_{\lambda^*}, \hat{p}] = [p_{\lambda^*}, 0]$.
   \item In either case, the characteristic passes through
-    $\conv(p_0, \hdots, p_{n-1})$ if and only if
+    $\conv(\set{p_0, \hdots, p_{n-1}})$ if and only if
     $\lambda^* \in \Delta^n$.
   \end{enumerate}
 \end{theorem}
@@ -391,7 +394,7 @@ in a sense made precise by the following theorem.
 
 \subsection{Causality}\label{ssec:causality} Dijkstra-like
 methods are based on the idea of monotone causality, similar to
-Dijkstra's method, itself. To compute shortest paths in a network,
+Dijkstra's method itself. To compute shortest paths in a network,
 Dijkstra's method uses dynamic programming to compute globally optimal
 shortest paths using local information~\cite{dijkstra1959note}. In
 this way, the distance to each downwind vertex must be greater than
@@ -402,9 +405,9 @@ monotone~\cite{crandall1983viscosity}. Our methods based on the
 \texttt{rhr} and \texttt{mp0} quadrature rules automatically inherit
 the consistency and causality of the finite difference methods that
 they relate to if they use the same 4 or 6 point neighborhoods in 2D
-and 3D, respectively. We consider a wide variety of update
-neighborhoods consisting of different simplexes. To this end, we
-provide a simple way of checking causality for each simplex.
+and 3D. We consider many different update neighborhoods involving
+geometrically distinct simplexes. To this end, we provide a simple way
+of checking whether each simplex is causal.
 
 Since we deal with causality simplex by simplex, we will refer to each
 update simplex being causal or not. Since we assume $\hat{p} = 0$,

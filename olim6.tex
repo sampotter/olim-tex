@@ -17,14 +17,14 @@ are defined:
 \end{align*}
 For convenience, we will also define:
 \begin{align*}
-  \delta u_i = u_i - u_0, \qquad \delta p_i = p_i - p_0, \qquad u_\lambda = u_0 + \lambda_1 \delta u_1 + \lambda \delta u_2.
+  \delU_i = u_i - u_0, \qquad \delp_i = p_i - p_0, \qquad u_\lambda = u_0 + \lambda_1 \delU_1 + \lambda \delU_2.
 \end{align*}
 In particular, $u_\lambda$ denotes a linear approximation to $u$ on
 the triangle with $p_0, p_1$, and $p_2$ as its vertices.
 
 \begin{lemma}
   Let $F(\lambda) = u_\lambda + \hat{s} ||\hat{p} - p_\lambda||$,
-  define $\alpha_i = |\delta u_i/(\hat{s} h)|$, and let:
+  define $\alpha_i = |\delU_i/(\hat{s} h)|$, and let:
   \begin{align*}
     A_i = 2 - \alpha_i^2, \qquad B_i = 1 - 2\alpha_i^2, \qquad C_i = 1 - \alpha_i^2,
   \end{align*}
@@ -43,7 +43,7 @@ the triangle with $p_0, p_1$, and $p_2$ as its vertices.
     \end{bmatrix} \begin{bmatrix}
       \lambda_1 \\ \lambda_2
     \end{bmatrix} = \boldsymbol{1}_{2 \times 1} - \frac{l_\lambda}{\hat{s} h} \begin{bmatrix}
-      \delta u_1 \\ \delta u_2
+      \delU_1 \\ \delU_2
     \end{bmatrix}.
   \end{align*}
 \end{lemma}

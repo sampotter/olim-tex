@@ -17,8 +17,8 @@
       update).}\label{fig:tetra-diagram}
   \end{subfigure}
   \caption{Characteristics emanate from the set
-    $p_0 + \delta P \Delta^d = \set{p_0 + \lambda_1 \delta p_1 +
-      \cdots + \lambda_d \delta p_d}$, which approximates the front of
+    $p_0 + \delP \Delta^d = \set{p_0 + \lambda_1 \delp_1 +
+      \cdots + \lambda_d \delp_d}$, which approximates the front of
     the numerical solution.}\label{fig:simplex-diagrams}
 \end{figure}
 
@@ -47,7 +47,7 @@ numerical solution. We identify the current grid point to be updated
 with the origin and denote the trial value of the numerical solution
 at this point by $\hat{u}$. In general, we use a hat to denote
 quantities for the update point; e.g., below, $\hat{s} =
-s(\hat{p})$. We also define $u_\lambda = u_0 + \delta u^\top
+s(\hat{p})$. We also define $u_\lambda = u_0 + \delU^\top
 \lambda$. Then, the goal is to approximate:
 \begin{equation}
   \hat{u} = \min_{\lambda \in \Delta^n} \set{u_\lambda + h \int_{[p_\lambda, 0]} s(\gamma(t))dt}.\label{eq:hat-u-variational}
@@ -93,8 +93,8 @@ quantities here.
 \begin{lemma}\label{prop:F0-grad-and-Hess}
   The gradient and Hessian of $F_0(\lambda; \theta)$ satisfy:
   \begin{align}
-    \nabla_\lambda F_0(\lambda; \theta) &= \delta u + \frac{s^{\theta} h}{l_\lambda} \delta P^\top p_\lambda, \\
-    \nabla^2_\lambda F_0(\lambda; \theta) &= \frac{s^{\theta} h}{l_\lambda} \delta P^\top \calP^\perp_{p_\lambda} \delta P,
+    \nabla_\lambda F_0(\lambda; \theta) &= \delU + \frac{s^{\theta} h}{l_\lambda} \delP^\top p_\lambda, \\
+    \nabla^2_\lambda F_0(\lambda; \theta) &= \frac{s^{\theta} h}{l_\lambda} \delP^\top \calP^\perp_{p_\lambda} \delP,
   \end{align}
   where $\calP_{p_\lambda}$ denotes the orthogonal projector onto
   $\operatorname{span}(p_\lambda)$ and $\calP_{p_\lambda}^\perp$ is
@@ -105,14 +105,14 @@ quantities here.
 \begin{proof}
   For the gradient, we have:
   \begin{equation*}
-    \nabla_\lambda F_0(\lambda; \theta) = \delta u + \frac{s^{\theta} h}{2 l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda = \delta u + \frac{s^{\theta} h}{l_\lambda} \delta P^\top p_\lambda,
+    \nabla_\lambda F_0(\lambda; \theta) = \delU + \frac{s^{\theta} h}{2 l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda = \delU + \frac{s^{\theta} h}{l_\lambda} \delP^\top p_\lambda,
   \end{equation*}
   since
-  $\nabla_\lambda p_\lambda^\top p_\lambda = 2 \delta P^\top
+  $\nabla_\lambda p_\lambda^\top p_\lambda = 2 \delP^\top
   p_\lambda$. For the Hessian:
   \begin{align*}
-    \nabla^2_\lambda F_0(\lambda; \theta) &= \nabla_\lambda \parens{\frac{s^{\theta} h}{l_\lambda} p_\lambda^\top \delta P} = s^{\theta} h \parens{\nabla_\lambda \frac{1}{l_\lambda} p_\lambda^\top \delta P + \frac{1}{l_\lambda} \nabla_\lambda p_\lambda^\top \delta P} \\
-    &= \frac{s^{\theta} h}{l_\lambda} \parens{\delta P^\top \delta P - \frac{\delta P^\top p_\lambda p_\lambda^\top \delta P}{p_\lambda^\top p_\lambda}} = \frac{s^{\theta} h}{l_\lambda} \delta P^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} \delta P,
+    \nabla^2_\lambda F_0(\lambda; \theta) &= \nabla_\lambda \parens{\frac{s^{\theta} h}{l_\lambda} p_\lambda^\top \delP} = s^{\theta} h \parens{\nabla_\lambda \frac{1}{l_\lambda} p_\lambda^\top \delP + \frac{1}{l_\lambda} \nabla_\lambda p_\lambda^\top \delP} \\
+    &= \frac{s^{\theta} h}{l_\lambda} \parens{\delP^\top \delP - \frac{\delP^\top p_\lambda p_\lambda^\top \delP}{p_\lambda^\top p_\lambda}} = \frac{s^{\theta} h}{l_\lambda} \delP^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} \delP,
   \end{align*}
   from which the result follows.
 \end{proof}
@@ -120,19 +120,19 @@ quantities here.
 \begin{lemma}\label{prop:F1-grad-and-Hess}
   The gradient and Hessian of $F_1(\lambda; \theta)$ satisfy:
   \begin{align}
-    \nabla_\lambda F_1(\lambda; \theta) &= \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda \delta s^\top + s^{\theta}_\lambda \delta P}^\top p_\lambda, \\
-    \nabla_\lambda^2 F_1(\lambda; \theta) &= \frac{h}{l_\lambda} \parens{\theta \parens{\delta P^\top p_\lambda \delta s^\top + \delta s p_\lambda^\top \delta P} + s^{\theta}_\lambda \delta P^\top \calP^\perp_{p_\lambda} \delta P}. \label{eq:hess-F1}
+    \nabla_\lambda F_1(\lambda; \theta) &= \delU + \frac{h}{l_\lambda} \parens{\theta p_\lambda \dels^\top + s^{\theta}_\lambda \delP}^\top p_\lambda, \\
+    \nabla_\lambda^2 F_1(\lambda; \theta) &= \frac{h}{l_\lambda} \parens{\theta \parens{\delP^\top p_\lambda \dels^\top + \dels p_\lambda^\top \delP} + s^{\theta}_\lambda \delP^\top \calP^\perp_{p_\lambda} \delP}. \label{eq:hess-F1}
   \end{align}
 \end{lemma}
 
 \begin{proof}
   Since $F_1(\lambda; \theta) = u_\lambda + h s^{\theta}_\lambda l_\lambda$, for the gradient we have:
   \begin{equation*}
-    \nabla_\lambda F_1(\lambda; \theta) = \delta u + h \parens{\theta l_\lambda \delta s + \frac{s^{\theta}_\lambda}{2l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda} = \delta u + \frac{h}{l_\lambda} \parens{\theta p_\lambda^\top p_\lambda \delta s + s^{\theta} \delta P^\top p_\lambda},
+    \nabla_\lambda F_1(\lambda; \theta) = \delU + h \parens{\theta l_\lambda \dels + \frac{s^{\theta}_\lambda}{2l_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda} = \delU + \frac{h}{l_\lambda} \parens{\theta p_\lambda^\top p_\lambda \dels + s^{\theta} \delP^\top p_\lambda},
   \end{equation*}
   and for the Hessian:
   \begin{equation*}
-    \nabla_\lambda^2 F_1(\lambda; \theta) = \frac{h}{2 l_\lambda} \parens{\theta \parens{\nabla_\lambda p_\lambda^\top p_\lambda \delta s^\top + \delta s {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top} + s^{\theta}_\lambda \parens{\frac{1}{2 p_\lambda^\top p_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top - \nabla^2_\lambda p_\lambda^\top p_\lambda}}.
+    \nabla_\lambda^2 F_1(\lambda; \theta) = \frac{h}{2 l_\lambda} \parens{\theta \parens{\nabla_\lambda p_\lambda^\top p_\lambda \dels^\top + \dels {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top} + s^{\theta}_\lambda \parens{\frac{1}{2 p_\lambda^\top p_\lambda} \nabla_\lambda p_\lambda^\top p_\lambda {(\nabla_\lambda p_\lambda^\top p_\lambda)}^\top - \nabla^2_\lambda p_\lambda^\top p_\lambda}}.
   \end{equation*}
   Simplfying this gives us the result.
 \end{proof}
@@ -148,43 +148,43 @@ quantities here.
 %     (or precompute and cache) $\nabla^2 F_0^{-1}$, then we might have
 %     access to a cheap Newton's method for both $F_0$ and $F_1$. If all
 %     we have to do is precompute a QR decomposition for each
-%     $\delta P$, and the resulting inverse is correct, the cost of
+%     $\delP$, and the resulting inverse is correct, the cost of
 %     inversion would be $O(nd + d^2) = O(n^2)$ (since $d \leq n$),
 %     where $n$ is the dimension of the ambient space and $d$ is the
 %     number of vectors $p_i$.}}
 
 \begin{lemma}\label{lemma:dPt-cprojp-dP-pd}
   Let $\Delta^n$ be a nondegenerate simplex. Then,
-  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$ is positive
+  $\delP^\top \mathcal{P}^\perp_{p_\lambda} \delP$ is positive
   definite.
 \end{lemma}
 
 \begin{proof}
-  To show that $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$
+  To show that $\delP^\top \mathcal{P}^\perp_{p_\lambda} \delP$
   is positive semidefinite, we simply note that since
   $\mathcal{P}^\perp_{p_\lambda}$ is an orthogonal projector, it is
   positive semidefinite, and its singular value decomposition can be
   written $UU^\top$, where $U \in \mathbb{R}^{n+1 \times n}$. Then:
   \begin{equation}\label{eq:dPt-cprojp-dP-gram}
-    \delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P = {(U^\top \delta P)}^\top {(U^\top \delta P)}.
+    \delP^\top \mathcal{P}^\perp_{p_\lambda} \delP = {(U^\top \delP)}^\top {(U^\top \delP)}.
   \end{equation}
   From the factorization in \cref{eq:dPt-cprojp-dP-gram}, we can see
-  that $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P$ is a
+  that $\delP^\top \mathcal{P}^\perp_{p_\lambda} \delP$ is a
   Gram matrix, hence positive semidefinite.
 
   Next, since $\Delta^n$ is nondegenerate, the vectors $p_i$ for
   $i = 0, \hdots, n$ are linearly independent. Since:
   \begin{equation*}
-    \delta P = \begin{bmatrix} p_1 - p_0 & \cdots & p_n - p_0 \end{bmatrix},
+    \delP = \begin{bmatrix} p_1 - p_0 & \cdots & p_n - p_0 \end{bmatrix},
   \end{equation*}
-  the vector $p_0$ is not in the range of $\delta P$; hence, there is
-  no vector $\mu$ such that $\delta P \mu = \alpha p_\lambda$, for any
+  the vector $p_0$ is not in the range of $\delP$; hence, there is
+  no vector $\mu$ such that $\delP \mu = \alpha p_\lambda$, for any
   $\alpha \neq 0$. What's more, by definition,
   $\text{ker}(\mathcal{P}_{p_\lambda}^\perp) = \langle p_\lambda
   \rangle$. So, we can see that
-  $\mathcal{P}^\perp_{p_\lambda} \delta P \mu = 0$ only if $\mu = 0$,
+  $\mathcal{P}^\perp_{p_\lambda} \delP \mu = 0$ only if $\mu = 0$,
   from which we can conclude
-  $\delta P^\top \mathcal{P}^\perp_{p_\lambda} \delta P \succ 0$.
+  $\delP^\top \mathcal{P}^\perp_{p_\lambda} \delP \succ 0$.
 \end{proof}
 
 \begin{lemma}
@@ -203,16 +203,16 @@ quantities here.
   consists of positive definite matrix
   $A = \frac{s^\theta_\lambda h}{l_\lambda}$, plus a small, indefinite
   perturbation,
-  $B = \tfrac{\theta h}{l_\lambda} \anticom{\delta P^\top p_\lambda,
-    \delta s}$. To use this fact, note that since
-  $\delta P^\top \mathcal{P}^\perp_\lambda \delta P$ is symmetric
+  $B = \tfrac{\theta h}{l_\lambda} \anticom{\delP^\top p_\lambda,
+    \dels}$. To use this fact, note that since
+  $\delP^\top \mathcal{P}^\perp_\lambda \delP$ is symmetric
   positive definite, it has an eigenvalue decomposition
   $Q \Lambda Q^\top$ where $\Lambda_{ii} > 0$ for all $i$. Since
-  $\delta P^\top \mathcal{P}^\perp_\lambda \delta P$ doesn't depend on
+  $\delP^\top \mathcal{P}^\perp_\lambda \delP$ doesn't depend on
   $h$, for a fixed set of vectors $p_0, \hdots, p_n$, we can expect
   its eigenvalues to be constant with respect to $h$. So, if we write:
   \begin{equation}
-    A = \frac{s^\theta_\lambda h}{l_\lambda} \delta P^\top \mathcal{P}^\perp_\lambda \delta P = Q \parens{\frac{s^\theta_\lambda h}{l_\lambda} \Lambda} Q^\top
+    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \mathcal{P}^\perp_\lambda \delP = Q \parens{\frac{s^\theta_\lambda h}{l_\lambda} \Lambda} Q^\top
   \end{equation}
   we can expect this matrix's eigenvalues to be $\Theta(h)$; in
   particular, $\lambda_{\min} \geq C h$ for some constant $C$,
@@ -222,8 +222,8 @@ quantities here.
   Now, considering the indefinite perturbation, we can easily see
   that:
   \begin{equation}
-    \lambda_{\max}(B) = \norm{\tfrac{\theta h}{l_\lambda} \anticom{\delta P^\top p_\lambda,
-        \delta s}} = O(h^2).
+    \lambda_{\max}(B) = \norm{\tfrac{\theta h}{l_\lambda} \anticom{\delP^\top p_\lambda,
+        \dels}} = O(h^2).
   \end{equation}
   Letting $z \neq 0$, we compute:
   \begin{equation}
@@ -250,7 +250,7 @@ $F_0(\lambda; \theta) = u^\top \lambda + s^{\theta} h \sqrt{\lambda^\top
   \nabla F_0(\lambda; \theta) = u + s^{\theta} h \frac{P^\top p_\lambda}{l_\lambda}, \qquad \text{and} \qquad \nabla^2 F_0(\lambda; \theta) = \frac{s^{\theta} h}{l_\lambda} P^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} P.
 \end{equation*}
 An immediate issue here is that, following this definition,
-$\nabla^2 F_0$ becomes singular. Before, the size of $\delta P$
+$\nabla^2 F_0$ becomes singular. Before, the size of $\delP$
 allowed us to mitigate the degeneracy of the orthogonal projection
 matrix. This motivates our choice of convention for the convex
 coefficients $\lambda$, along with the fact that the smaller dimension

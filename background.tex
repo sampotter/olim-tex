@@ -16,12 +16,35 @@
   \label{fig:overview}
 \end{figure}
 
-In this section, we give a brief overview of Dijkstra-like algorithms
-and fast sweeping methods for solving \cref{eq:eikonal}, and present a
-generic, high-level version of a Dijkstra-like algorithm which we will
-refer to throughout the rest of the paper to organize our
-developments. Since our focus is Dijkstra-like algorithms, our
-explanation of fast sweeping methods will be brief.
+We now provide a brief overview of the eikonal equation and its
+numerical solution on a regular grid. We then review the different
+algorithms available for its solution, and sketch a generic
+Dijkstra-like algorithm which we will refer to throughout the paper to
+organize our results. Note that the FMM could be described by this
+generic algorithm equally well. Since we focus on Dijkstra-like
+algorithms here, our explanation of the fast sweeping and other
+iterative methods will be brief.
+
+\subsection{The eikonal equation}
+
+With $n \geq 2$, and given a domain $\Omega \in \R^n$, the eikonal
+equation is:
+\begin{equation}\label{eq:eikonal}
+  \norm{\nabla u(x)}_2 = s(x), \qquad x \in \Omega,
+\end{equation}
+where $s : \Omega \to \R_+$ is a fixed, nonnegative \emph{slowness
+  function}, which forms part of the problem data. Hence, we solve for
+$u : \Omega \to \overline{\R}_+$. The rest of the problem data is a
+subset $D \subset \Omega$ where $u$ has been fixed; i.e.,
+$\left. u \right|_D = g$ for some $g : D \to \overline{\R}_+$. As an
+example, if $s \equiv 1$ and $g \equiv 0$, then the solution of
+\cref{eq:eikonal} is:
+\begin{equation}
+  \label{eq:distance-to-Omega}
+  u(x) = d(x, D) = \inf_{y \in \Omega} \norm{x - y}_2.
+\end{equation}
+That is, $u$ is the distance to $D$ at each point in
+$\Omega$. 
 
 To numerically solve \cref{eq:eikonal}, first let
 $\calG = \{p_i\} \subseteq \Omega$ be the set or grid of \emph{nodes}
@@ -29,33 +52,30 @@ where we would like to approximate the true solution $u$ with a
 numerical solution $U : \calG \to
 \overline{\mathbb{R}}_+$. Additionally, for each node $p \in \calG$,
 define a set of neighbors,
-$\neib(p) \subseteq \calG \backslash \set{p}$. Typically, $\calG$ is
-taken to be a subset of a lattice in $\R^n$ and $\neib(p)$ to be each
-node's $2n$ cardinal neighbors. With $\calG$ defined, we also define
-the set of \emph{boundary nodes}, $\boundary \subseteq \calG$. It may
-happen that the set $\boundary$ and $D$ do not coincide (e.g., $D$
-could be a curve which does not intersect $\calG$); to reconcile this
-difference, the initial value of $U(p)$ for each $p \in \boundary$
-must take $g = \left. u \right|_D \geq 0$ into account in the best way
+$\neib(p) \subseteq \calG \backslash \set{p}$. Typically---for the FMM
+and \texttt{olim6}, for instance---$\calG$ is taken to be a subset of
+a lattice in $\R^n$ and $\neib(p)$ to be each node's $2n$ cardinal
+neighbors. With $\calG$ defined, we also define the set of
+\emph{boundary nodes}, $\boundary \subseteq \calG$. It may happen that
+the set $\boundary$ and $D$ do not coincide (e.g., $D$ could be a
+curve which does not intersect $\calG$); to reconcile this difference,
+the initial value of $U(p)$ for each $p \in \boundary$ must take
+$g = \left. u \right|_D \geq 0$ into account in the best way
 possible. This problem has been approached in different ways, and is
 not the focus of the present work~\cite{chopp2001some}. Throughout, we
 will assume $\boundary = D \subseteq \calG$.
 
-Broadly speaking, there are two competing families of solvers for the
-eikonal equation: Dijkstra-like methods and fast sweeping methods. 
-
 \subsection{Dijkstra-like algorithms}\label{ssec:dijkstra-like}
-We will give a brief description of a prototypical Dijkstra-like
-algorithm for solving the eikonal equation. The idea is to order the
-solution of the eikonal equation dynamically so that new values are
-continually computed using only fixed upwind values. This is done
-using a variant of Dijkstra's algorithm for finding shortest paths in
-a network, hence the name. Other algorithms can be used that have
-different complexity guarantees but which may offer other performance
-advantages---see~\cite{chacon2012fast} for a review. In particular,
-Dijkstra's algorithm is a type of \emph{label-setting method} for
-finding shortest paths in a network; there are also
-\emph{label-correcting methods}.
+If we order nodes in $\mathcal{G}$ so that new solution values are
+only ever computed using upwind nodes, the eikonal equation can be
+solved directly; i.e., without the use of an iterative solver. This is
+done using a variant of Dijkstra's algorithm for finding shortest
+paths in a network. Other algorithms which solve similar network flow
+problems can also be used, but have different complexity guarantees
+---see~\cite{chacon2012fast} for a review. In particular, Dijkstra's
+algorithm is a type of \emph{label-setting method} for finding
+shortest paths in a network; there are also \emph{label-correcting
+  methods}.
 
 Using Dijkstra's algorithm to solve a ``continuous shortest path''
 problem has been discovered in several contexts. The earliest such
@@ -64,21 +84,21 @@ geometry due to Mitchell, Mount, and Papadimitriou, who used this idea
 to compute exact polyhedral shortest paths (``discrete geodesics'') on
 triangulated surfaces~\cite{mitchell1987discrete}. This was followed
 by Tsitsiklis who developed a first-order semi-Lagrangian method for
-solving isotropic control problems on a uniform
+solving isotropic optimal control problems on a uniform
 grid~\cite{tsitsiklis1995efficient}. Finally, the fast marching
 method, which uses a first-order upwind finite difference scheme was
 developed by Sethian for isotropic front
 propagation~\cite{sethian1996fast}. Many variations of these methods
-have since been developed. Our own development resembles
-Tsitsisklis's, but extends it past its original formulation.
+have since been developed~\cite{sethian2003ordered,kao2004lax}. Our
+own development resembles Tsitsisklis's, but extends it past its
+original formulation.
 
-There are several pieces of information that need to be kept track of
-in order to implement the algorithm. A data structure we call
-\texttt{front} that keeps track of an expanding wavefront is
-maintained throughout the algorithm's execution. For each node $p$,
-apart from the current value of $U(p)$, the most salient piece of
-information is the \emph{state} of each node $p$, written
-$p$\texttt{.state}
+To write down a generic Dijkstra-like algorithm, there are several
+pieces of information which need to kept track of. A data structure we
+call \texttt{front} that stores an expanding wavefront is maintained
+throughout the algorithm's execution. For each node $p$, apart from
+the current value of $U(p)$, the most salient piece of information is
+the \emph{state} of each node $p$, written $p$\texttt{.state}
 $\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. The meaning
 of each of these states and each node's interaction with the
 \texttt{front} data structure will become clear from the following
@@ -91,11 +111,7 @@ high-level description of the algorithm:
   \item For each $p \in \calG$, initially set $p$\texttt{.state} $=$
     \texttt{far} and $U(p) = \infty$.
   \item For each $p \in \boundary$, set $p$\texttt{.state} $=$
-    \texttt{valid}, initialize $U(p)$, and execute
-    \cref{enum:set-trial,enum:update-U}.
-  \item At this point, the set of trial points is sorted by $U(p)$ in
-    increasing order into a generic list or data structure called
-    \texttt{front}.
+    \texttt{trial}, and set $U(p)$ to some user-defined initial value.
   \item While there are \texttt{trial} nodes left in $\calG$:
     \begin{enumerate}[nolistsep]
     \item Let $p$ be the \texttt{trial} node in \texttt{front} with
@@ -113,20 +129,25 @@ high-level description of the algorithm:
   \end{enumerate}
 \end{algorithm}
 
-Computing $\hat{U}$ in \cref{enum:update-U} is left intentionally
-vague. Specifying this step involves indicating how nodes in
-$\neib(\hat{p})$ are to be used to compute $\hat{U}$. In the fast
-marching method, an upwind finite difference scheme where only
-\texttt{valid} nodes propagate information is used. Semi-Lagrangian
-methods like Tsitsiklis's group nodes in \texttt{valid} into sets
-whose convex hulls approximate the surface of the expanding wavefront
-and then solve local raytracing problems involving each such
-group. The method presented here operates in the same way (again, see
-\cref{fig:overview}).
-
-The exact sequencing and details of some of the steps of
-\cref{alg:dijkstra-like} is variable. Our intent here is to give a
-birds-eye view of the algorithm---for concrete details, a suitable
+Specifying how \cref{enum:update-U} is to be performed is the crux of
+developing a Dijkstra-like algorithm and is left intentionally
+vague. This step involves indicating how nodes in $\neib(\hat{p})$ are
+used to compute $\hat{U}$, and how they are organized into the
+\texttt{front} data structure. The FMM uses an upwind finite
+difference scheme where only \texttt{valid} nodes are used to compute
+$\hat{U}$, and where nodes on the front are sorted using an
+array-based heap implementing a priority
+queue~\cite{sethian1996fast}. As an example, Tsitsiklis's algorithm
+combines nodes in \texttt{valid} into sets whose convex hulls
+approximate the surface of the expanding wavefront and then solves
+local raytracing problems where rays emanate from these surfaces. The
+method presented here operates in the same way (see
+\cref{fig:overview}). As an aside, one detail of
+\cref{alg:dijkstra-like} that is frequently overlooked in the
+literature is how $p$\texttt{.state} is implemented---we explore this
+implementation detail and how it can significantly impact the
+performance characteristics of a Dijkstra-like algorithm in
+\cref{sec:numerical-results}. For specific details, a general
 reference should be consulted~\cite{sethian1999level}. In addition to
 \cref{enum:update-U}, algorithm \cref{alg:dijkstra-like} is generic in
 the following ways:
@@ -152,26 +173,28 @@ the following ways:
   involved~\cite{kimmel1998computing,sethian2000fast,bronstein2008numerical}.
 \end{itemize}
 Other problems can be solved using Dijkstra-like algorithms: the
-Hamilton-Jacobi equation, an anisotropic generalization of the eikonal
-equation, can be solved using the ordered upwind
-method~\cite{sethian2003ordered}, and the quasipotential of a
-nongradient stochastic differential equation can be computed using the
-ordered line integral
-method~\cite{dahiya2017ordered,dahiya2018ordered,yang2018computing}.
+static Hamilton-Jacobi equation, an anisotropic generalization of the
+eikonal equation, can be solved using the ordered upwind
+method~\cite{sethian2003ordered}. Consequently, the quasipotential of
+a nongradient stochastic differential equation can be computed using
+the ordered line integral method, although the considerations may be
+more
+involved~\cite{dahiya2017ordered,dahiya2018ordered,yang2018computing}.
 
 \subsection{Fast sweeping methods} Another approach to solving a
 discretized version of \cref{eq:eikonal} is the fast sweeping
 method~\cite{tsai2003fast,zhao2005fast}. Unlike Dijkstra-like methods,
 which are direct solvers, the fast sweeping method is an iterative
-solver using an upwind scheme and varying sweep directions. For
-problems where the characteristics of the solution change direction
-infrequently, the algorithm obtains $O(N)$ complexity. A drawback of
-the method is that the asymptotic constant for this complexity
-guarantee cannot be bound a priori and depends heavily on the geometry
-of the problem. Fast sweeping methods have been extended to
-Hamilton-Jacobi equations~\cite{kao2004lax,tsai2003fast}, and hybrid
-methods combining the fast sweeping method with a Dijkstra-like method
-have also been introduced~\cite{chacon2012fast,chacon2015parallel}.
+solver using an upwind scheme and rotating cardinal sweep
+directions. For problems where the characteristics of the solution
+change direction infrequently, the algorithm obtains $O(N)$
+complexity. A drawback of the method is that the asymptotic constant
+for this complexity guarantee cannot be bound a priori and depends
+heavily on the geometry of the problem. Fast sweeping methods have
+been extended to Hamilton-Jacobi
+equations~\cite{kao2004lax,tsai2003fast}, and hybrid methods combining
+the fast sweeping method with a Dijkstra-like method have been
+introduced recently~\cite{chacon2012fast,chacon2015parallel}.
 
 \end{document}
 

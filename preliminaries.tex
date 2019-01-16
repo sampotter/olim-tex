@@ -17,14 +17,14 @@ For each $\lambda = (\lambda_1, \hdots, \lambda_d) \in \Delta^d$, we
 will write $\lambda_0 = 1 - \lambda_1 - \cdots - \lambda_d$. Then,
 $\sum_{i=0}^d \lambda_i p_i$ lies in the convex hull of
 $\set{p_0, \hdots, p_d}$. We will typically write this vector
-$p_\lambda$. If we define $\delta p_i = p_i - p_0$, we can also write
-$p_\lambda = p_0 + \sum_{i=1}^d \lambda_i \delta p_i$. This is a
+$p_\lambda$. If we define $\delp_i = p_i - p_0$, we can also write
+$p_\lambda = p_0 + \sum_{i=1}^d \lambda_i \delp_i$. This is a
 homogeneous transformation applied to $\lambda$; to this end, we
 define the matrix:
 \begin{align*}
-  \delta P = \begin{pmatrix} \delta p_1 & \cdots & \delta p_d \end{pmatrix} \in \R^{n \times d},
+  \delP = \begin{pmatrix} \delp_1 & \cdots & \delp_d \end{pmatrix} \in \R^{n \times d},
 \end{align*}
-so that we can write $p_\lambda = \delta P \lambda + p_0$. We will
+so that we can write $p_\lambda = \delP \lambda + p_0$. We will
 have reason to make use of this ``$\delta$'' notation elsewhere---in
 general, if $x$ is some indexed object, then $\delta x_i = x_i - x_0$.
 
