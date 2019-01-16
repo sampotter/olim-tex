@@ -1,0 +1,30 @@
+* General
+  - [ ] Remove "hierarchical" everywhere
+* Paper Todo
+** Introduction
+   - [ ] Add a plot which contains "the gist" of our results
+*** Applications
+	- [ ] shape from shading
+	- [ ] noise removal
+	- [ ] geodesic distance computation
+	- [ ] high frequency wavefront propagation
+	- [ ] signed distance function computation in level set methods
+	- [ ] travel times in seismic tomography
+** Numerical results
+   - [ ] Add section based on PGO indicating relative time spent in
+     different sections of the code
+	 - [ ] Make a stacked graph showing percentages vs. N
+	 - [ ] Use this to make the point that using Dijkstra's algorithm
+       leads to an algorithm which is ~N for almost all practical
+       problem sizes
+	 - [ ] Compare this with what Whittaker says about the log(N) cost
+       of the method being expensive
+   - [ ] Reduce the number of plots
+   - [ ] Compare basic_marcher_3d and olim6_rhr runtimes as N
+     increases. It looks like it might be the case that olim6_rhr
+     achieves parity for larger N. Can add a section explaining why
+     this may be the case---probably has to do with memory transfers
+     starting to dominate.
+	 - [ ] May also be worth comparing on two different computes to
+       see the effect of cache sizes...
+   - [ ] Add a shape from shading test?
