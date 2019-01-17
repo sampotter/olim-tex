@@ -6,9 +6,11 @@
 
 The fast marching method discretizes the eikonal equation,
 \cref{eq:eikonal}, and solves this discretization in an upwind fashion
-to compute $\hat{U}$. The ordered line integral method locally and
-approximately minimizes the minimum action integral of
-\cref{eq:eikonal}:
+to compute $\hat{U}$. Throughout, we distinguish between the exact
+solution $u$ and the numerical solution $U$, where $\hat{U}$ will
+always denote the current value to be computed. The ordered line
+integral method locally and approximately minimizes the minimum action
+integral of \cref{eq:eikonal}:
 \begin{equation}
   \label{eq:action-functional}
   \hat{u} = \min_{\alpha} \set{u_0 + \int_\alpha s(x) dl},
@@ -139,32 +141,30 @@ then:
   \hat{U} = U(\hat{p}) = \min_{\lambda \in \Delta^d} \set{U_\lambda + h \int_{[p_\lambda, 0]} s(\alpha(t))dt}.
 \end{equation}
 We consider two approximations to
-\cref{eq:action-functional-line-segment}: the difference between the
-two pertains to the way we incorporate the slowness function $s$. Let
-$\theta \in [0, 1]$ and define $l_\lambda = \norm{p_\lambda}_2$. For
-$\theta$ such that $0 \leq \theta \leq 1$, we define the following two
-approximations to the cost function minimized when computing
-$\hat{U} = U(\hat{p})$ in \cref{eq:action-functional-line-segment}:
+\cref{eq:action-functional-line-segment}. Let
+$l_\lambda = \norm{p_\lambda}_2$. For $\theta$ such that
+$0 \leq \theta \leq 1$, we define:
 \begin{align}
   F_0(\lambda) = F_0^\theta(\lambda) &= U_\lambda + s^{\theta} h l_\lambda := U_\lambda + \squareb{(1-\theta)\hat{s} + \frac{\theta}{d + 1} \sum_{i=0}^d s_i} h l_\lambda, \label{eq:f0-definition} \\
   F_1(\lambda) = F_1^\theta(\lambda) &= U_\lambda + s^{\theta}_\lambda h l_\lambda := U_\lambda + \squareb{(1-\theta)\hat{s} + \theta s_\lambda} h l_\lambda,
 \end{align}
-where we typically omit the superscript in $F_i^\theta$. We will
-primarily concern ourselves with $F_0$ and $F_1$ for $\theta = 0$ and
-$\theta = \nicefrac{1}{2}$. See \cref{fig:slowness-tetra} for a
-careful explanation of this setup. If $\theta = 0$, then
-$F_0 \equiv F_1$, so we define a single quadrature rule to capture
-this case, called \texttt{rhr}. If $\theta = \nicefrac{1}{2}$, then
-$F_0 \neq F_1$ in general, leading us to define a separate midpoint
-quadrature rule for each of $F_0$ and $F_1$, named \texttt{mp0} and
-\texttt{mp1}, respectively. The case of \texttt{mp0} requires special
-care and is handled in \cref{ssec:validation}.
+where we omit the superscript in $F_i^\theta$ when the context is
+clear. We primarily concern ourselves with $F_0$ and $F_1$ where
+$\theta = 0$ and $\theta = \nicefrac{1}{2}$. See
+\cref{fig:slowness-tetra} for a careful explanation of this setup. If
+$\theta = 0$, then $F_0 \equiv F_1$, so we define a single quadrature
+rule to capture this case, which we call \texttt{rhr}. If
+$\theta = \nicefrac{1}{2}$, then $F_0 \neq F_1$ in general, leading us
+to define a separate midpoint quadrature rule for each of $F_0$ and
+$F_1$, named \texttt{mp0} and \texttt{mp1}, respectively. The case of
+\texttt{mp0} requires special care and is handled in
+\cref{ssec:validation}. The distinction between these quadrature rules
+and their impact on our solvers is a key consideration of this paper.
 
 \subsection{The minimization problem}\label{ssec:minimization-problem}
 
 With $F_0$ and $F_1$ so defined, the minimization problem which
-approximately solves
-\cref{eq:action-functional,eq:action-functional-line-segment} to
+approximately solves \cref{eq:action-functional-line-segment} to
 compute $\hat{U}$ for a fixed update simplex is:
 \begin{equation}
   \label{eq:constrained-minimization}
@@ -174,7 +174,7 @@ This is a nonlinear, constrained optimization problem with linear
 inequality constraints and no equality constraints (cf.\@
 \cref{eq:Delta-LMI}). We require the gradient and Hessian of $F_0$ and
 $F_1$ for our algorithms and analysis. These are easy to compute, but
-we have found a particular form for them to be appropriate. The proofs
+we have found a particular form for them to be convenient. The proofs
 of these propositions and the rest of the results in
 \cref{ssec:minimization-problem} are found in
 \cref{sec:minimization-proofs}.
@@ -186,11 +186,12 @@ of these propositions and the rest of the results in
     \nabla^2 F_0(\lambda) &= \frac{s^{\theta} h}{l_\lambda} \delP^\top \calP^\perp_{p_\lambda} \delP,
   \end{align}
   where $\nu_\lambda = p_\lambda/l_\lambda$ is the unit vector in the
-  direction $p_\lambda$,
+  direction of $p_\lambda$,
   $\calP_{p_\lambda} = \nu_\lambda \nu_\lambda^\top$ denotes the
   orthogonal projector onto $\operatorname{span}(p_\lambda)$ and
   $\calP_{p_\lambda}^\perp = I - \nu_\lambda \nu_\lambda^\top$ is the
-  orthogonal projector onto $\operatorname{span}(p_\lambda)^\perp$.
+  orthogonal projector onto $\operatorname{span}(p_\lambda)^\perp$,
+  the orthogonal complement of $\operatorname{span}(p_\lambda)$.
 \end{proposition}
 
 \begin{proposition}\label{prop:F1-grad-and-Hess}
@@ -203,70 +204,71 @@ of these propositions and the rest of the results in
   vectors.
 \end{proposition}
 
-Since our task will be to minimize $F_0$ and $F_1$ over a convex set,
-$\Delta^n$, we are interested in determining whether $F_0$ and $F_1$
-are convex themselves. The next two lemmas address this point. There
-is some question as to whether $F_0$ and $F_1$ are strictly convex or
-just convex. This relates to the definiteness of their Hessians,
-computed above. The conditions that $\hat{p}, p_0, \hdots, p_d$
-correspond to a nondegenerate simplex---i.e, $\set{p_i}$ is linearly
-independent---and that $\smin = \min_\calG s > 0$ are sufficient in
-this case.
+Our task is to minimize $F_0$ and $F_1$ over the convex set
+$\Delta^n$; so, we need to determine whether $F_0$ and $F_1$ are
+convex themselves. The next two lemmas address this point. We also
+examine whether $F_0$ and $F_1$ are strictly convex or just
+convex. This relates to the definiteness of their Hessians, computed
+above.
 
 \begin{lemma}\label{lemma:dPt-cprojp-dP-pd}
-  Let $\set{p_i}$ form a nondegenerate simplex together with $\hat{p}$
-  and assume that $\smin > 0$. Then, $\nabla^2 F_0$ is positive
+  Let $p_0, \hdots, p_d$ form a nondegenerate simplex (i.e.,
+  $p_0, \hdots, p_d$ are linearly independent) together with $\hat{p}$
+  and assume that $s$ is positive. Then, $\nabla^2 F_0$ is positive
   definite and $F_0$ is strictly convex.
 \end{lemma}
 
 For $F_1$, we can only obtain convexity (let alone strict convexity)
-as $h \to 0$. For large enough $h$, we will encounter nonconvex
-updates. To obtain convexity, we need to stipulate that the slowness
-function $s$ be Lipschitz continuous on $\Omega$ with a Lipschitz
-constant that is constant independent of $h$. In practice, we have not
-found this to be much of a restriction.
+for $h$ sufficiently small. For large enough $h$, we will encounter
+nonconvex updates. To obtain convexity, we need to stipulate that the
+slowness function $s$ be Lipschitz continuous on $\Omega$ with a
+Lipschitz constant that is constant independent of $h$. In practice,
+we have not found this to be a particularly stringent restriction.
 
 \begin{lemma}\label{lemma:F-strictly-convex}
-  Again, assume that the update simplex is nondegenerate and
-  $\smin > 0$. Additionally, assume that $s$ is Lipschitz continuous
+  Again, assume that the update simplex is nondegenerate and that $s$
+  is positive. Additionally, assume that $s$ is Lipschitz continuous
   with Lipschitz constant $K \leq C$ on $\Omega$, for some constant
   $C > 0$ independent of $h$. Then, $\nabla^2 F_1$ is positive
-  definite as $h \to 0$; hence, $F_1$ is strictly convex as $h \to 0$.
+  definite (hence, $F_1$ is strictly convex) for $h$ small enough.
 \end{lemma}
 
 We have found that all \texttt{mp1} updates become strictly convex
-problems rapidly as $h \to 0$.
+problems rapidly as $h \to 0$. The reason for this is discussed at the
+end of \cref{ssec:causality}.
 
 \subsection{Validation of \texttt{mp0}}\label{ssec:validation}
 
 If we consider an update simplex defined by the nodes
 $p_0, \hdots, p_{n-1}$, each subset of these nodes defines another,
-lower-dimensional update simplex. For example, the three triangle
-updates forming the boundary of a single tetrahedron update. We expect
-the values of $F_i$ to be the same when defined on one or another
-update simplex, and to be continuous as we transfer between simplexes
-that share a common boundary. For $F_1$ this is the case, but for
-$F_0$ with $\theta \neq 0$, the function $F_0$ may not be well-defined
-at boundaries or continuous from simplex to simplex. This problem can
-lead to inconsistent and divergent solvers. A heuristic fix is to
-first minimize \cref{eq:constrained-minimization} for $F_0$ with
-nonzero $\theta$ to obtain the minimizing argument $\lambda^*_0$, then
-set $\hat{U} = F_1(\lambda_0^*)$; i.e., to replace $F_0$ with $F_1$
-for the purposes of evaluation.
+lower-dimensional update simplex, which lies on the boundary of the
+original simplex. For example, three triangle updates form the
+boundary of a single tetrahedron update. We expect the values of $F_i$
+to be the same whether defined on one or another incident update
+simplex, and to be continuous as we transfer between simplexes that
+share a common boundary. For $F_1$ this is the case, but for $F_0$
+with $\theta \neq 0$, the function $F_0$ may not be well-defined or
+continuous at boundaries. This problem can lead to inconsistent and
+divergent solvers. A heuristic fix is to first minimize
+\cref{eq:constrained-minimization} for $F_0$ with nonzero $\theta$ to
+obtain the minimizing argument $\lambda^*_0$, then set
+$\hat{U} = F_1(\lambda_0^*)$; i.e., to replace $F_0$ with $F_1$ for
+the purposes of evaluation, or to use $F_0$ as a surrogate when
+minimizing $F_1$.
 
-If we apply Newton's method to the minimization of $F_1$, starting at
+If we use Newton's method to minimize $F_1$, starting from
 $\lambda_0^*$ and letting $\lambda_1^*$ denote the optimum of
-\cref{eq:constrained-minimization} with $i = 1$, then we can use use
-the convergence theory of Newton's method to prove the following
-result which bounds the distance between $\lambda_0^*$ and
-$\lambda_1^*$, thereby bounding the error incurred by using
-\texttt{mp0} instead of \texttt{mp1}~\cite{stoer2013introduction}.
+\cref{eq:constrained-minimization} for $F_1$, then we can use use the
+convergence theory of Newton's method to prove the following result
+which bounds the distance between $\lambda_0^*$ and $\lambda_1^*$,
+thereby bounding the error incurred by using \texttt{mp0} instead of
+\texttt{mp1}~\cite{stoer2013introduction}.
 
 \begin{theorem}\label{theorem:mp0-newton}
-  Let $h$ be sufficiently small so that $F_1$ is strictly convex by
-  \cref{lemma:F-strictly-convex}. Then, the perturbation
+  Let $h$ be sufficiently small so that $F_1$ is strictly convex (see
+  \cref{lemma:F-strictly-convex}). Then, the error
   $\dellam^* = \lambda_1^* - \lambda_0^*$ satisfies
-  $\norm{\dellam^*} = O(h)$. Additionally, if we let
+  $\norm{\dellam^*} = O(h)$. Further, if we let
   $\lambda_0 = \lambda_0^*$ in the following Newton iteration:
   \begin{equation}
     \label{eq:lam0-iter-to-lam1}
@@ -286,47 +288,47 @@ $\lambda_1^*$, thereby bounding the error incurred by using
   \cref{app:validation-proofs}.
 \end{proof}
 
-This bound is satisfactory in the following way: if we assume that our
-domain is spanned along a diameter by $O(N)$ nodes, and that
-$h \sim N^{-1}$, then we can anticipate $O(N)$ downwind updates,
-starting from $\boundary$ and extending to the boundary of
-$\calG$. Accumulating the error over these nodes, we can expect the
-maximum pointwise error between a solution to \cref{eq:eikonal}
-computed by using \texttt{mp0} and \texttt{mp1} to be $O(h^2)$, which
-is dominated by the $O(h)$ discretization error coming from the linear
-convergence of the method itself.
+We can provide some intuition for why this bound is satisfactory. If
+we assume that our domain is spanned along a diameter by $O(N)$ nodes,
+and that $h \sim N^{-1}$, then we can anticipate $O(N)$ downwind
+updates, starting from $\boundary$ and extending to the boundary of
+$\calG$ in any direction. Accumulating the error over these nodes, we
+can expect the maximum pointwise error between a solution to
+\cref{eq:eikonal} computed by using \texttt{mp0} and \texttt{mp1} to
+be $O(h^2)$, which is dominated by the $O(h)$ discretization error
+coming from the linear convergence of the method itself.
 
-Also, note that if we exchange the roles of $F_0$ and $F_1$---i.e., if
-we start from $\lambda_1^*$ and perform a Newton iteration on
-$\nabla F_0$---we can obtain the foregoing error bound again, and
-possibly with less effort. The main reason to start from $\lambda_0^*$
-and drive to $\lambda_1^*$ is that it allows us to use \texttt{mp0} to
-initialize \texttt{mp1}. Indeed, in the next section, we will see that
-it is possible to perform \texttt{mp0} updates without resorting to a
-nonlinear solver, but that this is not the case for \texttt{mp1}. For
-$d = 0, 1$, this is unimportant, but in higher dimensions especially,
-minimizing $F_0$ should be cheaper. Reducing the number of $F_1$
-update iterations leads to a sped-up method with the same accuracy.
+If we exchange the roles of $F_0$ and $F_1$ (if we start from
+$\lambda_1^*$ and perform a Newton iteration on $\nabla F_0$) we can
+obtain the foregoing error bound again. The main reason to start from
+$\lambda_0^*$ and iterate to $\lambda_1^*$ is that it allows us to use
+\texttt{mp0} to initialize \texttt{mp1}. Indeed, in the next section,
+we will see that it is possible to perform \texttt{mp0} updates
+without resorting to a nonlinear solver, but that this is not the case
+for \texttt{mp1}. For $d = 0$, this is unimportant, but for
+$d \geq 1$, minimizing $F_0$ can be cheaper. Reducing the number of
+$F_1$ update iterations leads to a sped-up method with the same
+accuracy.
 
 \subsection{Exact solution for \texttt{rhr} and \texttt{mp0}}\label{ssec:exact-soln}
 
 Since $F_0$ is strictly convex, $\nabla F_0(\lambda) = 0$ is
-sufficient for optimality of $\lambda$. The system of nonlinear
+sufficient for the optimality of $\lambda$. The system of nonlinear
 equations defined by $\nabla F_0(\lambda) = 0$ can be solved exactly
-without appealing to an iterative solver. We can compute the solution
-from the reduced QR decomposition of $\delP$ and some geometric
+without an iterative solver. We can compute the solution using the
+reduced QR decomposition of $\delP$ and after some geometric
 consideration of the minimization problem. This is captured by the
 following theorem, with the geometry of the problem is depicted in
 \cref{fig:f0-exact}.
 
 \begin{theorem}\label{thm:f0-exact}
-  Let $\delP = QR$ be the reduced QR decomposition of $\delP$;
-  i.e., such that
+  Let $\delP = QR$ be the reduced QR decomposition of $\delP$; i.e.,
+  where
   $Q \in \mathbb{R}^{n \times d}, R \in \mathbb{R}^{d \times d},
-  Q^\top Q = I_d$, and such that $R$ is upper triangular. For
-  $s^\theta, h$, and $U$ fixed, if
+  Q^\top Q = I_d$, and with $R$ upper triangular. For $s^\theta, h$,
+  and $U$ fixed, if
   $\lambda^* = \argmin_{\lambda \in \mathbb{R}^n}
-  F_0^\theta(\lambda)$, we have:
+  F_0^\theta(\lambda)$, then:
   \begin{align}
     l_{\lambda^*} &= \sqrt{\frac{p_0^\top {(I - QQ^\top)} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},\label{eq:l-star-expression} \\
     \lambda^* &= -R^{-1} \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delU}{s^\theta h}},\label{eq:f0-exact-lambda} \\ 
@@ -349,30 +351,30 @@ satisfies:
   U_i - \hat{U} = \nabla \hat{U}^\top p_i.
 \end{equation}
 This finite difference approximation to \cref{eq:eikonal} can be
-solved exactly and is a generalization of the upwind finite difference
-scheme used by the fast marching method to an unstructured
+solved exactly and is a known generalization of the upwind finite
+difference scheme used by the fast marching method to an unstructured
 mesh~\cite{kimmel1998computing,sethian2000fast}. Computing $\hat{U}$
-using this approximation turns out to be equivalent to solving:
+using this approximation is equivalent to solving:
 \begin{equation}
   \hat{U} = \min_{\lambda \in \Delta^n} F_0(\lambda)
 \end{equation}
 in a sense made precise by the following theorem.
 
 \begin{theorem}[Equivalence of upwind finite difference scheme and $F_0$]\label{thm:equivalence}
-  Let $\hat{U}$ by the finite difference solution and let
-  $\hat{U}' = \min_{\lambda \in \R^n} F_0(\lambda)$. Then, $\hat{U}$
-  exists if and only if $\|R^{-\top} \delU\| \leq s^\theta h$
-  holds; when this is the case, $\hat{U}$ can be computed from:
+  Let $\hat{U}$ by the solution of \cref{eq:finite-differences} and
+  let $\hat{U}' = \min_{\lambda \in \R^n} F_0(\lambda)$. Then,
+  $\hat{U}$ exists if and only if
+  $\|R^{-\top} \delU\| \leq s^\theta h$, and can be computed from:
   \begin{equation}
     \label{eq:U-finite-diff}
     \hat{U} = U_i - p_i^\top Q R^{-\top} \delU + \norm{\pmin} \sqrt{{(s^\theta h)}^2 - \norm{R^{-\top} \delU}^2},
   \end{equation}
   where $\pmin = (I - QQ^\top) p_i$ (for any $i$, see
-  \cref{fig:f0-exact} in \cref{sec:exact-soln-proofs}) and the
-  following properties hold:
+  \cref{fig:f0-exact} in \cref{sec:exact-soln-proofs}). Additionally,
+  the following hold:
   \begin{enumerate}
   \item The finite difference solution and line integral solution
-    coincide. That is, $\hat{U} = \hat{U}'$ can be computed from:
+    coincide: i.e., $\hat{U} = \hat{U}'$ can be computed from:
     \begin{equation}
       \label{eq:U-from-Ui-exact}
       \hat{U} = U_i + s^\theta h p_i^\top \nu_{\lambda^*},
@@ -382,7 +384,7 @@ in a sense made precise by the following theorem.
   \item The characteristics found by solving the finite difference
     problem and minimizing $F_i$ coincide and are given by
     $[p_{\lambda^*}, \hat{p}] = [p_{\lambda^*}, 0]$.
-  \item In either case, the characteristic passes through
+  \item The approximated characteristic passes through
     $\conv(\set{p_0, \hdots, p_{n-1}})$ if and only if
     $\lambda^* \in \Delta^n$.
   \end{enumerate}
@@ -409,32 +411,39 @@ and 3D. We consider many different update neighborhoods involving
 geometrically distinct simplexes. To this end, we provide a simple way
 of checking whether each simplex is causal.
 
-Since we deal with causality simplex by simplex, we will refer to each
-update simplex being causal or not. Since we assume $\hat{p} = 0$,
-whether or not each simplex is causal depends only on the vertices
-$p_0, \hdots, p_{n-1}$. So, we call a simplex causal for $F_i$ if:
+The causality of an update depends on the underlying simplex and the
+problem data. In particular, an update is causal for $F_i$ if:
 \begin{equation}
   \hat{U} = F_i(\lambda_i^*) \geq \max_i U_i.
 \end{equation}
-Another important property is the ``update gap'': the difference
-$\hat{U} - \max_i U_i$. Discussed in Tsitsiklis's original
-paper~\cite{tsitsiklis1995efficient}, an alternative to Dijkstra's
-algorithm is Dial's algorithm---a bucketed variant of Dijkstra's
-algorithm which runs in $O(N)$ time, where the constant depends on the
-bucket size~\cite{dial1969algorithm,kim2001calo}. In this case, the
-size of the buckets is determined by the update gap. In the next
-theorem, we present a simple characterization of causality and a way
-to compute the update gap.
+It is enough to determine whether or not each type of update simplex
+admits only causal updates, which relates to whether the simplex is
+acute.
 
+We also consider something we refer to here as the ``update gap'': the
+difference $\hat{U} - \max_i U_i$. As discussed in Tsitsiklis's
+original paper~\cite{tsitsiklis1995efficient}, an alternative to
+Dijkstra's algorithm is Dial's algorithm---a bucketed version of
+Dijkstra's algorithm which runs in $O(N)$ time, where the constant
+depends on the bucket size~\cite{dial1969algorithm,kim2001calo}. In
+this case, the size of the buckets is determined by the update gap. It
+is unclear whether there is any real advantage of a Dial-like solver
+(see~\cite{jeong2008fast} for a discussion). We present numerical
+evidence suggesting that this is not the case in (\textbf{TODO}: cite
+subsection). Despite this, the update gap is of fundamental importance
+and limits the number of nodes that can be processed in parallel
+without breaking causality.
+
+We now present a simple characterization of causality and a way to
+compute the update gap.
 \begin{theorem}\label{thm:causality}
   An update simplex is causal for $F_0$ if and only if
   $\nu_i^\top \nu_j \geq 0$ for all $i$ and $j$ such that
   $0 \leq i < n$ and $0 \leq j < n$. If we assume that $s$ is
-  Lipschitz continuous, there exists some $\hthresh > 0$ such that for
-  all $h < \hthresh$, if the same assumption holds, then the simplex
-  is also causal for $F_1$, and the term in $F_1$ which prevents an
-  update from being causal decays with order $O(h^2)$. Furthermore,
-  the update gap is given explicitly by:
+  Lipschitz continuous, for $h$ small enough, the simplex is also
+  causal for $F_1$, and the term in $F_1$ which prevents an update
+  from being causal decays with order $O(h^2)$. Furthermore, the
+  update gap is given explicitly by:
   \begin{equation}
     \hat{U} - \max_i U_i = s^\theta h \min_{i, j} \frac{\nu_i^\top \nu_j}{\norm{p_i}}.
   \end{equation}
