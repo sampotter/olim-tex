@@ -18,7 +18,13 @@ acoustics~\cite{prislan2016ray}, which are key to enabling a higher
 degree of verisimilitude in virtual reality simulations
 (see~\cite{raghuvanshi2014parametric,raghuvanshi2018parametric} for a
 cutting-edge time-domain approach); higher accuracy leads to more
-faithful results, and fast algorithms allow for more economical use.
+faithful results, and fast algorithms allow for more economical
+use. Current approaches to acoustics simulations rely on methods whose
+complexity depends on the highest frequency of the sound being
+simulated. For moderately high-frequency wave propagation problems,
+the eikonal equation comes about as the first term in an asymptotic
+expansion of the Helmholtz equation and corresponds to the first
+arrival time of rays propagating under geometric optics.
 
 \subsection{Results}
 
@@ -48,7 +54,7 @@ to recover $O(h)$ convergence.
 Our main results are as follows:
 \begin{itemize}
 \item For 3D problems, we develop two separate algorithms: a
-  \emph{bottom-up} (\texttt{olimhu}) algorithm, and a \emph{top-down}
+  \emph{bottom-up} (\texttt{olimbu}) algorithm, and a \emph{top-down}
   algorithm (\texttt{olim\emph{N}}, where \texttt{\emph{N}}
   \hspace{-0.1em}$=6,18,26$ is the size of neighborhood used). Each
   algorithm locally updates a grid point by performing a minimal
@@ -56,15 +62,16 @@ Our main results are as follows:
   quadrature rule, each update is calculated by solving a system of
   nonlinear equations either directly (\texttt{rhr} and \texttt{mp0})
   or iteratively (\texttt{mp1}).
-\item We note that this work was done in tandem with work constructing
+\item We note that this work was done in tandem with research on
   ordered line integral methods for computing the quasipotential for
   nongradient stochastic differential equations
   (SDEs)~\cite{dahiya2017ordered,yang2018computing,dahiya2018ordered}. Unlike
   the quasipotential, the eikonal equation is simple enough to allow
-  us to analyze and justify our algorithms. We show how our quadrature
-  rules relate to one another, rigorously justifying the \texttt{mp0}
-  rule, and establishing it as preferable to \texttt{mp1} in most
-  cases.
+  us to analyze and justify our algorithms. We are also able to obtain
+  simpler solution methods and established performance guarantees. We
+  show how our quadrature rules relate to one another, rigorously
+  justifying the \texttt{mp0} rule, and establishing it as preferable
+  to \texttt{mp1} in most cases.
 \item We conduct extensive numerical tests on a variety of problems,
   including point source problems for different slowness (index of
   refraction) functions, and multiple point source problems with a

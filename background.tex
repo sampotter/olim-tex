@@ -34,14 +34,14 @@ equation is:
 \end{equation}
 where $s : \Omega \to \R_+$ is a fixed, nonnegative \emph{slowness
   function}, which forms part of the problem data. Hence, we solve for
-$u : \Omega \to \overline{\R}_+$. The rest of the problem data is a
+$u : \Omega \to \R_+$. The rest of the problem data is a
 subset $D \subset \Omega$ where $u$ has been fixed; i.e.,
-$\left. u \right|_D = g$ for some $g : D \to \overline{\R}_+$. As an
+$\left. u \right|_D = g$ for some $g : D \to \R_+$. As an
 example, if $s \equiv 1$ and $g \equiv 0$, then the solution of
 \cref{eq:eikonal} is:
 \begin{equation}
   \label{eq:distance-to-Omega}
-  u(x) = d(x, D) = \inf_{y \in \Omega} \norm{x - y}_2.
+  u(x) = d(x, D) = \min_{y \in D} \norm{x - y}_2.
 \end{equation}
 That is, $u$ is the distance to $D$ at each point in
 $\Omega$. 
@@ -49,9 +49,8 @@ $\Omega$.
 To numerically solve \cref{eq:eikonal}, first let
 $\calG = \{p_i\} \subseteq \Omega$ be the set or grid of \emph{nodes}
 where we would like to approximate the true solution $u$ with a
-numerical solution $U : \calG \to
-\overline{\mathbb{R}}_+$. Additionally, for each node $p \in \calG$,
-define a set of neighbors,
+numerical solution $U : \calG \to \R_+$. Additionally, for each node
+$p \in \calG$, define a set of neighbors,
 $\neib(p) \subseteq \calG \backslash \set{p}$. Typically---for the FMM
 and \texttt{olim6}, for instance---$\calG$ is taken to be a subset of
 a lattice in $\R^n$ and $\neib(p)$ to be each node's $2n$ cardinal
@@ -60,10 +59,10 @@ neighbors. With $\calG$ defined, we also define the set of
 the set $\boundary$ and $D$ do not coincide (e.g., $D$ could be a
 curve which does not intersect $\calG$); to reconcile this difference,
 the initial value of $U(p)$ for each $p \in \boundary$ must take
-$g = \left. u \right|_D \geq 0$ into account in the best way
-possible. This problem has been approached in different ways, and is
-not the focus of the present work~\cite{chopp2001some}. Throughout, we
-will assume $\boundary = D \subseteq \calG$.
+$g = \left. u \right|_D$ into account in the best way possible. This
+problem has been approached in different ways, and is not the focus of
+the present work~\cite{chopp2001some}. Throughout, we will assume
+$\boundary = D \subseteq \calG$.
 
 \subsection{Dijkstra-like algorithms}\label{ssec:dijkstra-like}
 If we order nodes in $\mathcal{G}$ so that new solution values are
@@ -71,11 +70,10 @@ only ever computed using upwind nodes, the eikonal equation can be
 solved directly; i.e., without the use of an iterative solver. This is
 done using a variant of Dijkstra's algorithm for finding shortest
 paths in a network. Other algorithms which solve similar network flow
-problems can also be used, but have different complexity guarantees
----see~\cite{chacon2012fast} for a review. In particular, Dijkstra's
-algorithm is a type of \emph{label-setting method} for finding
-shortest paths in a network; there are also \emph{label-correcting
-  methods}.
+problems can also be used, but have different complexity
+guarantees~\cite{chacon2012fast}. In particular, Dijkstra's algorithm
+is a type of \emph{label-setting method} for finding shortest paths in
+a network; there are also \emph{label-correcting methods}.
 
 Using Dijkstra's algorithm to solve a ``continuous shortest path''
 problem has been discovered in several contexts. The earliest such
@@ -115,7 +113,7 @@ high-level description of the algorithm:
   \item While there are \texttt{trial} nodes left in $\calG$:
     \begin{enumerate}[nolistsep]
     \item Let $p$ be the \texttt{trial} node in \texttt{front} with
-      the smallest value $U(p)$.
+      the smallest value $U(p)$.\label{enum:get-node}
     \item Set $p$\texttt{.state} $\gets$ \texttt{valid} and remove $p$
       from \texttt{front}.
     \item For each $\hat{p} \in \neib(p)$, set
@@ -142,20 +140,15 @@ combines nodes in \texttt{valid} into sets whose convex hulls
 approximate the surface of the expanding wavefront and then solves
 local raytracing problems where rays emanate from these surfaces. The
 method presented here operates in the same way (see
-\cref{fig:overview}). As an aside, one detail of
-\cref{alg:dijkstra-like} that is frequently overlooked in the
-literature is how $p$\texttt{.state} is implemented---we explore this
-implementation detail and how it can significantly impact the
-performance characteristics of a Dijkstra-like algorithm in
-\cref{sec:numerical-results}. For specific details, a general
-reference should be consulted~\cite{sethian1999level}. In addition to
+\cref{fig:overview}). For specific details, a general reference should
+be consulted~\cite{sethian1999level}. In addition to
 \cref{enum:update-U}, algorithm \cref{alg:dijkstra-like} is generic in
 the following ways:
 \begin{itemize}
 \item As we mentioned before, there are different ways of computing
   $\boundary$ and subsequently approximating the initial value of $U$
   for $p \in \boundary$ using
-  $g = \left. u \right|_D$~\cite{chopp2001some}.
+  $g = \left. u \right|_D$~\cite{chopp2001some}
 \item How we keep track of the node with the smallest value is
   variable: most frequently, as in Dijkstra's algorithm, a heap
   storing pointers to the nodes is used, leading to $O(N \log N)$
@@ -175,10 +168,11 @@ the following ways:
 Other problems can be solved using Dijkstra-like algorithms: the
 static Hamilton-Jacobi equation, an anisotropic generalization of the
 eikonal equation, can be solved using the ordered upwind
-method~\cite{sethian2003ordered}. Consequently, the quasipotential of
-a nongradient stochastic differential equation can be computed using
-the ordered line integral method, although the considerations may be
-more
+method~\cite{sethian2003ordered} and other recently introduced
+methods~\cite{mirebeau2014efficient,mirebeau2014anisotropic}. Consequently,
+the quasipotential of a nongradient stochastic differential equation
+can be computed using the ordered line integral method, although the
+considerations may be more
 involved~\cite{dahiya2017ordered,dahiya2018ordered,yang2018computing}.
 
 \subsection{Fast sweeping methods} Another approach to solving a

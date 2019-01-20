@@ -62,7 +62,7 @@ of \cref{eq:action-functional}. We then present theoretical results.
     in a tetrahedron update.}\label{fig:simplex-diagrams}
 \end{figure}
 
-\subsection{Notation}
+\subsection{Notation}\label{ssec:notation}
 
 When numerically minimizing \cref{eq:action-functional}, we minimize a
 line integral whose starting point is constrained to lie on the base
@@ -119,30 +119,28 @@ and define the matrix:
 \begin{equation}
   \delP = \begin{bmatrix} \delp_1 & \cdots & \delp_d \end{bmatrix} \in \R^{n \times d},
 \end{equation}
-so that we can write $p_\lambda = \delP \lambda + p_0$. Along the
-same lines, $U_\lambda = U_0 + \delU^\top \lambda$, where
+so that we can write $p_\lambda = p_0 + \delP \lambda$. Along the same
+lines, $U_\lambda = U_0 + \delU^\top \lambda$, where
 $\delU_i = U_i - U_0$; we also define
-$s_\lambda = s_0 + \dels^\top \lambda$, where
-$\dels_i = s_i - s_0$. Although the slowness function $s$ may be
-available to us in analytic form, we assume that it is only available
-on the nodes in $\calG$ to reflect use in real-world applications
-(e.g., $s$ will most likely be presented to use on a grid as some
-form.
+$s_\lambda = s_0 + \dels^\top \lambda$, where $\dels_i = s_i -
+s_0$. Although the slowness function $s$ may be available to us in
+analytic form, we assume that it is only available on the nodes in
+$\calG$ to reflect use in real-world applications (e.g., $s$ will most
+likely be presented to us as gridded data of some sort).
 
 \subsection{Quadrature}\label{ssec:quadrature}
 
-To minimize \cref{eq:action-functional}, we assume that $\alpha$ is a
-line segment parametrized by arc length and then apply several
-different one-point quadrature rules to the resulting integral. If
-$\alpha$ is a line segment connecting $p_\lambda$ and $\hat{p} = 0$,
-then:
+To approximately minimize \cref{eq:action-functional}, we assume that
+$\alpha$ is a line segment parametrized by arc length and then apply
+several different one-point quadrature rules to the resulting
+integral. If $\alpha$ is a straight line segment connecting
+$p_\lambda$ and $\hat{p} = 0$ and $l_\lambda = \|p_\lambda\|_2$, then:
 \begin{equation}
   \label{eq:action-functional-line-segment}
-  \hat{U} = U(\hat{p}) = \min_{\lambda \in \Delta^d} \set{U_\lambda + h \int_{[p_\lambda, 0]} s(\alpha(t))dt}.
+  \hat{U} = U(\hat{p}) = \min_{\lambda \in \Delta^d} \set{U_\lambda + h \int_0^{l_\lambda} s(\alpha(t))dt}.
 \end{equation}
 We consider two approximations to
-\cref{eq:action-functional-line-segment}. Let
-$l_\lambda = \norm{p_\lambda}_2$. For $\theta$ such that
+\cref{eq:action-functional-line-segment}. For $\theta$ such that
 $0 \leq \theta \leq 1$, we define:
 \begin{align}
   F_0(\lambda) = F_0^\theta(\lambda) &= U_\lambda + s^{\theta} h l_\lambda := U_\lambda + \squareb{(1-\theta)\hat{s} + \frac{\theta}{d + 1} \sum_{i=0}^d s_i} h l_\lambda, \label{eq:f0-definition} \\
@@ -258,15 +256,14 @@ minimizing $F_1$.
 
 If we use Newton's method to minimize $F_1$, starting from
 $\lambda_0^*$ and letting $\lambda_1^*$ denote the optimum of
-\cref{eq:constrained-minimization} for $F_1$, then we can use use the
-convergence theory of Newton's method to prove the following result
-which bounds the distance between $\lambda_0^*$ and $\lambda_1^*$,
-thereby bounding the error incurred by using \texttt{mp0} instead of
-\texttt{mp1}~\cite{stoer2013introduction}.
+\cref{eq:constrained-minimization} for $F_1$, then we can use the
+convergence theory of Newton's method to bound the distance between
+$\lambda_0^*$ and $\lambda_1^*$, thereby bounding the error incurred
+by using \texttt{mp0} instead of \texttt{mp1}.
 
 \begin{theorem}\label{theorem:mp0-newton}
-  Let $h$ be sufficiently small so that $F_1$ is strictly convex (see
-  \cref{lemma:F-strictly-convex}). Then, the error
+  Using \cref{lemma:F-strictly-convex}, let $h$ be sufficiently small
+  so that $F_1$ is strictly convex. Then, the error
   $\dellam^* = \lambda_1^* - \lambda_0^*$ satisfies
   $\norm{\dellam^*} = O(h)$. Further, if we let
   $\lambda_0 = \lambda_0^*$ in the following Newton iteration:
@@ -296,30 +293,33 @@ $\calG$ in any direction. Accumulating the error over these nodes, we
 can expect the maximum pointwise error between a solution to
 \cref{eq:eikonal} computed by using \texttt{mp0} and \texttt{mp1} to
 be $O(h^2)$, which is dominated by the $O(h)$ discretization error
-coming from the linear convergence of the method itself.
+coming from the linear convergence of the method itself. Hence, using
+\texttt{mp0} instead of \texttt{mp1} should introduce no significant
+error.
 
-If we exchange the roles of $F_0$ and $F_1$ (if we start from
-$\lambda_1^*$ and perform a Newton iteration on $\nabla F_0$) we can
-obtain the foregoing error bound again. The main reason to start from
-$\lambda_0^*$ and iterate to $\lambda_1^*$ is that it allows us to use
-\texttt{mp0} to initialize \texttt{mp1}. Indeed, in the next section,
-we will see that it is possible to perform \texttt{mp0} updates
-without resorting to a nonlinear solver, but that this is not the case
-for \texttt{mp1}. For $d = 0$, this is unimportant, but for
-$d \geq 1$, minimizing $F_0$ can be cheaper. Reducing the number of
-$F_1$ update iterations leads to a sped-up method with the same
-accuracy.
+% If we exchange the roles of $F_0$ and $F_1$ (if we start from
+% $\lambda_1^*$ and perform a Newton iteration on $\nabla F_0$) we can
+% obtain the foregoing error bound again. The main reason to start from
+% $\lambda_0^*$ and iterate to $\lambda_1^*$ is that it allows us to use
+% \texttt{mp0} to initialize \texttt{mp1}. Indeed, in the next section,
+% we will see that it is possible to perform \texttt{mp0} updates
+% without resorting to a nonlinear solver, but that this is not the case
+% for \texttt{mp1}. For $d = 0$, this is unimportant, but for
+% $d \geq 1$, minimizing $F_0$ can be cheaper. Reducing the number of
+% $F_1$ update iterations leads to a sped-up method with the same
+% accuracy.
 
 \subsection{Exact solution for \texttt{rhr} and \texttt{mp0}}\label{ssec:exact-soln}
 
 Since $F_0$ is strictly convex, $\nabla F_0(\lambda) = 0$ is
-sufficient for the optimality of $\lambda$. The system of nonlinear
-equations defined by $\nabla F_0(\lambda) = 0$ can be solved exactly
-without an iterative solver. We can compute the solution using the
-reduced QR decomposition of $\delP$ and after some geometric
-consideration of the minimization problem. This is captured by the
-following theorem, with the geometry of the problem is depicted in
-\cref{fig:f0-exact}.
+sufficient for the optimality of $\lambda$, if we ignore the
+constraint $\lambda \in \Delta^d$. The unconstrained system of
+nonlinear equations defined by $\nabla F_0(\lambda) = 0$ can be solved
+exactly without an iterative solver. We can compute the solution using
+the reduced QR decomposition of $\delP$ and by consider the problem's
+geometry (see \cref{fig:f0-exact}). This is captured in the following
+theorem. We will discuss how to use this theorem efficiently in a
+solver in \cref{ssec:algorithms-and-skipping}.
 
 \begin{theorem}\label{thm:f0-exact}
   Let $\delP = QR$ be the reduced QR decomposition of $\delP$; i.e.,
@@ -428,14 +428,14 @@ Dijkstra's algorithm which runs in $O(N)$ time, where the constant
 depends on the bucket size~\cite{dial1969algorithm,kim2001calo}. In
 this case, the size of the buckets is determined by the update gap. It
 is unclear whether there is any real advantage of a Dial-like solver
-(see~\cite{jeong2008fast} for a discussion). We present numerical
-evidence suggesting that this is not the case in (\textbf{TODO}: cite
-subsection). Despite this, the update gap is of fundamental importance
-and limits the number of nodes that can be processed in parallel
-without breaking causality.
+(see~\cite{jeong2008fast} for a discussion); indeed, we present
+numerical evidence suggesting that this is not the case in
+\cref{ssec:impl-notes}. Despite this, the update gap is of fundamental
+importance and limits the number of nodes that can be processed in
+parallel without violating causality.
 
-We now present a simple characterization of causality and a way to
-compute the update gap.
+We now present a simple characterization of causality and a formula
+for computing the update gap.
 \begin{theorem}\label{thm:causality}
   An update simplex is causal for $F_0$ if and only if
   $\nu_i^\top \nu_j \geq 0$ for all $i$ and $j$ such that
@@ -456,6 +456,90 @@ compute the update gap.
 \noindent The fact that the term in $F_1$ which can prevent causality
 for large $h$ is $O(h^2)$ accounts for the phenomenon that for all
 practical problem sizes the method is causal and converges.
+
+\subsection{Local factoring}
+
+Near rarefaction fans, for example if $D$ is a point source or the
+domain contains obstacles with corners, the rate of convergence of the
+eikonal equation is diminished. For the eikonal equation with point
+source data and constant slowness, this degrades the rate of
+convergence to $O(h \log h^{-1})$~\cite{qi2018corner}. Different
+factored eikonal equations which treat this problem have been
+developed~\cite{fomel2009fast,luo2012fast}. In this section, we show
+how the ordered line integral method can be easily adapted to additive
+factoring, and provide numerical tests that show that it recovers the
+expected linear rate of convergence for factored problems. Our focus
+is locally factored point sources, but this approach can be applied to
+the globally factored equation and other types of rarefaction fans
+occuring at corners or discontinuities~\cite{qi2018corner}.
+
+\begin{figure}
+  \centering
+  \includegraphics{factoring-example.eps}
+  \caption{Running \texttt{olim4rhr} (or, equivalently, the four-point
+    fast marching method with factoring~\cite{qi2018corner}) for three
+    steps. Ordered clockwise from the top left, the nodes are
+    $p_{0, 0}, p_{0, 1}, p_{1, 1}$, and $p_{1, 0}$, with $h = 1$ (so
+    we assume our domain is identified with $\mathbb{Z}^2$). We assume
+    a constant slowness function: $s \equiv 1$. Initially,
+    $p^\circ = p_{1, 0}$ is the only node in \texttt{bd} and is
+    factored. The first two steps proceed exactly the same as for the
+    unfactored method, since the steps between the source nodes and
+    the updated nodes lie along characteristics of the solution,
+    $u$. In the third step, the unfactored method would set
+    $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. For the factored
+    method, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we find that
+    $U_{0,1} \gets 0 + s^\circ l^\circ_{\nicefrac{1}{2}} + s^\theta h
+    l_{\nicefrac{1}{2}} = \nicefrac{\sqrt{2}}{2} +
+    \nicefrac{\sqrt{2}}{2} = \sqrt{2}$.}\label{fig:factoring-example}
+\end{figure}
+
+Let $x^\circ \in \Omega$ be the location of a point source so that
+$\boundary = \set{x^\circ}$ and let the grid
+$\calG \subseteq \mathbb{Z}^n$ be aligned so that
+$p^\circ \in \mathbb{Z}^n$. For a point $p_\lambda$, define
+$l^\circ_\lambda = \norm{p_\lambda - p^\circ}$ and let
+$s^\circ = s(x^\circ)$. The additive factorization of $U$ around
+$x^\circ$ is~\cite{luo2012fast,qi2018corner}:
+\begin{align}
+  U(x) = T(x) + \tau(x), \qquad \text{where} \qquad T(x) = s^\circ \norm{x - x^\circ},
+\end{align}
+i.e.\ $u_\lambda = T_\lambda + \tau_\lambda$ where
+$T_\lambda = s^\circ h l^\circ_\lambda$. Our original definition of
+$F_i^\theta$ was such that $\hat{U} = F_i^\theta(\lambda^*)$. We will
+define $G_i^\theta$ analogously. Letting
+$\tau_\lambda = \tau_0 + \deltau^\top \lambda$, where $\tau_i$ and
+$T_i$ are the values of $\tau$ and $T$ at $p_i$ for each $i$, we
+define:
+\begin{align}
+  \label{eq:Gi}
+  G_0(\lambda) = G_0^\theta(\lambda) &= \tau_\lambda + T_\lambda + s^\theta h l_\lambda, \\
+  G_1(\lambda) = G_1^\theta(\lambda) &= \tau_\lambda + T_\lambda + s^\theta_\lambda h l_\lambda.
+\end{align}
+Like with $F_0$ and $F_1$, the only difference between
+$G_0$ and $G_1$ is between the terms containing
+$s^\theta$ and $s^\theta_\lambda$.
+
+To solve the factored eikonal equation, we choose a factoring radius
+$\rfac$, replacing $F_i$ with $G_i$ in
+\cref{eq:constrained-minimization} for nodes which lie within a
+distance $\rfac$ of $x^\circ$. For constant slowness, the effect of
+this is to solve \cref{eq:eikonal} exactly inside of the locally
+factored region. For clarity, this is depicted in
+\cref{fig:factoring-example}. \Cref{alg:top-down} can be applied to
+solve \cref{eq:constrained-minimization} for factored nodes. The
+gradient and Hessian of $G_i$ are simple modifications of the gradient
+and Hessian for $F_i$.
+
+\begin{lemma}
+  The gradient and Hessian of $G_i$ for $i = 0, 1$ are given
+  by:
+  \begin{align}
+    \label{eq:G-grad-hess}
+    \nabla G_i(\lambda) &= \nabla F_i(\lambda) - \deltau + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top {(p_\lambda - p^\circ)}, \\
+    \nabla^2 G_i(\lambda) &= \nabla^2 F_i(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top \calP^\perp_{p_\lambda - p^\circ} \delP.
+  \end{align}
+\end{lemma}
 
 \end{document}
 

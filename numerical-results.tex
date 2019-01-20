@@ -7,54 +7,110 @@ section, we collect our numerical tests. We first test our factored
 method on several different slowness functions with available exact
 solutions for point source data. We also test our method on a linear
 speed function (reciprocal of slowness) which has been shown to be
-amenable to local factoring. Finally, we present some statistics on
-the number of different types of updates performed by
-\cref{alg:bottom-up,alg:top-down} to give a more precise understanding
-of the types of updates that make up the majority of each method's
-runtime.
+amenable to local factoring. For each quadrature rule described in
+\cref{ssec:quadrature} (\texttt{mp0}, \texttt{mp1}, or \texttt{rhr}),
+we have two 2D algorithms, \texttt{olim4} and \texttt{olim8},
+corresponding to 4- and 8-point stencils, respectively. Since there is
+no advantage in 2D, we don't apply the top-down or bottom-up
+approaches. In 3D, we have three top-down algorithms: \texttt{olim6}
+(group IVa), \texttt{olim18} (groups I, IVa, and IVb), and
+\texttt{olim26} (group V). We also test the bottom-up algorithm
+\texttt{olimbu} (see \cref{fig:hu-neighborhoods}).
+
+\begin{figure}
+  \centering
+  \includegraphics{speed-comparison.eps}%
+  \vspace{-1.5em}
+  \caption{To see how much of a slowdown we get by using
+    \texttt{olim6\_rhr} instead of the standard fast marching method
+    (noting that they compute the same solution), we compare runtimes
+    on two different computers. The first (labeled ``2.2 GHz'') is a
+    2015 MacBook Air with a 2.2 GHz Intel Core i7 CPU, 8 GB of 1600
+    MHz DDR3 RAM, a 256 KiB L2 cache, and a 4 MiB L3 cache. The second
+    (``4.6 GHz'') is a custom built workstation running Linux with a
+    4.6 GHz Intel Core i7 CPU, 64 GB of 2133 MHz DDR4 RAM, a 1536 KiB
+    L2 cache, and 12 MiB L3 cache. Both computers have L1 instruction
+    caches and data caches that are each 32 KiB. From the plots, we
+    can see that the difference in memory speeds has a significant
+    impact on the relative slowdown.}\label{fig:speed-comparison}%
+  \vspace{-1em}
+  \includegraphics{tasks.eps}%
+  \vspace{-0.5em}
+  \caption{ The percentage of time spent doing different tasks. The
+    ``update'' tasks and ``heap'' tasks are clearly defined, while the
+    ``logic'' task contains a variety of things related to
+    control-flow, finding neighbors, and memory movement---basically,
+    the parts of \cref{alg:dijkstra-like} that don't clearly pertain
+    to computing new $\hat{U}$ values or keeping \texttt{front}
+    updated. From these plots, it is clear that memory speed plays a
+    large role in determining efficiency. To some extent, even though
+    the more complicated update procedures are slower, their slowness
+    is hidden somewhat by memory latency as problem sizes grow. For
+    some problem sizes, ``heap'' takes too little time, and is not
+    picked up by the profiler.}\label{fig:tasks}
+\end{figure}
+
+\subsection{Implementation Notes}\label{ssec:impl-notes}
+
+Before describing our numerical tests, we briefly comment on our
+implementation and make some observations about its
+performance. Different design decisions can be made when implementing
+a Dijkstra-like algorithm which significantly affect its performance
+characteristics. We list the following choices that we made in our
+implementation:
+\begin{itemize}
+\item We precompute and cache all values of $s$ on the grid $\calG$,
+  as opposed to reevaluating $s$ each time a value is needed. We chose
+  to do this we assume that $s$ will generally be provided as gridded
+  input data (consider, e.g., the shape from shading
+  problem~\cite{kimmel2001optimal}, where the input data is an image).
+\item We maintain the front using a priority queue implemented using a
+  array-based binary heap, which is updated using the \texttt{sink}
+  and \texttt{swim} functions described in Sedgewick and
+  Wayne~\cite{sedgewick2011algorithms}.
+\item The \texttt{front} data structure is stored as a dense grid of
+  states: for each node in $p \in \calG$, we keep track of
+  $p$\texttt{.state} for all time. Note that it is possible to
+  maintain a sparse front which saves space but is slower to update.
+\end{itemize}
+
+We use a policy-based design~\cite{alexandrescu2001modern} written in
+the C++ programmed language which makes heavy use of templates. This
+allows us to conditionally compile different features and reuse logic
+to implement different Dijkstra-like algorithms. In particular, we
+implement the standard FMM~\cite{sethian1996fast} and make a direct
+comparison between it and the ordered line integral method which it is
+equivalent to, \texttt{olim6rhr} (see \cref{fig:speed-comparison}). We
+have found that only a modest slowdown is incurred by using
+\texttt{olim6rhr} for problems of moderate size. The disparity between
+the two is greater for smaller problem sizes, which is due to cache
+effects. We can expect the rest of our algorithms to incur a similarly
+modest slowdown. So, in our numerical tests, we only compare results
+among the algorithms mentioned in \cref{ssec:specific-algorithms}.
+
+As a consequence of our design decisions, we note that our solvers
+spend almost no time maintaing the front data structure. Using
+Valgrind~\cite{nethercote2007valgrind}, we profiled running our solver
+on the numerical tests below for different problem sizes and
+categorized the resulting profile data. See \cref{fig:tasks}. The
+``update'' task corresponds to time spent actually computing updates,
+the ``logic'' task is a grab bag category for time spent on program
+logic, and ``heap'' corresponds to updating the array-based heap which
+implements \texttt{front}. Since the asymptotic complexity of the
+``update'' and ``logic'' sections is $O(N)$ in the number of nodes,
+and since ``heap'' is $O(N \log N)$, we can see from \cref{fig:tasks}
+that since so little time is spent updating the heap, the algorithm's
+runtime is better described as linear for practical problem sizes.
 
 \subsection[Single point source]{Nonsymmetric slowness functions with
   a single point source}\label{ssec:point-source-problems}
 
-\begin{table}
-  \centering
-  \begin{tabular}{cccc}
-    Name & $u(x)$ & $s(x)$ \\
-    \midrule
-    \texttt{s0} & $r$ & $1$ \\
-    \texttt{s1} & $\cos(r) + r - 1$ & $1 - \sin(r)$ \\
-    \texttt{s2} & $r^2/2$ & $r$ \\
-    \texttt{s3} & $S^\top A S$ & $\alpha\norm{\operatorname{diag}(C){(A + A^\top)}S}$ \\
-    \texttt{s4} & $\tfrac{1}{2} x^\top A^{1/2} x$, where $A$ is symmetric positive definite & $\norm{x}_A = \sqrt{x^\top A x}$
-  \end{tabular}
-  \caption{Slowness functions used in point source tests. For these
-    definitions, we assume that $x \in \Omega = [-1, 1]^n$, where
-    $n = 2, 3$. Each definition is for $n = 2$ and $n = 3$. We also
-    define $r = \norm{x}$, $S = (\sin(\alpha x_i))_{i=1}^n$, and
-    $C = (\cos(\alpha x_i))_{i=1}^n$. \hl{\textbf{TODO}}:
-    \emph{\texttt{s2}--\texttt{s4} don't have a singularity like
-        \texttt{s0} and \texttt{s1} do and don't need to be factored. We
-        could make these better examples by adding $r$ to \texttt{s2}
-        and replacing \texttt{s3} and \texttt{s4} with their square
-        roots.}}\label{table:slowness-functions}
-\end{table}
-
 Using \cref{eq:eikonal} directly, a simple recipe to create pairs of
-slowness functions $s$ and solutions $u$ is to prescribe a solution
-$u$ and compute $s(x) = \norm{\nabla u(x)}_2$. See
+slowness functions and solutions is to prescribe a solution $u$ and
+compute $s(x) = \norm{\nabla u(x)}_2$. See
 \cref{table:slowness-functions} for slowness function definitions. In
-2D, the matrices we use for \texttt{s3} and \texttt{s4} are:
-\begin{equation}
-  A_{\texttt{s3}} = \begin{bmatrix}
-    2 & 1 \\
-    1 & \nicefrac{1}{2}
-  \end{bmatrix}, \qquad A^{1/2}_{\texttt{s4}} = \begin{bmatrix}
-    \nicefrac{2}{3} & \nicefrac{-1}{2} \\
-    \nicefrac{-1}{2} & 1
-  \end{bmatrix},
-\end{equation}
-and in 3D:
-\begin{equation}
+3D, the matrix we use for \texttt{s3} and \texttt{s4}
+is:\begin{equation}
   A_{\texttt{s3}} = \begin{bmatrix}
     1 & \nicefrac{1}{4} & \nicefrac{1}{8} \\
     \nicefrac{1}{4} & 1 & \nicefrac{1}{4} \\
@@ -62,25 +118,55 @@ and in 3D:
   \end{bmatrix} = A_{\texttt{s4}}^{1/2}
 \end{equation}
 Plots collecting our numerical results are contained in
-\cref{sec:point-source-plots}. For the algorithms listed in
-\cref{ssec:specific-algorithms}, we include plots of relative $\ell_2$
-and $\ell_\infty$ error plotted versus problem size and time.
+\cref{fig:time-vs-error}. We include plots of relative
+$\ell_\infty$ error plotted versus problem size and
+time. \textbf{TODO}: \emph{commentary.}
+
+\begin{figure}
+  \centering
+  \includegraphics{time_vs_error_3d.eps}
+  \caption{Relative $\ell_\infty$ error plotted against CPU runtime in
+    seconds (see \cref{ssec:point-source-problems}). The domain is
+    $\Omega = [-1, 1]^3$ discretized uniformly in each direction into
+    $N = 2^p + 1$ points, where $p = 3, \hdots, 9$, so that there are
+    $N^3$ points overall. The slowness functions used are listed in
+    \cref{table:slowness-functions}.}\label{fig:time-vs-error}
+  \begin{tabular}{cccc}
+    Name & $u(x)$ & $s(x)$ \\
+    \midrule
+    \texttt{s1} & $\cos(r) + r - 1$ & $1 - \sin(r)$ \\
+    \texttt{s2} & $r^2/2$ & $r$ \\
+    \texttt{s3} & $S^\top A S$ & $\alpha\norm{\operatorname{diag}(C){(A + A^\top)}S}$ \\
+    \texttt{s4} & $\tfrac{1}{2} x^\top A^{1/2} x$, where $A$ is symmetric positive definite & $\norm{x}_A = \sqrt{x^\top A x}$
+  \end{tabular}
+  \caption{Slowness functions used in point source tests. For these
+    definitions, we assume that $x \in \Omega = [-1, 1]^3$, where
+    $n = 3$. We also define $r = \norm{x}$,
+    $S = (\sin(\alpha x_i))_{i=1}^3$, and
+    $C = (\cos(\alpha x_i))_{i=1}^3$.}\label{table:slowness-functions}
+\end{figure}
 
 \subsection{A linear speed function}\label{ssec:slotnick}
 
-\begin{figure}[t]
+\begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{qv_plots_2d.eps}
-  \caption{Comparing factoring using a linear speed function: relative
-    error plots in 2D for \cref{ssec:slotnick}. For these plots,
-    $\Omega = [0, 1]^2$, and $N$ is the number of grid points that
-    each side of the square $\Omega$ is discretized into. There are
-    two point sources at $(0, 0)$ and $(0.8, 0)$. The disks of radius
-    $\rfac = 0.1$ around each point are factored. We note that in this
-    example, the errors due to the linear interpolation and the use of
-    the \texttt{rhr} quadrature rule partially compensate each
-    other. \hl{\textbf{TODO}}: \emph{extend these plots to a larger
-      size on the cluster before submitting.}}\label{fig:qv-2d}
+  \includegraphics{factoring-error-example.eps}%
+  \vspace{-1.4em}
+  \caption{Comparing different ways of selecting factored nodes. For
+    the test problem, $\Omega = [-1, 1]^n$, with $n = 2$ (first row)
+    and $n = 3$ (second row). The domain is descretized into $N^3$
+    nodes, where $N = 2^p + 1$, so that $h = 2/(N - 1)$. The slowness
+    function is constant. For the 2D problem, \texttt{olim8rhr} is
+    used; \texttt{olim26rhr} is used for the 3D problem. Solutions for
+    the unfactored problem are plotted, along with solutions using a
+    disk/sphere neighborhood with constant radius given by
+    $\rfac = 0.05, 0.1, 0.15,
+    0.2$.}\label{fig:factoring-error-example}
+  \includegraphics{qv_plots.eps}
+  \caption{Numerical results for \cref{ssec:slotnick}. The relative
+    $\ell_\infty$ error is plotted versus problem size $N = 2^p + 1$,
+    where $p = 3, \hdots, 14$ in 2D and $p = 3, \hdots, 9$ in
+    3D.}\label{fig:qv}
 \end{figure}
 
 We consider a problem that has an analytical ray tracing solution and
@@ -119,58 +205,9 @@ by~\cite{fomel2009fast,qi2018corner}:
   u(x) = \min_i u_i(x).
 \end{equation}
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=\linewidth]{qv_plots_3d.eps}
-  \caption{Comparing factoring using a linear speed function: relative
-    error plots in 3D for \cref{ssec:slotnick}. For these plots,
-    $\Omega = [0, 1]^3$, and $N$ is the number of grid points that
-    each side of the square $\Omega$ is discretized into. There are
-    two point sources at $(0, 0, 0)$ and $(0.8, 0, 0)$. The disks of
-    radius $\rfac = 0.1$ around each point are factored. Compared to
-    the example in \cref{fig:qv-2d}, we simply add a third dimension
-    and keep the rest of the problem the same. The same comments
-    regarding the quadrature rule \texttt{rhr} apply
-    here. \hl{\textbf{TODO}}: \emph{extend these plots to a larger
-      size on the cluster before submitting.}}\label{fig:qv-3d}
-\end{figure}
-
-We compare relative $\ell_2$ and $\ell_\infty$ errors in for each of
-our OLIMs in 2D and 3D for this slowness function. See
-\cref{fig:qv-2d,fig:qv-3d}.
-
-\subsection{Comparison of hierarchical algorithms}\label{ssec:alg-comparison}
-
-\Cref{alg:bottom-up,alg:top-down} can be compared in terms of the
-number of updates of different degree that they
-perform. In~\cref{tab:stats}, for our usual single point source
-problem on $\Omega = [-1, 1]^3$, discretized into a grid with $n^3$
-points, where $n = 5, 9, \hdots, 129$, we run \texttt{olim6},
-\texttt{olim18}, \texttt{olim26}, and \texttt{olimhu}, using the
-\texttt{rhr} quadrature rule for each (the choice of quadrature rule
-has no bearing on this experiment). For each algorithm, we compute the
-average number of times each node is visited, and the average number
-of line, triangle, and tetrahedron updates that are performed. For the
-triangle and tetrahedron updates, we count the number of updates that
-are ``nondegenerate''---i.e, which have an interior point solution and
-contribute information to the solution. From these statistics, we can
-see numerically that the total number of updates of each type is
-$O(N)$, which matches our expectations. Further, we can see that a
-reasonably small number of updates is performed.
-
-\begin{table}
-  \centering
-  \input{stats_table.tex}
-  \caption{Table of update statistics
-    for~\cref{ssec:alg-comparison}. All numbers are averages per grid
-    point. Above, ``nondeg.'' is ``nondegenerate''. As $N$ increases,
-    the average number of updates of each type per grid point
-    approaches a constant. It's clear that only $O(N)$ updates of each
-    type should be performed total---this gives numerical evidence
-    that the constant in this $O(N)$ is small and a minimal number of
-    updates of each type are evaluated.}
-  \label{tab:stats}
-\end{table}
+We compare relative $\ell_\infty$ errors in for each of our OLIMs in
+2D and \texttt{olim26} and \texttt{olimbu} in 3D for this slowness
+function. See \cref{fig:qv}. \textbf{TODO}: \emph{commentary.}
 
 \end{document}
 
