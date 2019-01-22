@@ -2,7 +2,28 @@
 
 \begin{document}
 
-\section{Conclusion} \textbf{TODO}: rewrite this.
+\section{Conclusion}
+
+In this work, we develop two families of fast and accurate direct
+solvers for the eikonal equation. One of these relies on enumerating
+valid update simplexes, while the other employs a fast search for the
+first arrival characteristic. These algorithms use several different
+quadrature rules (\texttt{mp0}, \texttt{mp1}, and \texttt{rhr}). We
+analyze the relationship between these quadrature rules and establish
+guarantees on their error. We also conduct extensive numerical tests
+exploring these algorithms runtime and error, also comparing them to
+the standard fast marching method, showing that only a very modest
+slowdown is incurred. To get a sense of the relative time spent by our
+algorithms on different tasks, we also profile our algorithms,
+separating the time spent into several coarse-grained categories. As a
+result of this, we suggest that the emphasis on seeking an $O(N)$
+algorithm may be misplaced.
+
+In future works, we plan on extending this work to handle
+Hamilton-Jacobi solvers, explore more quadrature rules, and
+investigate the effect of directional coverage on solution
+accuracy. Our numerical tests also suggest that knowledge of the
+update gap may allow us to parallelize a Dijkstra-like solver.
 
 \end{document}
 

@@ -1,0 +1,183 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage{sansmathfonts}
+\usepackage[T1]{fontenc}
+\renewcommand*\familydefault{\sfdefault} %% Only if the base font of the document is to be sans serif
+\usepackage{hyperref}
+
+\newcommand{\curlyb}[1]{\left\{#1\right\}}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\set}[1]{\curlyb{#1}}
+
+\DeclareMathOperator{\Jac}{Jac}
+
+\title{Solving lifted anisotropic eikonal equations}
+\author{Samuel F. Potter\footnote{Homepage:
+    \url{https://umiacs.umd.edu/\textasciitilde sfp}, email:
+    \url{sfp@umiacs.umd.edu}.}}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Lifted Hamilton-Jacobi?}
+
+We'll start by considering an anisotropic eikonal equation on a
+regular square grid in $\mathbb{R}^2$. Without loss of generality, let
+$\Omega = [0, 1]^2$ and define:
+\begin{equation}
+  \mathcal{G} = \set{(u_i, v_j) = (hi, hj) : 0 \leq i \leq N, 0 \leq j
+    \leq N} \subseteq \Omega,
+\end{equation}
+where $N$ is a positive integer and $h = N^{-1}$. Now, let
+$A(u, v) : \mathbb{R}^2 \to \mathbb{R}^{2 \times 2}$ be a matrix field
+where $A(u, v)$ is symmetric positive definite for all
+$(u, v) \in \Omega$. For each $(u, v) \in \Omega$,
+\begin{equation}
+  \langle \mu, \nu \rangle_{A(u, v)} = \mu^\top A(u, v) \nu
+\end{equation}
+is an inner product, and
+$\norm{\mu}_{A(u, v)} = \sqrt{\langle \mu, \mu \rangle_{A(u, v)}}$ is
+a norm. For a nonnegative scalar field
+$\sigma : \Omega \to \mathbb{R}$, the anisotropic eikonal equation is:
+\begin{equation}
+  \norm{\nabla \sigma(u, v)}_{A(u, v)} = 1.
+\end{equation}
+To specify boundary conditions, we assume there is a subset
+$\mathcal{B} \subseteq \Omega$ where $\sigma$ agrees with boundary
+data specified by a nonnegative function
+$b : \mathcal{B} \to \mathbb{R}$:
+\begin{equation}
+  \left. \sigma(u, v) \right|_{\mathcal{B}} = b(u, v).
+\end{equation}
+
+Our goal is to find a surface whose first fundamental form agrees with
+the spatially varying metric $A(u, v)$ and solve an isotropic eikonal
+equation on that surface. Let $X : \Omega \to \mathbb{R}^3$
+parametrize a surface. The first fundamental form $I$ of the surface
+$S = X(\Omega)$ at a point $X(u, v)$ is given by:
+\begin{equation}
+  I = \begin{bmatrix}
+    \langle X_u, X_u \rangle & \langle X_u, X_v \rangle \\
+    \langle X_v, X_u \rangle & \langle X_v, X_v \rangle
+  \end{bmatrix} = \begin{bmatrix}
+    X_u & X_v
+  \end{bmatrix}^\top \begin{bmatrix}
+    X_u & X_v
+  \end{bmatrix} = \Jac_X(u, v)^\top \Jac_X(u, v).
+\end{equation}
+To accomplish our task, we need to compute $X$ such that:
+\begin{equation}
+  A(u, v) = \Jac_X(u, v)^\top \Jac_X(u, v)
+\end{equation}
+for all $(u, v) \in \Omega$. The particular conditions that need to be
+satisfied are:
+\begin{equation}
+  \norm{X_u}_2^2 = A_{11}, \hspace{1em} \langle X_u, X_v \rangle = A_{12}, \hspace{1em} \norm{X_v}_2^2 = A_{22}.
+\end{equation}
+Our approach will be to compute a piecewise polynomial interpolant
+(probably a $B$-spline surface) and attempt to stipulate that these
+conditions hold and then solve for the corresponding set of polynomial
+coefficients. In the process, we should recover a surface which we can
+then solve an eikonal equation on.
+
+\section{Alternative: using the gradient theorem}
+
+\paragraph{Another idea.} Let's assume that we have a tensor field
+$A : \mathbb{R}^2 \to \mathbb{R}^{2 \times 2}$, so that $A$ is spd
+everywhere. If, for $(x, y)$ fixed:
+\begin{equation}
+  A = \begin{bmatrix}
+    a & b \\ b & c
+  \end{bmatrix},
+\end{equation}
+then the LDL decomposition of $A$ can be written:
+\begin{equation}
+  A = \begin{bmatrix}
+    1 & \\ a^{-1}b & 1
+  \end{bmatrix} \begin{bmatrix}
+    a & \\ & c - a^{-1} b^2
+  \end{bmatrix} \begin{bmatrix}
+    1 & a^{-1} b \\ & 1
+  \end{bmatrix},
+\end{equation}
+so that lower triangular factor of the Cholesky factorization of $A$
+is just:
+\begin{equation}
+  L = \begin{bmatrix}
+    1 & \\ a^{-1} b & 1
+  \end{bmatrix} \begin{bmatrix}
+    \sqrt{a} & \\ & \sqrt{c - a^{-1}b^2}
+  \end{bmatrix} = \begin{bmatrix}
+    \sqrt{a} & \\ \frac{b}{\sqrt{a}} & \frac{b}{a} \sqrt{c - \frac{b^2}{a}}
+  \end{bmatrix}
+\end{equation}
+Provided that $A(x, y)$ is continuous, $L = L(x, y)$ is also
+continuous and well-defined since $A$ is positive definite ($L$ is
+also unique).
+
+Now, if we would like to solve the anisotropic eikonal equation:
+\begin{equation}
+  \norm{\nabla u}_A = 1
+\end{equation}
+if we define a new scalar field $v$ such that
+$\nabla v = L^\top \nabla u$, then:
+\begin{equation}
+  \nabla u^\top A \nabla u = \nabla u^\top L L^\top \nabla u = \nabla v^\top \nabla v.
+\end{equation}
+Hence, $\norm{\nabla u}_A = \norm{\nabla v}$. For a point source in a
+convex domain $\Omega$, it seems clear that if we first solve
+$\norm{\nabla v} = 1$, we can then use the gradient theorem to
+evaluate $u$ in $\Omega$; i.e., we compute solve
+$L^\top \nabla u = \nabla v$ on $\Omega$ to recover $\nabla u$
+everywhere, and then use the fact that:
+\begin{equation}
+  u_1 - u_0 = \int_\gamma \nabla u^\top d\gamma
+\end{equation}
+to evaluate $u$ throughout $\Omega$.
+
+Some observations:
+\begin{itemize}
+\item The accuracy is probably going to be limited by where we're able
+  to compute $\nabla u$. We have to approximate the integral
+  $\int_\gamma \nabla u^\top d\gamma$ with the data available to us,
+  which will limit the accuracy of $u$.
+\item In principle, we can compute all of the integrals
+  $\int_\gamma \nabla u^\top d\gamma$ simultaneously and in parallel
+  (and in $O(N)$ time).
+\item Computing $\nabla v$ is also easy for a point source in a convex
+  domain. If $(x_0, y_0) \in \Omega$ is the location of the point
+  source, then $v(x, y) = \norm{(x - x_0, y - y_0)}$, and:
+  \begin{equation}
+    \nabla v(x, y) = \frac{1}{v(x, y)} \begin{bmatrix}
+      x - x_0 \\ y - y_0
+    \end{bmatrix}
+  \end{equation}
+\end{itemize}
+
+\paragraph{A test problem.} The simplest thing to do would be to solve
+the eikonal equation with $s \equiv 1$ in $\Omega = [0, 1]^d$, where
+$d = 2, 3$. In this case, the characteristics behave predictably, and
+we can see how the discretization of
+$\int_\gamma \nabla u^\top d\gamma$ affects the accuracy. Furthermore,
+we can see how choosing the ``summation graph'' affects the
+accuracy. It's the least clear from the formulation given above what
+should be done here. It might be that we end up back where we started
+with the OLIM. For parallelization, if we can get away with summing
+along axes of the standard grid, then it seems likely that we can
+think of $u$ itself as a sort of ``summed area table'' and take
+advantage of parallelization techniques related to those.
+
+
+\end{document}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:

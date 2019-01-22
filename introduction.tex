@@ -26,6 +26,22 @@ the eikonal equation comes about as the first term in an asymptotic
 expansion of the Helmholtz equation and corresponds to the first
 arrival time of rays propagating under geometric optics.
 
+In this work, we are concern ourselves with developing direct solvers
+for the eikonal equation which are fast and accurate, particularly in
+3D. We develop two separate families of algorithms which approach the
+problem of efficiently computing updates in 3D in separate ways. These
+algorithms are analyzed and extensive numerical studies are carried
+out. Both approaches use knowledge of the problem gleaned from its
+Lagrangian representation to reduce the amount of computational work
+necessary to compute an accurate result. These approaches are
+competitve with existing direct solvers for the eikonal equation and
+readily generalize to related equations (the static Hamilton-Jacobi
+equation) and higher dimensions. This research was conducted in tandem
+with research into ordered line integral methods for computing the
+quasipotential of nongradient stochastic differential equations
+(SDEs), but takes a different approach which allows for greater
+analysis.
+
 \subsection{Results}
 
 Different numerical methods have been proposed for the solution of the
@@ -54,18 +70,19 @@ to recover $O(h)$ convergence.
 Our main results are as follows:
 \begin{itemize}
 \item For 3D problems, we develop two separate algorithms: a
-  \emph{bottom-up} (\texttt{olimbu}) algorithm, and a \emph{top-down}
-  algorithm (\texttt{olim\emph{N}}, where \texttt{\emph{N}}
-  \hspace{-0.1em}$=6,18,26$ is the size of neighborhood used). Each
-  algorithm locally updates a grid point by performing a minimal
-  number of triangle or tetrahedron updates. Depending on the
-  quadrature rule, each update is calculated by solving a system of
-  nonlinear equations either directly (\texttt{rhr} and \texttt{mp0})
-  or iteratively (\texttt{mp1}).
+  \emph{bottom-up} (\texttt{olim\emph{N}d}) algorithm (where
+  \texttt{\emph{N}} is the dimension of the problem), and a
+  \emph{top-down} algorithm (\texttt{olim\emph{N}}, where
+  \texttt{\emph{N}} \hspace{-0.1em}$=6,18,26$ is the size of
+  neighborhood used). Each algorithm locally updates a grid point by
+  performing a minimal number of triangle or tetrahedron
+  updates. Depending on the quadrature rule, each update is calculated
+  by solving a system of nonlinear equations either directly
+  (\texttt{rhr} and \texttt{mp0}) or iteratively (\texttt{mp1}).
 \item We note that this work was done in tandem with research on
   ordered line integral methods for computing the quasipotential for
-  nongradient stochastic differential equations
-  (SDEs)~\cite{dahiya2017ordered,yang2018computing,dahiya2018ordered}. Unlike
+  nongradient
+  SDEs~\cite{dahiya2017ordered,yang2019computing,dahiya2018ordered}. Unlike
   the quasipotential, the eikonal equation is simple enough to allow
   us to analyze and justify our algorithms. We are also able to obtain
   simpler solution methods and established performance guarantees. We
@@ -82,7 +99,9 @@ Our main results are as follows:
   is incurred by the version of our top-down algorithm which is
   equivalent to the FMM (specifically, \texttt{olim6} with the
   \texttt{rhr} quadrature rule is computes the same result as the
-  FMM). \textbf{TODO}: include the final \% slowdown.
+  FMM). From our tests, we find that for moderately-sized problems and
+  larger, less than a 15\% slowdown is incurred. As we continue to
+  optimize our library, we expect this disparity to shrink.
 \end{itemize}
 
 \end{document}

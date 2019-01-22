@@ -15,7 +15,7 @@ no advantage in 2D, we don't apply the top-down or bottom-up
 approaches. In 3D, we have three top-down algorithms: \texttt{olim6}
 (group IVa), \texttt{olim18} (groups I, IVa, and IVb), and
 \texttt{olim26} (group V). We also test the bottom-up algorithm
-\texttt{olimbu} (see \cref{fig:hu-neighborhoods}).
+\texttt{olim3d} (see \cref{fig:hu-neighborhoods}).
 
 \begin{figure}
   \centering
@@ -85,8 +85,7 @@ have found that only a modest slowdown is incurred by using
 \texttt{olim6rhr} for problems of moderate size. The disparity between
 the two is greater for smaller problem sizes, which is due to cache
 effects. We can expect the rest of our algorithms to incur a similarly
-modest slowdown. So, in our numerical tests, we only compare results
-among the algorithms mentioned in \cref{ssec:specific-algorithms}.
+modest slowdown.
 
 As a consequence of our design decisions, we note that our solvers
 spend almost no time maintaing the front data structure. Using
@@ -120,7 +119,7 @@ is:\begin{equation}
 Plots collecting our numerical results are contained in
 \cref{fig:time-vs-error}. We include plots of relative
 $\ell_\infty$ error plotted versus problem size and
-time. \textbf{TODO}: \emph{commentary.}
+time.
 
 \begin{figure}
   \centering
@@ -206,8 +205,8 @@ by~\cite{fomel2009fast,qi2018corner}:
 \end{equation}
 
 We compare relative $\ell_\infty$ errors in for each of our OLIMs in
-2D and \texttt{olim26} and \texttt{olimbu} in 3D for this slowness
-function. See \cref{fig:qv}. \textbf{TODO}: \emph{commentary.}
+2D and \texttt{olim26} and \texttt{olim3d} in 3D for this slowness
+function. See \cref{fig:qv}.
 
 \end{document}
 
