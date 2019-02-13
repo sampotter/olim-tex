@@ -11,7 +11,7 @@ Bulirsch~\cite{stoer2013introduction}, from which
 \cref{theorem:mp0-newton} readily follows.
 
 \begin{lemma}\label{lemma:bounded-inv-hess-F1}
-  There is a constant $\beta = O(h^{-1})$ such that
+  There exists $\beta = O(h^{-1})$ s.t.
   $\norm{\nabla^2 F_1(\lambda)^{-1}} \leq \beta$ for all
   $\lambda \in \Delta^n$.
 \end{lemma}
@@ -29,7 +29,7 @@ Bulirsch~\cite{stoer2013introduction}, from which
   $\norm{A^{-1} B} < 1$ for $h$ small enough, and we can Taylor
   expand:
   \begin{equation}
-    \nabla^2 F_1(\lambda)^{-1} = \parens{A + B}^{-1} = A \parens{I + A^{-1}B}^{-1} = A \parens{I - A^{-1} B + A^{-2} B^2 - + \cdots},
+    \nabla^2 F_1(\lambda)^{-1} = \parens{A + B}^{-1} = A \parens{I - A^{-1} B + A^{-2} B^2 - + \cdots},
   \end{equation}
   which implies $\norm{\nabla^2 F_1(\lambda)^{-1}} = O(h^{-1})$. To
   define $\beta$, let:
@@ -40,7 +40,7 @@ Bulirsch~\cite{stoer2013introduction}, from which
 \end{proof}
 
 \begin{lemma}\label{lemma:bounded-first-step}
-  There is a constant $\alpha = O(h)$ such that
+  There exists $\alpha = O(h)$ s.t.
   $\norm{\nabla^2 F_1(\lambda_{0}^*)^{-1} \nabla F_1(\lambda_{0}^*)}
   \leq \alpha$.
 \end{lemma}
@@ -55,9 +55,11 @@ Bulirsch~\cite{stoer2013introduction}, from which
   recalling \cref{fig:slowness-tetra},
   $s^\theta_\lambda = s^\theta + \dels^\top (\lambda -
   \underline{\lambda})$ so that, for a general $\lambda$:
-  \begin{equation}
-    \label{eq:grad-F1-in-terms-of-grad-F0}
-    \nabla F_1(\lambda) = l_\lambda h \dels + \delU + \frac{s^\theta + \dels^\top (\lambda - \underline{\lambda})}{l_\lambda} h \delP^\top p_\lambda = l_\lambda h \dels + \nabla F_0(\lambda) + \frac{\dels^\top {(\lambda - \underline{\lambda})}}{l_\lambda} h \delP^\top p_\lambda.
+  \begin{equation}\label{eq:grad-F1-in-terms-of-grad-F0}
+    \begin{aligned}
+      \nabla F_1(\lambda) &= l_\lambda h \dels + \delU + \frac{s^\theta + \dels^\top (\lambda - \underline{\lambda})}{l_\lambda} h \delP^\top p_\lambda \\
+      &= l_\lambda h \dels + \nabla F_0(\lambda) + \frac{\dels^\top {(\lambda - \underline{\lambda})}}{l_\lambda} h \delP^\top p_\lambda.
+    \end{aligned}
   \end{equation}
   Since $\nabla F_0(\lambda_0^*) = 0$ by optimality, we can conclude
   using \cref{eq:grad-F1-in-terms-of-grad-F0} and
@@ -78,7 +80,7 @@ Bulirsch~\cite{stoer2013introduction}, from which
 \end{lemma}
 
 \begin{proof}[Proof of \cref{lemma:hess-F1-lipschitz}]
-  If we restrict our attention to $\Delta^n$, we can see that:
+  If we restrict our attention to $\Delta^n$, we see that
   $l_\lambda^{-1} \delP^\top \mathcal{P}_\lambda^\perp \delP$ is
   Lipschitz continuous with $O(1)$ Lipschitz constant and
   $\tfrac{\theta}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels}$ is

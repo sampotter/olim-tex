@@ -7,18 +7,21 @@
 
 \begin{figure}
   \centering
-  \includegraphics{neighborhoods.eps}
+  \includegraphics[width=0.95\linewidth]{neighborhoods.eps}
+  % \vspace{-1.5em}
   \caption{Ordered line integral method neighborhoods in 2D and 3D:
     \texttt{olim4} and \texttt{olim8} are 2D solvers and the rest are
     3D solvers. The color coding of tetrahedron updates is the same
     for this figure and \cref{fig:octant-numbering}
     below.}\label{fig:neighborhoods}%
-  \vspace{-1.5em}
-  \includegraphics{simplex-groups.eps}
+  %\vspace{-1em}
+  \includegraphics[width=0.95\linewidth]{simplex-groups.eps}
+  %\vspace{-1em}
   \caption{Numbering scheme for an update octant. In this diagram,
     $\hat{p}$ is being updated. The diagonally opposite node is the
     sixth (last) node, with the other six nodes numbered 0--5
     cyclically.}\label{fig:octant-numbering}
+  \vspace{-0.5em}
   {
     \footnotesize
     \begin{tabular}{c|cccccc|cccccc|cccccc|cc}
@@ -30,7 +33,7 @@
       5 & & & & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & & & $\groupmarker$ & & $\groupmarker$ & $\groupmarker$ & & $\groupmarker$ & & & $\groupmarker$ & $\groupmarker$ & & $\groupmarker$ \\
       \multicolumn{1}{c}{} & \multicolumn{6}{c}{I} & \multicolumn{6}{c}{II} & \multicolumn{6}{c}{III} & \multicolumn{2}{c}{IV}
     \end{tabular}%
-    \vspace{1em}
+    \vspace{0.5em}
     \begin{tabular}{c|cccccc|cccccc|ccc}
       0 & $\groupmarker$ & & & & & $\groupmarker$ & $\groupmarker$ & & & & $\groupmarker$ & & $\groupmarker$ & & \\
       1 & $\groupmarker$ & $\groupmarker$ & & & & & & $\groupmarker$ & & & & $\groupmarker$ & & $\groupmarker$ & \\
@@ -41,13 +44,13 @@
       6 & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ & $\groupmarker$ \\
       \multicolumn{1}{c}{} & \multicolumn{6}{c}{V} & \multicolumn{6}{c}{VI} & \multicolumn{3}{c}{VII}
     \end{tabular}%
-    \vspace{-0.5em}
+    \vspace{-0.75em}
   }
   \caption{These tables should be scanned columnwise: each column of
     dots indicates a different tetrahedron. Note that the tetrahedra
     (0, 1, 2), (2, 3, 4), and (4, 5, 0) in group I are degenerate and
     can be omitted; likewise, the tetrahedra in group VII are all
-    degenerate and can do not form a useful
+    degenerate and do not form a useful
     group.}\label{fig:tetrahedra-groups}
 \end{figure}
 
@@ -109,9 +112,9 @@ $p \in \{0, 1\}^3$ in a symmetric fashion. Since we assume our update
 tetrahedra have been translated so that $\hat{p} = 0 \in \mathbb{Z}^n$
 (see \cref{ssec:notation}), this means enumerating
 ${7 \choose 3} = 35$ choices of vertices. Some choices lead to
-degenerate tetrehedra (i.e., such that $p_0, p_1, p_2$ aren't linearly
-independent), so the number of nondegenerate update tetrahedra is
-smaller. Since we iterate octant by octant, and since the number of
+degenerate tetrahedra (i.e., such that $p_0, p_1$, and $p_2$ are
+linearly dependent), so the number of nondegenerate update tetrahedra
+is smaller. Since we iterate octant by octant, and since the number of
 tetrahedra is relatively small, it is reasonable to write out the
 update procedure as straight-line code, which is what we do in our own
 implementation.
@@ -126,7 +129,7 @@ branching is done. This is done using the template feature of
 C++~\cite{stroustrup2013c++}. Example stencils for the versions of
 \texttt{olim6}, \texttt{olim18}, and \texttt{olim26} that are used for
 our numerical test are shown in \cref{fig:neighborhoods}. The
-enumerated tetrahedron groups are shown in
+tetrahedron groups are shown in
 \cref{fig:octant-numbering,fig:tetrahedra-groups}.
 
 \subsection{Update gaps for tetrahedron
@@ -139,15 +142,15 @@ following update gaps (ignoring the $s^\theta h$ factor):
 \vspace{0.5em}
 \begin{center}
   \begin{tabular}{lc|lc|lc|lc}
-    Group I & $1/\sqrt{2}$ & Group II & $1/\sqrt{2}$ & Group III & $1/\sqrt{2}$ & Group IVa & 0 \\
+    Group I & $\nicefrac{1}{\sqrt{2}}$ & Group II & $\nicefrac{1}{\sqrt{2}}$ & Group III & $\nicefrac{1}{\sqrt{2}}$ & Group IVa & 0 \\
     \midrule
-    Group V & $1/\sqrt{3}$ & Group VIa & 0 & Group VIb & $\boldsymbol{2/\sqrt{3}}$ & Group IVb & $1/\sqrt{2}$
+    Group V & $\nicefrac{1}{\sqrt{3}}$ & Group VIa & 0 & Group VIb & $\boldsymbol{\nicefrac{2}{\sqrt{3}}}$ & Group IVb & $\nicefrac{1}{\sqrt{2}}$
   \end{tabular}
 \end{center}
 \vspace{0.5em} The idea of the update gap is first explored in
 Tsitsiklis's original paper~\cite{tsitsiklis1995efficient}; in this
 work, the fact that Group IVa has no update gap and that the update
-gap of Group V is $1/\sqrt{3}$ is noted and an $O(N)$ algorithm based
+gap of Group V is $1/\sqrt{3}$ is noted and an $O(N^n)$ algorithm based
 on Dial's algorithm is presented using Group V for the update
 tetrahedra. This same observation is made in a more recent paper
 explicitly detailing a method based on Dial's
@@ -171,22 +174,27 @@ characteristic is likely close by.
 To this end, we start with the minimum line update, enumerate
 neighboring vertices and perform the corresponding triangle updates,
 then enumerate vertices which are sufficiently close to the minimum
-triangle update, finally doing any relevant tetrahedron updates. While
-the top-down algorithm is parametrized by the choice of tetrahedron
-groups to include, the bottom-up algorithm can instead be parametrized
-by the type of norm used when searching for neighboring vertices as
-well as the permitted distance. For example, in 3D, if $p_0$ is the
-vertex for the minimum line update, then $p_1$ must satisfy
-$\norm{p_1 - p_0}_{q_1} \leq d_1$, where $q = 1, 2, \infty$ and
-$d_1 = 1, 2, \hdots$. Likewise, when searching for tetrahedron
-updates, if $p_2$ is the candidate vertex, then
-$\norm{p_2 - p_1}_{q_2} \leq d_2$ and $\norm{p_2 - p_0}_q \leq d_2$
-are required to hold simultaneously. For our numerical tests, we set
-$q_1 = 1 = q_2$, $d_1 = 1$ and $d_2 = 2$. This setup is depicted in
-\cref{fig:hu-neighborhoods}. We found this choice of parameters to be
-a good compromise between speed and accuracy. Using larger
+triangle update, doing any relevant tetrahedron updates along the
+way. While the top-down algorithm is parametrized by the choice of
+tetrahedron groups to include, the bottom-up algorithm can instead be
+parametrized by the type of norms used when searching for neighboring
+vertices as well as the permitted search radii. For example, in 3D, if
+$p_0$ is the vertex for the minimum line update, then $p_1$ must
+satisfy $\norm{p_1 - p_0}_{q_1} \leq d_1$, where $q_1 = 1, 2$, or
+$\infty$ and $d_1$ is a positive integer. Likewise, when searching for
+tetrahedron updates, if $p_2$ is the candidate vertex, then
+$\norm{p_2 - p_1}_{q_2} \leq d_2$ and
+$\norm{p_2 - p_0}_{q_2} \leq d_2$ are required to hold
+simultaneously. For our numerical tests, we use the $\ell_1$ norm in
+both cases ($q_1 = 1 = q_2$), set $d_1 = 1$, and set $d_2 = 2$. The
+indexing convention is such that $q_i$ and $d_i$ correspond to the
+norms and radii used when searching for $p_i$. This setup is depicted
+in \cref{fig:hu-neighborhoods}. We found this choice of parameters to
+be a good compromise between speed and accuracy. Using larger
 neighborhoods does lead to a more accurate solution, but may cause the
-solver to run more slowly.
+solver to run more slowly. We do not explore the effect of this
+parametrization in this paper, since our choice of parameters performs
+well (see \cref{sec:numerical-results}).
 
 \begin{figure}[t]
   \centering
@@ -233,29 +241,38 @@ higher-dimensional update using an unconstrained solver, then
 depending on where the optimum $\lambda_0^*$ lies, we can skip some
 lower-dimensional updates. The idea is simple: since $F_0$ is strictly
 convex, if we consider a straight line starting at $\lambda_0^*$ and
-extending in some direction, then $f$ restricted to that line can only
-increase as we move away from $\lambda_0^*$. Hence, for a tetrahedron
-update, if $\lambda_0^* \notin \Delta^2$, then we can skip all updates
-which are not ``visible'' (in parameter space) from
-$\lambda_0^*$. This is illustrated in the \cref{fig:skip-zones}.
+extending in some direction, then $f$ restricted to that line is
+monotonically increasing as we move away from $\lambda_0^*$. Hence,
+for a tetrahedron update, if $\lambda_0^* \notin \Delta^2$, then we
+can skip all updates which are not ``visible'' (in parameter space)
+from $\lambda_0^*$. This is illustrated in the \cref{fig:skip-zones}.
 
 \begin{figure}
   \centering
-  \includegraphics{skip-zones.eps}
+  \includegraphics[width=0.4\linewidth]{skip-zones.eps}
   \caption{For $d = 2$, when minimizing $F_0$ using
     \cref{thm:f0-exact}, if $\lambda^*_0 \notin \Delta^2$, depending
     on where $\lambda_0^*$ lies, it is possible to skip one or two
     triangle updates. On the other hand, if
     $\lambda_0^* \in \Delta^2$, all three triangle updates can be
-    skipped.}\label{fig:skip-zones}
+    skipped. In this case, we label the different regions by the
+    number of updates that it is possible to skip: $\lambda^*$ here
+    lies in a region labeled ``2'', since it is possible to skip the
+    two triangle updates on the opposite side of $\Delta^2$. Along the
+    same lines, if $\lambda^*$ were to lie in a region labeled ``1'',
+    two triangle updates would be ``visible'', and it would only be
+    possible to skip one update.}\label{fig:skip-zones}
 \end{figure}
 
 The first two approaches to skipping updates skip incident
 lower-dimensional updates. It is also possible to skip incident
 higher-dimensional updates. For example, if we do the three triangle
-updates on the boundary of a tetrahedron update, we can use
-Karush-Kuhn-Tucker (KKT) theory to determine if the minimizer on the
-boundary is also a global minimizer for the tetrahedron update. Let
+updates on the boundary of a tetrahedron update, we can use the
+Karush-Kuhn-Tucker necessary conditions for optimality of a
+constrained optimization problem~\cite{nocedal2006numerical} to
+determine if the minimizer on the boundary is also a global minimizer
+for the constrained minimization problem given by
+\cref{eq:constrained-minimization}. Let
 $L(\lambda, \mu) = F_i(\lambda) + (A\lambda - b)^\top \mu$ be the
 Lagrangian function, where $\mu \in \mathbb{R}^{d + 1}$ is the vector
 of Lagrange multipliers. Since $F_0$ is strictly convex and since we
@@ -270,51 +287,68 @@ constraints' indices, stationarity requires:
 \begin{equation}\label{eq:stationarity}
   A^\top_{\mathcal{I}} \mu_{\mathcal{I}}^* = \nabla F_i(\lambda).
 \end{equation}
-For a tetrahedron update in 3D, $A \in \mathbb{R}^{3 \times 2}$ and
-$|\mathcal{I}| \leq 2$ (not all three constraints be active
-simultaneously). In particular, if $i \notin \mathcal{I}$, then
-$\mu_i^* = 0$, and otherwise, $\mu_i^*$ can be computed easily from
-\cref{eq:stationarity}. Once the full vector of Lagrange multipliers
-has been computed, if $\mu^* \geq 0$, then the update may be skipped.
+See \cref{eq:Delta-LMI} for the definition of $A$; the notation
+$A_{\mathcal{I}}$ refers to the submatrix consisting of rows of $A$
+indexed by $\mathcal{I}$. For a tetrahedron update in 3D,
+$A \in \mathbb{R}^{3 \times 2}$ and $|\mathcal{I}| \leq 2$ (not all
+three constraints be active simultaneously). In particular, if
+$i \notin \mathcal{I}$, then $\mu_i^* = 0$, and otherwise, $\mu_i^*$
+can be computed easily from \cref{eq:stationarity}. Once the full
+vector of Lagrange multipliers has been computed, if $\mu^* \geq 0$,
+then the update may be skipped. A modified version of this strategy
+for skipping updates was used in our previous work on computing the
+quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
 
 \subsection{The top-down and bottom-up algorithms}
 
 To describe our top-down algorithm, we define:
 \begin{equation}\label{eq:calU}
-  \calU_d = \set{(p_0, \hdots, p_d): p_i\texttt{.state}=\texttt{valid} \mbox{ for } i = 0, \hdots, d \mbox{ and } (p_0, \hdots, p_d) \mbox{ is in an update group}}
+  \begin{aligned}
+    \calV_d = \big\{\set{p_0, \hdots, p_d}: \; &p_i\texttt{.state}=\texttt{valid} \mbox{ for } i = 0, \hdots, d, \\
+    &\mbox{and } \set{p_0, \hdots, p_d} \mbox{ belongs to the selected update group}, \\
+    &\mbox{and } \pnew \in \set{p_0, \hdots, p_d} \big\}
+  \end{aligned}
 \end{equation}
-for $d = 0, \hdots, n - 1$. For each update, this set collects all of
-the possible simplex updates of each dimension: i.e., updates which
-both belong to a group as defined in \cref{ssec:simplex-enumeration}
-and are \texttt{valid}. Each set $\calU_d$ is initialized according to
-\cref{eq:calU} but is modified as the algorithm runs and as
-lower-dimensional updates are skipped (removed from $\calU_d$).
+for $d = 0, \hdots, n - 1$. These sets collect all possible simplex
+updates: i.e., updates which both belong to a group as defined in
+\cref{ssec:simplex-enumeration} and are \texttt{valid}. The third
+condition is an important optimization. To see why it is correct, fix
+an update set $\calV_d$. If $\set{p_0, \hdots, p_d}$ satisfies the
+first two conditions but not the third, we can see that $\hat{p}$
+would have already been updated from it in a previous iteration. All
+new information affecting $\hat{U}$ this iteration must be computed
+from an update involving $\pnew$.
 
 \begin{algorithm}[H]
   \caption{The top-down hierarchical algorithm for computing
     $U(\hat{p})$ (\cref{enum:update-U} of
     \cref{alg:dijkstra-like}).}\label{alg:top-down}
+  \textbf{Input:} the neighboring update points $(p_0, \hdots, p_d)$,
+  and, for $i = 0, \hdots, d$, the downwind solution value
+  $U_i = U(p_i)$ and the slowness $s_i = s(p_i)$. \\
+  \textbf{Output:} a new solution value $\hat{U} = U(\hat{p})$, where
+  $\hat{U} > U_i$ for $i = 0, \hdots, d$.
   \begin{enumerate}[nolistsep]
   \item Set $\hat{U} \gets \infty$.
-  \item Initialize $\calC_d$ according to \cref{eq:calU} for each
+  \item Initialize $\calV_d$ according to \cref{eq:calU} for each
     $d = 0, \hdots, n - 1$.
   \item For $d = n - 1$ down to $0$:
     \begin{enumerate}
-    \item For each $(p_0, \hdots, p_d) \in \calC_d$:
+    \item For each $(p_0, \hdots, p_d) \in \calV_d$:
       \begin{enumerate}
-      \item If $F_i = F_0$:
+      \item If $F_i = F_0$ (\texttt{mp0} or \texttt{rhr}):
         \begin{enumerate}
         \item Compute $U$ for $(p_0, \hdots, p_{d})$ using
           \cref{thm:f0-exact} or \cref{thm:equivalence}.
-        \item Remove updates from $\calC_0, \hdots, \calC_{d-1}$
-          according to their visibility (see \cref{fig:skip-zones}).
+        \item Remove updates from $\calV_0, \hdots, \calV_{d-1}$ by
+          visibility (see \cref{fig:skip-zones}).
         \end{enumerate}
-      \item Otherwise, if $F_i = F_1$:
+      \item Otherwise, if $F_i = F_1$ (\texttt{mp1}):
         \begin{enumerate}
-        \item Compute $U$ using a constrained minimization algorithm
-          (SQP in our case).
-        \item Remove all incident lower-dimensional updates from
-          $\calC_0, \hdots, \calC_{d-1}$.
+        \item Compute $U$ by solving
+          \cref{eq:constrained-minimization} numerically (we use SQP).
+        \item Remove lower-dimensional updates from
+          $\calV_0, \hdots, \calV_{d-1}$.
         \end{enumerate}
       \item Set $\hat{U} = \min(\hat{U}, U)$.
       \end{enumerate}
@@ -322,39 +356,37 @@ lower-dimensional updates are skipped (removed from $\calU_d$).
   \end{enumerate}
 \end{algorithm}
 
-On the other hand, the bottom-up algorithm builds up each update
-$(p_0, \hdots, p_d)$ one vector at a time, by searching for adjacent
-minimizing updates of higher dimension.
+The bottom-up algorithm builds up each update $(p_0, \hdots, p_d)$ one
+vector at a time, by searching for adjacent minimizing updates of
+higher dimension. The optimization involving $\pnew$ described above
+can be incorporated in a straightforward fashion by taking
+$p_0 = \pnew$.
 
 \begin{algorithm}[H]
   \caption{The bottom-up hierarchical algorithm for computing
     $U(\hat{p})$ (\cref{enum:update-U} of
     \cref{alg:dijkstra-like}).}\label{alg:bottom-up}
+  \textbf{Input:} for $i = 0, \hdots, d$, the update point $p_i$, the
+  values
+  $U_i = U(p_i)$, and $s_i = s(p_i)$. \\
+  \textbf{Output:} the new solution value $\hat{U} = U(\hat{p})$.
   \begin{enumerate}[nolistsep]
-  \item Set $\hat{U} \gets \infty$.
-  \item Find $p_0 \in \neib(\hat{p})$ such that $p_0$\texttt{.state}
-    $=$ \texttt{valid} with the minimum update value for $d = 0$.
+  \item Set $\hat{U} \gets \infty$ and $p_0 \gets \pnew$.
   \item For $i = 1, \hdots, n - 1$:
     \begin{enumerate}
     \item For each \texttt{valid} $p_i$ close enough to
-      $p_0, \hdots, p_{i-1}$ (see
-      \cref{ssec:bottom-up-search}):\label{item:bottom-up-for}
-      \begin{enumerate}
-      \item Do the update corresponding to $(p_0, \hdots, p_i)$ and
-        keep track of the minimizing $\lambda^* \in \Delta^i$. This
-        update can optionally be skipped by first computing $\mu^*$
-        corresponding to the optimum of the incident lower-dimensional
-        update $(p_0, \hdots, p_{i-1})$ and checking if
-        $\mu^* \geq 0$.
-      \end{enumerate}
+      $p_0, \hdots, p_{i-1}$ (see \cref{ssec:bottom-up-search}), do
+      the update corresponding to $(p_0, \hdots, p_i)$ and keep track
+      of the minimizing $\lambda^* \in \Delta^i$. This update can
+      optionally be skipped by first computing $\mu^*$ corresponding
+      to the optimum of the incident lower-dimensional update
+      $(p_0, \hdots, p_{i-1})$ and checking if
+      $\mu^* \geq 0$.\label{item:bottom-up-for}
     \item Let $p_i$ be the node which forms the update with the
       minimum value.
     \end{enumerate}
   \end{enumerate}
 \end{algorithm}
-
-In the next section, we conduct numerical tests to compare the
-performance of these two algorithms.
 
 \end{document}
 

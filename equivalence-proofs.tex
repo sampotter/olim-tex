@@ -34,11 +34,14 @@
   $\hat{U} - U_i$. Expanding $\|\nabla U\|^2$, a number of
   cancellations occur since $Q^\top \numin = 0$. We have:
   \begin{equation}
-    \delU^\top R^{-1} Q^\top \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}}^\top \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}} Q R^{-\top} \delU = \norm{R^{-\top} \delU}^2 + \frac{\parens{p_i^\top Q R^{-\top} \delU}^2}{\norm{\pmin}^2},
+    \delU^\top R^{-1} Q^\top \hspace{-0.25em} \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}}^{\hspace{-0.25em}\top} \hspace{-0.4em} \parens{I - \frac{\numin p_i^\top}{\numin^\top p_i}} \hspace{-0.1em} Q R^{-\top} \delU = \norm{R^{-\top} \delU}^2 + \frac{\parens{p_i^\top Q R^{-\top} \delU}^2}{\norm{\pmin}^2},
   \end{equation}
   so that, written in standard form:
   \begin{equation}
-    {(\hat{U} - U_i)}^2 + 2 p_i^\top Q R^{-\top} \delU {(\hat{U} - U_i)} + \parens{p_i^\top Q R^{-\top} \delU}^2 + \norm{\pmin}^2 \parens{\norm{R^{-\top} \delU}^2 - \parens{s^\theta h}^2} = 0.
+    \begin{aligned}
+      {(\hat{U} - U_i)}^2 + 2 p_i^\top Q R^{-\top} \delU {(\hat{U} - U_i)} \,&+\, \parens{p_i^\top Q R^{-\top} \delU}^2 + \\
+       &\norm{\pmin}^2 \parens{\norm{R^{-\top} \delU}^2 - \parens{s^\theta h}^2} = 0.
+    \end{aligned}
   \end{equation}
   Solving for $\hat{U} - U_i$ gives:
   \begin{equation}
@@ -89,7 +92,7 @@
   intersection between $p_0 + \langle \delP \rangle$ and
   $\langle \tilde{\nu} \rangle$, and let
   $\tilde{l} = \norm{\tilde{p}}$, then, since
-  $\tilde{p} - p_0 \in \langle \delP \rangle$, we have:
+  $\tilde{p} - p_0 \in \langle \delP \rangle$:
   \begin{equation}
     \numin^\top (\tilde{p} - p_0) = 0.
   \end{equation}
@@ -107,7 +110,7 @@
 
   To see that $\tilde{p} = p_{\lambda^*}$, note that since
   $\tilde{\nu} = -\nabla \hat{U}/\norm{\nabla \hat{U}} = -\nabla
-  \hat{U}/(s^\theta h)$, we can write:
+  \hat{U}/(s^\theta h)$:
   \begin{equation}
     \mathcal{P}_{\delP} \tilde{\nu} = \frac{-\mathcal{P}_{\delP} \nabla \hat{U}}{s^\theta h} = \frac{-QR^{-\top} \delU}{s^\theta h} = \mathcal{P}_{\delP} \nu_{\lambda^*}.
   \end{equation}

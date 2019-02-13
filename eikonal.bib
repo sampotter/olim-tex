@@ -101,16 +101,6 @@
   publisher =	 {SIAM}
 }
 
-@article{dahiya2017ordered,
-  title =		 {Ordered line integral methods for computing the
-                  quasi-potential},
-  author =		 {Dahiya, Daisy and Cameron, Maria},
-  journal =		 {Journal of Scientific Computing},
-  pages =		 {1--34},
-  year =		 {2017},
-  publisher =	 {Springer}
-}
-
 @article{tsai2003fast,
   title =		 {Fast sweeping algorithms for a class of
                   {Hamilton-Jacobi} equations},
@@ -133,18 +123,16 @@
   pages =		 {603--627},
   year =		 {2005}
 }
-
-@article{kao2004lax,
-  title =		 {{Lax-Friedrichs} sweeping scheme for static
-                  {Hamilton-Jacobi} equations},
-  author =		 {Kao, Chiu Yen and Osher, Stanley and Qian,
-                  Jianliang},
-  journal =		 {Journal of Computational Physics},
-  volume =		 {196},
-  number =		 {1},
-  pages =		 {367--391},
-  year =		 {2004},
-  publisher =	 {Elsevier}
+                  
+@article{kao2008legendre,
+  title={Legendre-transform-based fast sweeping methods for static Hamilton--Jacobi equations on triangulated meshes},
+  author={Kao, Chiu-Yen and Osher, Stanley and Qian, Jianliang},
+  journal={Journal of Computational Physics},
+  volume={227},
+  number={24},
+  pages={10209--10225},
+  year={2008},
+  publisher={Elsevier}
 }
 
 @article{chacon2015parallel,
@@ -290,6 +278,24 @@
   note =		 {Author's personal webpage}
 }
 
+@misc{masha-math-homepage,
+  howpublished = {\url{https://www.math.umd.edu/~mariakc/index.html}},
+  author =		 {Cameron, Maria K},
+  note =		 {Author's personal webpage}
+}
+
+@misc{libolim-github,
+  howpublished = {\url{https://github.com/sampotter/olim/tree/sisc19}},
+  note =		 {Project page for \texttt{libolim} on GitHub.}
+}
+
+@misc{libolim-github-plotting,
+  howpublished = {\url{https://github.com/sampotter/olim/tree/sisc19/plotting}},
+  note =		 {Link to section of \texttt{libolim} project page
+                  containing Python plotting scripts and
+                  instructions.}
+}
+
 @article{engquist2003computational,
   title =		 {Computational high frequency wave propagation},
   author =		 {Engquist, Bj{\"o}rn and Runborg, Olof},
@@ -374,6 +380,18 @@
   year =		 {2019},
   publisher =	 {Elsevier}
 }
+
+@article{dahiya2017ordered,
+  title={Ordered Line Integral Methods for Computing the Quasi-Potential},
+  author={Dahiya, Daisy and Cameron, Maria},
+  journal={Journal of Scientific Computing},
+  volume={75},
+  number={3},
+  pages={1351--1384},
+  year={2018},
+  publisher={Springer}
+}
+
 
 @article{dahiya2018ordered,
   title =		 {An Ordered Line Integral Method for Computing the
@@ -460,9 +478,7 @@
   title =		 {Valgrind: a framework for heavyweight dynamic binary
                   instrumentation},
   author =		 {Nethercote, Nicholas and Seward, Julian},
-  booktitle =	 {ACM Sigplan notices},
-  volume =		 {42},
-  number =		 {6},
+  booktitle =	 {ACM Sigplan Notices},
   pages =		 {89--100},
   year =		 {2007},
   organization = {ACM}
@@ -502,4 +518,80 @@
   pages =		 {393--399},
   year =		 {2006},
   publisher =	 {Elsevier}
+}
+
+@article{sethian19993,
+  title =		 {{3-D} traveltime computation using the fast marching
+                  method},
+  author =		 {Sethian, James A and Popovici, A Mihai},
+  journal =		 {Geophysics},
+  volume =		 {64},
+  number =		 {2},
+  pages =		 {516--523},
+  year =		 {1999},
+  publisher =	 {Society of Exploration Geophysicists}
+}
+
+@article{popovici20023,
+  title={3-D imaging using higher order fast marching traveltimes},
+  author={Popovici, Alexander Mihai and Sethian, James A},
+  journal={Geophysics},
+  volume={67},
+  number={2},
+  pages={604--609},
+  year={2002},
+  publisher={Society of Exploration Geophysicists}
+}
+
+@article{kim20023,
+  title =		 {{3-D} eikonal solvers: {First-arrival} traveltimes},
+  author =		 {Kim, Seongjai},
+  journal =		 {Geophysics},
+  volume =		 {67},
+  number =		 {4},
+  pages =		 {1225--1231},
+  year =		 {2002},
+  publisher =	 {Society of Exploration Geophysicists}
+}
+
+@article{van1991upwind,
+  title =		 {Upwind finite-difference calculation of traveltimes},
+  author =		 {Van Trier, Jos and Symes, William W},
+  journal =		 {Geophysics},
+  volume =		 {56},
+  number =		 {6},
+  pages =		 {812--821},
+  year =		 {1991},
+  publisher =	 {Society of Exploration Geophysicists}
+}
+
+@article{vidale1990finite,
+  title =		 {Finite-difference calculation of traveltimes in
+                  three dimensions},
+  author =		 {Vidale, John E},
+  journal =		 {Geophysics},
+  volume =		 {55},
+  number =		 {5},
+  pages =		 {521--526},
+  year =		 {1990},
+  publisher =	 {Society of Exploration Geophysicists}
+}
+
+@article{fomel2002fast,
+  title =		 {Fast-phase space computation of multiple arrivals},
+  author =		 {Fomel, Sergey and Sethian, James A},
+  journal =		 {Proceedings of the National Academy of Sciences},
+  volume =		 {99},
+  number =		 {11},
+  pages =		 {7329--7334},
+  year =		 {2002},
+  publisher =	 {National Acad Sciences}
+}
+
+@book{bertsekas1998network,
+  title =		 {Network optimization: continuous and discrete
+                  models},
+  author =		 {Bertsekas, Dimitri P},
+  year =		 {1998},
+  publisher =	 {Citeseer}
 }

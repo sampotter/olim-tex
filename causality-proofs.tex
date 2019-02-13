@@ -2,14 +2,14 @@
 
 \begin{document}
 
-\section{Proofs for section \ref{ssec:causality}}
+\section{Proofs for section \ref{ssec:causality}}\label{sec:causality-proofs}
 
 \begin{proof}[Proof of \cref{thm:causality}]
   For causality of $F_0$, we want $\hat{U} \geq \max_i U_i$, which is
   equivalent to $\min_i(\hat{U} - U_i) \geq 0$. From
   \cref{eq:U-finite-diff}, we have:
   \begin{equation}
-    \min_i \parens{\hat{U} - U_i} = \min_i \min_{\lambda \in \Delta^n} \frac{s^\theta h}{l_\lambda} p_i^\top p_\lambda = s^\theta h \min_i \min_{\lambda \in \Delta^n} \frac{\nu_i^\top \nu_{\lambda}}{\norm{p_\lambda}} = s^\theta h \min_{i, j} \frac{\nu_i^\top \nu_j}{\norm{p_i}} \geq 0.
+    \min_i \parens{\hat{U} - U_i} = s^\theta h \min_i \min_{\lambda \in \Delta^n} \frac{\nu_i^\top \nu_{\lambda}}{\norm{p_\lambda}} = s^\theta h \min_{i, j} \frac{\nu_i^\top \nu_j}{\norm{p_i}} \geq 0.
   \end{equation}
   The last equality follows because minimizing the cosine between two
   unit vectors is equivalent to maximizing the angle between them;
@@ -25,7 +25,7 @@
   $\lambda_0^\star$ and $\lambda_1^\star$ are the minimizing arguments
   for $F_0$ and $F_1$, respectively, and if
   $\dellam^* = \lambda_1^* - \lambda_0^*$, then we have:
-  \begin{equation}
+  \begin{equation}\label{eq:F1-in-terms-of-F0}
     F_1^\theta(\lambda_1^*) = F_0^\theta(\lambda_1^*) + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^\star}.
   \end{equation}
   By the optimality of $\lambda_0^*$ and strict convexity of
@@ -41,10 +41,10 @@
     \hat{U} \geq \max_i U_i + R + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^*}.
   \end{equation}
   Since $s$ is Lipschitz, the last term is $O(h^2)$---in particular,
-  $\norm{\dels} = O(h)$ and $\norm{s_0 - \overline{s}} = O(h)$
-  since $s_0$ and $\overline{s}$ lie in the same simplex, whose
-  diameter is $O(h)$. So, because the gap $\min_i(\hat{U} - U_i)$ is
-  $O(h^2)$, we can see that $\hat{U} \geq \max_i U_i$ as $h \to 0$.
+  $\norm{\dels} = O(h)$ and $\norm{s_0 - \overline{s}} = O(h)$ since
+  $s_0$ and $\overline{s}$ lie in the same simplex, whose diameter is
+  $O(h)$. So, because the gap $\min_i(\hat{U} - U_i)$ is $O(h^2)$, we
+  can see that $\hat{U} \geq \max_i U_i$ for $h$ sufficiently small.
 \end{proof}
 
 \end{document}

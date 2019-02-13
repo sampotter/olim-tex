@@ -4,13 +4,15 @@
 
 \section{Ordered line integral methods for the eikonal equation}
 
-The fast marching method discretizes the eikonal equation,
-\cref{eq:eikonal}, and solves this discretization in an upwind fashion
-to compute $\hat{U}$. Throughout, we distinguish between the exact
-solution $u$ and the numerical solution $U$, where $\hat{U}$ will
-always denote the current value to be computed. The ordered line
-integral method locally and approximately minimizes the minimum action
-integral of \cref{eq:eikonal}:
+The fast marching method~\cite{sethian1996fast} discretizes the
+eikonal equation, \cref{eq:eikonal}, and solves this discretization in
+an upwind fashion to compute $\hat{U}$. Throughout, we distinguish
+between the exact solution $u$ and the numerical solution $U$, where
+$\hat{U}$ will always denote the current value to be computed;
+likewise, any quantity with a hat (\^{}) will denote a quantity
+evaluated at the node being updated. The ordered line integral method
+locally and approximately minimizes the minimum action integral of
+\cref{eq:eikonal}:
 \begin{equation}
   \label{eq:action-functional}
   \hat{u} = \min_{\alpha} \set{u_0 + \int_\alpha s(x) dl},
@@ -38,7 +40,7 @@ of \cref{eq:action-functional}. We then present theoretical results.
   \centering
   \begin{subfigure}{.5\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{slowness-tetra.eps}
+    \includegraphics[width=0.95\linewidth]{slowness-tetra.eps}
     \caption{A depiction of the different quantities related to
       $s^{\theta}$ and $s^{\theta}_\lambda$ for the case of $d = 2$, a
       tetrahedron update. Both of $s^\theta$ and $s^\theta_\lambda$ live
@@ -51,7 +53,7 @@ of \cref{eq:action-functional}. We then present theoretical results.
   \hspace{.05\linewidth}
   \begin{subfigure}{.44\textwidth}
     \centering
-    \includegraphics[width=\linewidth]{simplex-diagram.eps}
+    \includegraphics[width=0.95\linewidth]{simplex-diagram.eps}
     \caption{An example showing an update interval for $d = 2$ (a
       tetrahedron update).}\label{fig:tetra-diagram}
   \end{subfigure}
@@ -79,12 +81,15 @@ Let $n$ and $d$ be integers such that $n \geq 2$ and $0 \leq d <
 n$. We think of $n$ as the ambient dimension and $d$ as the affine
 dimension of the facet of the simplex where the line integral
 originates (e.g., $d = 2$ for a tetrahedron). Let
-$p_0, \hdots, p_d \in \Z^n \backslash \set{0}$ be linearly
-independent. Together with the update point $\hat{p} = 0$, these
-vectors are the vertices of a simplex with affine dimension $d$. In
-this work, since we focus on the eikonal equation, we only consider
-vectors $p_i$ which satisfy $\norm{p_i}_\infty = 1$ (larger
-neighborhoods may be required for a Hamilton-Jacobi solver). For each
+$p_0, \hdots, p_d \in \Z^n$ be linearly independent. For each update,
+we shift the coordinates so that the update node $\hat{p}$ coincides
+with the origin: $\hat{p} = 0$. Then, the vectors
+$\hat{p}, p_0, \hdots, p_d$ are the vertices of a simplex with affine
+dimension $d$. In this work, we only use uniform square or cubic
+meshes; hence, we only consider vectors $p_i$ which satisfy
+$\norm{p_i}_\infty = 1$ (larger neighborhoods may be required for a
+Hamilton-Jacobi solver). Our results here are straightforwardly
+generalized to nonuniform rectangular grids. For each
 $i = 0, \hdots, d$, we also define $x_i$ to be the preimage of $p_i$
 before scaling and translation is performed (i.e., $x_i$ lies in
 $h \Z^n$). The numerical solution $U$ and the slowness function $s$
@@ -95,8 +100,7 @@ necessary to do updates for simplexes with affine dimension up to and
 including $n$. We will cover this in more detail in
 \cref{sec:implementation}; presently, we will derive the updates for
 general dimension since there is no need to specialize. So, for this
-section, we simply assume that $d = n - 1$. Nothing important is lost
-when we make this simplification.
+section, we simply assume that $d = n - 1$.
 
 We define the set $\Delta^d$, the parameter space for the simplex, by:
 \begin{equation}\label{eq:Delta-set}
@@ -106,7 +110,7 @@ We will also occasionally write $\Delta^d$ as a linear matrix inequality:
 \begin{equation}\label{eq:Delta-LMI}
   \lambda \in \Delta^d \iff A\lambda \leq b, \hspace{1em} \mbox{where } A = \begin{bmatrix}
     -I_d \\ \m{1}_{1 \times d}
-  \end{bmatrix} \in \mathbb{R}^{d + 1 \times d}, \hspace{1em} \mbox{and }
+  \end{bmatrix} \in \mathbb{R}^{(d + 1) \times d}, \hspace{1em} \mbox{and }
   b = \begin{bmatrix} \m{0}_{d \times 1} \\ 1 \end{bmatrix} \in \mathbb{R}^{d + 1}.
 \end{equation}
 For each $\lambda = (\lambda_1, \hdots, \lambda_d) \in \Delta^d$, we
@@ -124,7 +128,7 @@ lines, $U_\lambda = U_0 + \delU^\top \lambda$, where
 $\delU_i = U_i - U_0$; we also define
 $s_\lambda = s_0 + \dels^\top \lambda$, where $\dels_i = s_i -
 s_0$. Although the slowness function $s$ may be available to us in
-analytic form, we assume that it is only available on the nodes in
+analytic form, we assume that it is only available at the nodes in
 $\calG$ to reflect use in real-world applications (e.g., $s$ will most
 likely be presented to us as gridded data of some sort).
 
@@ -134,7 +138,7 @@ To approximately minimize \cref{eq:action-functional}, we assume that
 $\alpha$ is a line segment parametrized by arc length and then apply
 several different one-point quadrature rules to the resulting
 integral. If $\alpha$ is a straight line segment connecting
-$p_\lambda$ and $\hat{p} = 0$ and $l_\lambda = \|p_\lambda\|_2$, then:
+$p_\lambda$ and $\hat{p} = 0$ and $l_\lambda = \|p_\lambda\|$, then:
 \begin{equation}
   \label{eq:action-functional-line-segment}
   \hat{U} = U(\hat{p}) = \min_{\lambda \in \Delta^d} \set{U_\lambda + h \int_0^{l_\lambda} s(\alpha(t))dt}.
@@ -144,26 +148,39 @@ We consider two approximations to
 $0 \leq \theta \leq 1$, we define:
 \begin{align}
   F_0(\lambda) = F_0^\theta(\lambda) &= U_\lambda + s^{\theta} h l_\lambda := U_\lambda + \squareb{(1-\theta)\hat{s} + \frac{\theta}{d + 1} \sum_{i=0}^d s_i} h l_\lambda, \label{eq:f0-definition} \\
-  F_1(\lambda) = F_1^\theta(\lambda) &= U_\lambda + s^{\theta}_\lambda h l_\lambda := U_\lambda + \squareb{(1-\theta)\hat{s} + \theta s_\lambda} h l_\lambda,
+  F_1(\lambda) = F_1^\theta(\lambda) &= U_\lambda + s^{\theta}_\lambda h l_\lambda := U_\lambda + \squareb{(1-\theta)\hat{s} + \theta s_\lambda} h l_\lambda, \label{eq:F1-definition}
 \end{align}
 where we omit the superscript in $F_i^\theta$ when the context is
-clear. We primarily concern ourselves with $F_0$ and $F_1$ where
-$\theta = 0$ and $\theta = \nicefrac{1}{2}$. See
-\cref{fig:slowness-tetra} for a careful explanation of this setup. If
-$\theta = 0$, then $F_0 \equiv F_1$, so we define a single quadrature
-rule to capture this case, which we call \texttt{rhr}. If
-$\theta = \nicefrac{1}{2}$, then $F_0 \neq F_1$ in general, leading us
-to define a separate midpoint quadrature rule for each of $F_0$ and
-$F_1$, named \texttt{mp0} and \texttt{mp1}, respectively. The case of
-\texttt{mp0} requires special care and is handled in
-\cref{ssec:validation}. The distinction between these quadrature rules
-and their impact on our solvers is a key consideration of this paper.
+clear. See \cref{fig:slowness-tetra} for depiction of this setup. The
+geometric sense of $\theta$ and the aggregates in
+\cref{eq:f0-definition,eq:F1-definition} is as follows:
+\begin{itemize}
+\item The parameter $\theta$ is a convex coefficient that selects a
+  section of $\Delta^d$ transverse to the characteristic. It is used
+  to linearly interpolate between $\hat{s}$ and the interpolated value
+  of $s$ at the base of $\Delta^d$.
+\item The slowness is interpolated differently for $F_0$ and
+  $F_1$. For $F_0$, we use the sample mean of $s_0, \hdots, s_d$; for
+  $F_1$, we linearly interpolate between $s_0, \hdots, s_d$ using the
+  convex coefficient vector $\lambda$.
+\end{itemize}
+
+We primarily concern ourselves with $F_0$ and $F_1$ where $\theta = 0$
+and $\theta = \nicefrac{1}{2}$.  If $\theta = 0$, then
+$F_0 \equiv F_1$, so we define a single quadrature rule to capture
+this case, which we call \texttt{rhr}. If $\theta = \nicefrac{1}{2}$,
+then $F_0 \neq F_1$ in general, leading us to define a separate
+midpoint quadrature rule for each of $F_0$ and $F_1$, named
+\texttt{mp0} and \texttt{mp1}, respectively. The case of \texttt{mp0}
+requires special care and is handled in \cref{ssec:validation}. The
+distinction between these quadrature rules and their impact on our
+solvers is a key consideration of this paper.
 
 \subsection{The minimization problem}\label{ssec:minimization-problem}
 
 With $F_0$ and $F_1$ so defined, the minimization problem which
-approximately solves \cref{eq:action-functional-line-segment} to
-compute $\hat{U}$ for a fixed update simplex is:
+approximates \cref{eq:action-functional-line-segment} to compute
+$\hat{U}$ for a fixed update simplex is:
 \begin{equation}
   \label{eq:constrained-minimization}
   \hat{U} = \min_{\lambda \in \Delta^d} F_i(\lambda).
@@ -172,13 +189,12 @@ This is a nonlinear, constrained optimization problem with linear
 inequality constraints and no equality constraints (cf.\@
 \cref{eq:Delta-LMI}). We require the gradient and Hessian of $F_0$ and
 $F_1$ for our algorithms and analysis. These are easy to compute, but
-we have found a particular form for them to be convenient. The proofs
-of these propositions and the rest of the results in
-\cref{ssec:minimization-problem} are found in
-\cref{sec:minimization-proofs}.
+we have found a particular form for them to be convenient for both
+implementation and analysis. The proofs of all propositions and lemmas
+in this section can be found in \cref{sec:minimization-proofs}.
 
 \begin{proposition}\label{prop:F0-grad-and-Hess}
-  The gradient and Hessian of $F_0(\lambda; \theta)$ satisfy:
+  The gradient and Hessian of $F_0(\lambda; \theta)$ are given by:
   \begin{align}
     \nabla F_0(\lambda) &= \delU + s^{\theta} h \delP^\top \nu_\lambda,\label{eq:F0-grad} \\
     \nabla^2 F_0(\lambda) &= \frac{s^{\theta} h}{l_\lambda} \delP^\top \calP^\perp_{p_\lambda} \delP,
@@ -206,8 +222,8 @@ Our task is to minimize $F_0$ and $F_1$ over the convex set
 $\Delta^n$; so, we need to determine whether $F_0$ and $F_1$ are
 convex themselves. The next two lemmas address this point. We also
 examine whether $F_0$ and $F_1$ are strictly convex or just
-convex. This relates to the definiteness of their Hessians, computed
-above.
+convex. This relates to the definiteness of their Hessians, which are
+computed above.
 
 \begin{lemma}\label{lemma:dPt-cprojp-dP-pd}
   Let $p_0, \hdots, p_d$ form a nondegenerate simplex (i.e.,
@@ -220,15 +236,15 @@ For $F_1$, we can only obtain convexity (let alone strict convexity)
 for $h$ sufficiently small. For large enough $h$, we will encounter
 nonconvex updates. To obtain convexity, we need to stipulate that the
 slowness function $s$ be Lipschitz continuous on $\Omega$ with a
-Lipschitz constant that is constant independent of $h$. In practice,
-we have not found this to be a particularly stringent restriction.
+Lipschitz constant that is independent of $h$. In practice, we have
+not found this to be a particularly stringent restriction.
 
 \begin{lemma}\label{lemma:F-strictly-convex}
-  Again, assume that the update simplex is nondegenerate and that $s$
-  is positive. Additionally, assume that $s$ is Lipschitz continuous
-  with Lipschitz constant $K \leq C$ on $\Omega$, for some constant
-  $C > 0$ independent of $h$. Then, $\nabla^2 F_1$ is positive
-  definite (hence, $F_1$ is strictly convex) for $h$ small enough.
+  In the setting of \cref{lemma:dPt-cprojp-dP-pd}, additionally assume
+  that $s$ is Lipschitz continuous with Lipschitz constant $K \leq C$
+  on $\Omega$, for some constant $C > 0$ independent of $h$. Then,
+  $\nabla^2 F_1$ is positive definite (hence, $F_1$ is strictly
+  convex) for $h$ small enough.
 \end{lemma}
 
 We have found that all \texttt{mp1} updates become strictly convex
@@ -242,16 +258,17 @@ $p_0, \hdots, p_{n-1}$, each subset of these nodes defines another,
 lower-dimensional update simplex, which lies on the boundary of the
 original simplex. For example, three triangle updates form the
 boundary of a single tetrahedron update. We expect the values of $F_i$
-to be the same whether defined on one or another incident update
-simplex, and to be continuous as we transfer between simplexes that
-share a common boundary. For $F_1$ this is the case, but for $F_0$
-with $\theta \neq 0$, the function $F_0$ may not be well-defined or
-continuous at boundaries. This problem can lead to inconsistent and
-divergent solvers. A heuristic fix is to first minimize
-\cref{eq:constrained-minimization} for $F_0$ with nonzero $\theta$ to
-obtain the minimizing argument $\lambda^*_0$, then set
-$\hat{U} = F_1(\lambda_0^*)$; i.e., to replace $F_0$ with $F_1$ for
-the purposes of evaluation, or to use $F_0$ as a surrogate when
+to be the same on the surface of the neighborhood without regard to
+the simplex under consideration (note that the update simplexes share
+common lower-dimensional boundaries). Likewise, we expect $F_i$ to be
+continuous as we transfer between adjacent simplexes. For $F_1$ this
+is the case, but for $F_0$ with $\theta \neq 0$, the function $F_0$
+may not be well-defined or continuous at boundaries. This problem can
+lead to inconsistent and divergent solvers. A heuristic fix is to
+first minimize \cref{eq:constrained-minimization} for $F_0$ with
+nonzero $\theta$ to obtain the minimizing argument $\lambda^*_0$, then
+set $\hat{U} = F_1(\lambda_0^*)$; i.e., to replace $F_0$ with $F_1$
+for the purposes of evaluation, or to use $F_0$ as a surrogate when
 minimizing $F_1$.
 
 If we use Newton's method to minimize $F_1$, starting from
@@ -294,8 +311,9 @@ can expect the maximum pointwise error between a solution to
 \cref{eq:eikonal} computed by using \texttt{mp0} and \texttt{mp1} to
 be $O(h^2)$, which is dominated by the $O(h)$ discretization error
 coming from the linear convergence of the method itself. Hence, using
-\texttt{mp0} instead of \texttt{mp1} should introduce no significant
-error.
+\texttt{mp0} instead of \texttt{mp1} to find the parameter $\lambda$
+(i.e., determine the local characteristic) should introduce no
+significant error when evaluating $F_1$.
 
 % If we exchange the roles of $F_0$ and $F_1$ (if we start from
 % $\lambda_1^*$ and perform a Newton iteration on $\nabla F_0$) we can
@@ -316,10 +334,10 @@ sufficient for the optimality of $\lambda$, if we ignore the
 constraint $\lambda \in \Delta^d$. The unconstrained system of
 nonlinear equations defined by $\nabla F_0(\lambda) = 0$ can be solved
 exactly without an iterative solver. We can compute the solution using
-the reduced QR decomposition of $\delP$ and by consider the problem's
-geometry (see \cref{fig:f0-exact}). This is captured in the following
-theorem. We will discuss how to use this theorem efficiently in a
-solver in \cref{ssec:algorithms-and-skipping}.
+the reduced QR decomposition of $\delP$ and by considering the
+problem's geometry (see \cref{fig:f0-exact}). This is captured in the
+following theorem. We will discuss how to use this theorem efficiently
+in a solver in \cref{ssec:algorithms-and-skipping}.
 
 \begin{theorem}\label{thm:f0-exact}
   Let $\delP = QR$ be the reduced QR decomposition of $\delP$; i.e.,
@@ -424,7 +442,7 @@ We also consider something we refer to here as the ``update gap'': the
 difference $\hat{U} - \max_i U_i$. As discussed in Tsitsiklis's
 original paper~\cite{tsitsiklis1995efficient}, an alternative to
 Dijkstra's algorithm is Dial's algorithm---a bucketed version of
-Dijkstra's algorithm which runs in $O(N)$ time, where the constant
+Dijkstra's algorithm which runs in $O(N^n)$ time, where the constant
 depends on the bucket size~\cite{dial1969algorithm,kim2001calo}. In
 this case, the size of the buckets is determined by the update gap. It
 is unclear whether there is any real advantage of a Dial-like solver
@@ -437,8 +455,8 @@ parallel without violating causality.
 We now present a simple characterization of causality and a formula
 for computing the update gap.
 \begin{theorem}\label{thm:causality}
-  An update simplex is causal for $F_0$ if and only if
-  $\nu_i^\top \nu_j \geq 0$ for all $i$ and $j$ such that
+  For $\nu_i = p_i/\|p_i\|$, an update simplex is causal for $F_0$ if
+  and only if $\nu_i^\top \nu_j \geq 0$ for all $i$ and $j$ such that
   $0 \leq i < n$ and $0 \leq j < n$. If we assume that $s$ is
   Lipschitz continuous, for $h$ small enough, the simplex is also
   causal for $F_1$, and the term in $F_1$ which prevents an update
@@ -450,12 +468,15 @@ for computing the update gap.
 \end{theorem}
 
 \begin{proof}
-  See \cref{sec:equivalence-proofs}.
+  See \cref{sec:causality-proofs}.
 \end{proof}
 
-\noindent The fact that the term in $F_1$ which can prevent causality
-for large $h$ is $O(h^2)$ accounts for the phenomenon that for all
-practical problem sizes the method is causal and converges.
+\noindent The fact that our methods are causal for all practical
+problem sizes follows from the fact that the term preventing causality
+decays rapidly---see \cref{eq:F1-in-terms-of-F0}. This can be seen
+easily by rewriting $F_1(\lambda)$ as $F_0(\lambda)$ plus a small
+perturbation (which is $O(h^2)$) and using the Lipschitz continuity of
+$s$.
 
 \subsection{Local factoring}
 
@@ -475,7 +496,7 @@ occuring at corners or discontinuities~\cite{qi2018corner}.
 
 \begin{figure}
   \centering
-  \includegraphics{factoring-example.eps}
+  \includegraphics[width=\linewidth]{factoring-example.eps}
   \caption{Running \texttt{olim4rhr} (or, equivalently, the four-point
     fast marching method with factoring~\cite{qi2018corner}) for three
     steps. Ordered clockwise from the top left, the nodes are
@@ -497,9 +518,12 @@ occuring at corners or discontinuities~\cite{qi2018corner}.
 Let $x^\circ \in \Omega$ be the location of a point source so that
 $\boundary = \set{x^\circ}$ and let the grid
 $\calG \subseteq \mathbb{Z}^n$ be aligned so that
-$p^\circ \in \mathbb{Z}^n$. For a point $p_\lambda$, define
-$l^\circ_\lambda = \norm{p_\lambda - p^\circ}$ and let
-$s^\circ = s(x^\circ)$. The additive factorization of $U$ around
+$p^\circ \in \mathbb{Z}^n$; that is, we let $p^\circ$ be the image of
+$x^\circ$ in the update neighborhood, in the same way that each $p_i$
+is the image of a grid point $x \in \calG$ (hence, $p^\circ$ varies
+from update to update, but $x^\circ$ remains the same). For a point
+$p_\lambda$, define $l^\circ_\lambda = \norm{p_\lambda - p^\circ}$ and
+let $s^\circ = s(x^\circ)$. The additive factorization of $U$ around
 $x^\circ$ is~\cite{luo2012fast,qi2018corner}:
 \begin{align}
   U(x) = T(x) + \tau(x), \qquad \text{where} \qquad T(x) = s^\circ \norm{x - x^\circ},

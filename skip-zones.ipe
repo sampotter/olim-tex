@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20190117202213" modified="D:20190117203103"/>
+<info created="D:20190117202213" modified="D:20190205161917"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -254,76 +254,88 @@ h
 <page>
 <layer name="alpha"/>
 <view layers="alpha" active="alpha"/>
-<path layer="alpha" stroke="black" pen="heavier" rarrow="normal/small">
+<path layer="alpha" stroke="black" fill="lightgray" pen="fat">
+256 584 m
+256 512 l
+328 512 l
+256 584 l
+</path>
+<path matrix="1 0 0 1 128 -192" stroke="black" pen="heavier" rarrow="normal/small">
 128 800 m
 128 672 l
 </path>
-<path stroke="black" pen="heavier" arrow="normal/small">
+<path matrix="1 0 0 1 128 -192" stroke="black" pen="heavier" arrow="normal/small">
 96 704 m
 224 704 l
 </path>
-<path stroke="black" pen="heavier">
+<path matrix="1 0 0 1 128 -192" stroke="black" pen="heavier">
 128 776 m
 200 704 l
 </path>
-<use name="mark/disk(sx)" pos="128 776" size="normal" stroke="black"/>
-<use name="mark/disk(sx)" pos="128 704" size="normal" stroke="black"/>
-<use name="mark/disk(sx)" pos="200 704" size="normal" stroke="black"/>
-<path stroke="black" dash="dashed">
+<use matrix="1 0 0 1 128 -192" name="mark/disk(sx)" pos="128 776" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 128 -192" name="mark/disk(sx)" pos="128 704" size="normal" stroke="black"/>
+<use matrix="1 0 0 1 128 -192" name="mark/disk(sx)" pos="200 704" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 128 -192" stroke="black" dash="dashed">
 228 704 m
 248 704 l
 </path>
-<path stroke="black" dash="dashed">
+<path matrix="1 0 0 1 128 -192" stroke="black" dash="dashed">
 204 700 m
 236 668 l
 </path>
-<path matrix="1 0 0 1 -112 112" stroke="black" dash="dashed">
+<path matrix="1 0 0 1 16 -80" stroke="black" dash="dashed">
 204 700 m
 236 668 l
 </path>
-<path stroke="black" dash="dashed">
+<path matrix="1 0 0 1 128 -192" stroke="black" dash="dashed">
 128 804 m
 128 824 l
 </path>
-<path stroke="black" dash="dashed">
+<path matrix="1 0 0 1 128 -192" stroke="black" dash="dashed">
 92 704 m
 80 704 l
 </path>
-<path stroke="black" dash="dashed">
+<path matrix="1 0 0 1 128 -192" stroke="black" dash="dashed">
 128 668 m
 128 656 l
 </path>
-<text transformations="translations" pos="144 720" stroke="black" type="label" width="12.772" height="8.11" depth="0" valign="baseline" style="math">\Delta^2</text>
-<text matrix="1 0 0 1 -11.7927 -7.36752" transformations="translations" pos="192 768" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">2</text>
-<text matrix="1 0 0 1 4.70825 -10.6267" transformations="translations" pos="160 688" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">2</text>
-<text matrix="1 0 0 1 17.7761 -14.7013" transformations="translations" pos="80 752" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">2</text>
-<text matrix="1 0 0 1 -5.55226 -2.00484" transformations="translations" pos="240 688" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">1</text>
-<text matrix="1 0 0 1 5.83013 6.20409" transformations="translations" pos="96 672" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">1</text>
-<text matrix="1 0 0 1 -1.05436 -4.20185" transformations="translations" pos="112 816" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">1</text>
-<text matrix="1 0 0 1 -39.689 7.20651" transformations="translations" pos="266.303 700.625" stroke="black" type="label" width="10.281" height="6.923" depth="1.49" valign="baseline" style="math">\lambda_1</text>
-<text matrix="1 0 0 1 3.72142 -28.8754" transformations="translations" pos="126.507 832.451" stroke="black" type="label" width="10.281" height="6.923" depth="1.49" valign="baseline" style="math">\lambda_2</text>
-<use name="mark/disk(sx)" pos="208 736" size="normal" stroke="black"/>
-<path stroke="black" arrow="normal/small">
+<text matrix="1 0 0 1 128 -192" transformations="translations" pos="144 720" stroke="black" type="label" width="12.772" height="8.11" depth="0" valign="baseline" style="math">\Delta^2</text>
+<text matrix="1 0 0 1 116.207 -199.368" transformations="translations" pos="192 768" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">2</text>
+<text matrix="1 0 0 1 132.708 -202.627" transformations="translations" pos="160 688" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">2</text>
+<text matrix="1 0 0 1 145.776 -206.701" transformations="translations" pos="80 752" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">2</text>
+<text matrix="1 0 0 1 122.448 -194.005" transformations="translations" pos="240 688" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">1</text>
+<text matrix="1 0 0 1 133.83 -185.796" transformations="translations" pos="96 672" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">1</text>
+<text matrix="1 0 0 1 126.946 -196.202" transformations="translations" pos="112 816" stroke="black" type="label" width="4.981" height="6.42" depth="0" valign="baseline">1</text>
+<text matrix="1 0 0 1 88.311 -184.793" transformations="translations" pos="266.303 700.625" stroke="black" type="label" width="10.281" height="6.923" depth="1.49" valign="baseline" style="math">\lambda_1</text>
+<text matrix="1 0 0 1 131.721 -220.875" transformations="translations" pos="126.507 832.451" stroke="black" type="label" width="10.281" height="6.923" depth="1.49" valign="baseline" style="math">\lambda_2</text>
+<use matrix="1 0 0 1 128 -192" name="mark/disk(sx)" pos="208 736" size="normal" stroke="black"/>
+<path matrix="1 0 0 1 128 -192" stroke="black" arrow="normal/small">
 208 736 m
 128 744 l
 </path>
-<path stroke="black" arrow="normal/small">
+<path matrix="1 0 0 1 128 -192" stroke="black" arrow="normal/small">
 208 736 m
 176 704 l
 </path>
-<use name="mark/circle(sx)" pos="163.906 740.481" size="large" stroke="black"/>
-<use name="mark/circle(sx)" pos="187.99 716.046" size="large" stroke="black"/>
-<path stroke="black" arrow="normal/small">
+<use matrix="1 0 0 1 128 -192" name="mark/circle(sx)" pos="163.906 740.481" size="large" stroke="black"/>
+<use matrix="1 0 0 1 128 -192" name="mark/circle(sx)" pos="187.99 716.046" size="large" stroke="black"/>
+<path matrix="1 0 0 1 128 -192" stroke="black" arrow="normal/small">
 70.4832 671.028 m
 75.8563 724.237
 123.726 741.771 c
 </path>
-<path stroke="black" arrow="normal/small">
+<path matrix="1 0 0 1 128 -192" stroke="black" arrow="normal/small">
 93.8011 664.432 m
 142.302 673.994
 173.834 701.807 c
 </path>
-<text matrix="1 0 0 1 -1.77631 -3.89541" transformations="translations" pos="71.7687 665.076" stroke="black" type="label" width="17.49" height="6.926" depth="1.93" valign="baseline">skip</text>
-<text matrix="1 0 0 1 -2.56578 -1.94771" transformations="translations" pos="217.434 741.992" stroke="black" type="label" width="10.392" height="6.921" depth="2.47" valign="baseline" style="math">\lambda_0^*</text>
+<text matrix="1 0 0 1 126.224 -195.895" transformations="translations" pos="71.7687 665.076" stroke="black" type="label" width="17.49" height="6.926" depth="1.93" valign="baseline">skip</text>
+<text matrix="1 0 0 1 125.434 -193.948" transformations="translations" pos="217.434 741.992" stroke="black" type="label" width="10.392" height="6.921" depth="2.47" valign="baseline" style="math">\lambda_0^*</text>
+<use name="mark/disk(sx)" pos="256 584" size="large" stroke="black"/>
+<use name="mark/disk(sx)" pos="256 512" size="large" stroke="black"/>
+<use name="mark/disk(sx)" pos="328 512" size="large" stroke="black"/>
+<text matrix="1 0 0 1 -4.20153 0" transformations="translations" pos="248 504" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline" style="math">p_0</text>
+<text matrix="1 0 0 1 -4.20153 0" transformations="translations" pos="320 504" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline" style="math">p_1</text>
+<text matrix="1 0 0 1 -4.20153 0" transformations="translations" pos="248 576" stroke="black" type="label" width="9.482" height="4.297" depth="1.93" valign="baseline" style="math">p_2</text>
 </page>
 </ipe>

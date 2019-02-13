@@ -4,26 +4,40 @@
 
 \section{Conclusion}
 
-In this work, we develop two families of fast and accurate direct
-solvers for the eikonal equation. One of these relies on enumerating
-valid update simplexes, while the other employs a fast search for the
-first arrival characteristic. These algorithms use several different
-quadrature rules (\texttt{mp0}, \texttt{mp1}, and \texttt{rhr}). We
-analyze the relationship between these quadrature rules and establish
-guarantees on their error. We also conduct extensive numerical tests
-exploring these algorithms runtime and error, also comparing them to
-the standard fast marching method, showing that only a very modest
-slowdown is incurred. To get a sense of the relative time spent by our
-algorithms on different tasks, we also profile our algorithms,
-separating the time spent into several coarse-grained categories. As a
-result of this, we suggest that the emphasis on seeking an $O(N)$
-algorithm may be misplaced.
+We have presented two families of fast and accurate direct solvers for
+the eikonal equation. One of these relies on enumerating valid update
+simplexes, while the other employs a fast search for the first arrival
+characteristic. These methods use different quadrature rules: a
+simplified midpoint rule (\texttt{mp0}), a midpoint rule
+(\texttt{mp1}), and a righthand rule (\texttt{rhr}). We analyze the
+relationship between these quadrature rules and prove error bounds. We
+conduct numerical experiments measuring runtime and relative
+$\ell_\infty$ error. We make a comparison with the standard fast
+marching method which is equivalent to our \texttt{olim6\_rhr},
+showing that they are comparable in terms of speed and accuracy, with
+\texttt{olim6\_rhr} being slightly slower. To determine the relative
+time spent on different tasks, we profile our C++ implementation using
+Valgrind, separating time spent into several coarse-grained
+categories. From this, we show that for practical problem sizes, the
+runtime of Dijkstra-like algorithms behaves like $C N^n$, where
+$n = 2, 3$, and $N^n$ is the total number of gridpoints (even if this
+is not strictly true from a computational complexity viewpoint); we
+also emphasize that memory access patterns play a large role in
+algorithm runtime, especially for large $N$.
 
-In future works, we plan on extending this work to handle
-Hamilton-Jacobi solvers, explore more quadrature rules, and
-investigate the effect of directional coverage on solution
-accuracy. Our numerical tests also suggest that knowledge of the
-update gap may allow us to parallelize a Dijkstra-like solver.
+Overall, we conclude that ordered line integral methods are a powerful
+approach to obtaining a higher degree of accuracy when solving the
+eikonal equation in 3D. With an appropriate choice of quadrature rule,
+we are able to exploit improved directional coverage to drive down the
+error constant. The improved accuracy more than makes up for the
+modest price paid in speed, and we fully expect it to be possible to
+find ways to optimize this family of algorithms further. We have also
+tried to demonstrate that memory access patterns dominate both update
+time and time spent maintaining the front data structure, from which
+we can conclude two things: 1) the exact time spent updating a node is
+important but not paramount (improving accuracy is more important than
+improving speed), 2) using memory optimally will lead to a substantial
+speed-up for large problems.
 
 \end{document}
 

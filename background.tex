@@ -6,7 +6,7 @@
 
 \begin{figure}[t]
   \centering
-  \includegraphics{overview.eps}
+  \includegraphics[width=0.9\linewidth]{overview.eps}
   \caption{An overview of a Dijkstra-like algorithm for solving the
     eikonal equation, \cref{eq:eikonal} (see
     \cref{alg:dijkstra-like}). The box surrounding $p$ depicts its
@@ -30,18 +30,19 @@ iterative methods will be brief.
 With $n \geq 2$, and given a domain $\Omega \in \R^n$, the eikonal
 equation is:
 \begin{equation}\label{eq:eikonal}
-  \norm{\nabla u(x)}_2 = s(x), \qquad x \in \Omega,
+  \norm{\nabla u(x)} = s(x), \qquad x \in \Omega,
 \end{equation}
-where $s : \Omega \to \R_+$ is a fixed, nonnegative \emph{slowness
+where $\|\cdot\|$ denotes the $\ell_2$ norm unless otherwise stated,
+and $s : \Omega \to (0, \infty)$ is a fixed, positive \emph{slowness
   function}, which forms part of the problem data. Hence, we solve for
-$u : \Omega \to \R_+$. The rest of the problem data is a
-subset $D \subset \Omega$ where $u$ has been fixed; i.e.,
-$\left. u \right|_D = g$ for some $g : D \to \R_+$. As an
-example, if $s \equiv 1$ and $g \equiv 0$, then the solution of
-\cref{eq:eikonal} is:
+$u : \Omega \to \R_+$. The rest of the problem data is a subset
+$D \subset \Omega$ where $u$ has been fixed; i.e.,
+$\left. u \right|_D = g$ for some $g : D \to \R_+$. As an example, if
+$s \equiv 1$ and $g \equiv 0$, then the solution of \cref{eq:eikonal}
+is:
 \begin{equation}
   \label{eq:distance-to-Omega}
-  u(x) = d(x, D) = \min_{y \in D} \norm{x - y}_2.
+  u(x) = d(x, D) = \min_{y \in D} \norm{x - y}.
 \end{equation}
 That is, $u$ is the distance to $D$ at each point in
 $\Omega$. 
@@ -53,7 +54,7 @@ numerical solution $U : \calG \to \R_+$. Additionally, for each node
 $p \in \calG$, define a set of neighbors,
 $\neib(p) \subseteq \calG \backslash \set{p}$. Typically---for the FMM
 and \texttt{olim6}, for instance---$\calG$ is taken to be a subset of
-a lattice in $\R^n$ and $\neib(p)$ to be each node's $2n$ cardinal
+a lattice in $\R^n$ and $\neib(p)$ to be each node's $2n$ von Neumann
 neighbors. With $\calG$ defined, we also define the set of
 \emph{boundary nodes}, $\boundary \subseteq \calG$. It may happen that
 the set $\boundary$ and $D$ do not coincide (e.g., $D$ could be a
@@ -61,19 +62,35 @@ curve which does not intersect $\calG$); to reconcile this difference,
 the initial value of $U(p)$ for each $p \in \boundary$ must take
 $g = \left. u \right|_D$ into account in the best way possible. This
 problem has been approached in different ways, and is not the focus of
-the present work~\cite{chopp2001some}. Throughout, we will assume
-$\boundary = D \subseteq \calG$.
+the present work~\cite{chopp2001some}.
+
+Throughout, we make several simplifying assumptions.
+\begin{itemize}
+\item All boundary nodes coincide with grid points:
+  $\boundary = D \subseteq \calG$.
+\item The grid $\calG$ is a regular, uniform grid (a subset of a
+  regular, uniform square lattice in 2D or cubic lattice in 3D). We
+  denote grid nodes by $x \in \calG$.
+\item When numerically computing a new value at a grid point
+  $\hat{x} \in \calG$, we transform the neighborhood to the origin and
+  scale the vertices so that they have integer values. The transformed
+  update node is labeled $\hat{p}$. See \cref{ssec:notation} for a
+  detailed explanation.
+\end{itemize}
 
 \subsection{Dijkstra-like algorithms}\label{ssec:dijkstra-like}
 If we order nodes in $\mathcal{G}$ so that new solution values are
 only ever computed using upwind nodes, the eikonal equation can be
-solved directly; i.e., without the use of an iterative solver. This is
-done using a variant of Dijkstra's algorithm for finding shortest
-paths in a network. Other algorithms which solve similar network flow
-problems can also be used, but have different complexity
+solved directly; i.e., without the use of an iterative solver. To be
+clear, this means that each new value of the solution is only ever
+calculated using nodes that have smaller values. This is done using a
+variant of Dijkstra's algorithm for finding shortest paths in a
+network. Other algorithms which solve similar network flow problems
+can also be used, but have different complexity
 guarantees~\cite{chacon2012fast}. In particular, Dijkstra's algorithm
 is a type of \emph{label-setting method} for finding shortest paths in
-a network; there are also \emph{label-correcting methods}.
+a network; there are also \emph{label-correcting
+  methods}~\cite{bertsekas1998network}.
 
 Using Dijkstra's algorithm to solve a ``continuous shortest path''
 problem has been discovered in several contexts. The earliest such
@@ -87,16 +104,18 @@ grid~\cite{tsitsiklis1995efficient}. Finally, the fast marching
 method, which uses a first-order upwind finite difference scheme was
 developed by Sethian for isotropic front
 propagation~\cite{sethian1996fast}. Many variations of these methods
-have since been developed~\cite{sethian2003ordered,kao2004lax}. Our
-own development resembles Tsitsisklis's, but extends it past its
-original formulation.
+have since been
+developed~\cite{sethian2003ordered,kao2008legendre}. Our own
+development resembles Tsitsisklis's, but extends it past its original
+formulation.
 
 To write down a generic Dijkstra-like algorithm, there are several
-pieces of information which need to kept track of. A data structure we
-call \texttt{front} that stores an expanding wavefront is maintained
-throughout the algorithm's execution. For each node $p$, apart from
-the current value of $U(p)$, the most salient piece of information is
-the \emph{state} of each node $p$, written $p$\texttt{.state}
+pieces of information which need to be kept track of. A data structure
+we call \texttt{front} that stores an expanding wavefront is
+maintained throughout the algorithm's execution. For each node $p$,
+apart from the current value of $U(p)$, the most salient piece of
+information is the \emph{state} of each node $p$, written
+$p$\texttt{.state}
 $\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. The meaning
 of each of these states and each node's interaction with the
 \texttt{front} data structure will become clear from the following
@@ -112,14 +131,14 @@ high-level description of the algorithm:
     \texttt{trial}, and set $U(p)$ to some user-defined initial value.
   \item While there are \texttt{trial} nodes left in $\calG$:
     \begin{enumerate}[nolistsep]
-    \item Let $p$ be the \texttt{trial} node in \texttt{front} with
-      the smallest value $U(p)$.\label{enum:get-node}
-    \item Set $p$\texttt{.state} $\gets$ \texttt{valid} and remove $p$
-      from \texttt{front}.
-    \item For each $\hat{p} \in \neib(p)$, set
+    \item Let $\pnew$ be the \texttt{trial} node in \texttt{front}
+      with the smallest value $U(\pnew)$.\label{enum:get-node}
+    \item Set $\pnew$\texttt{.state} $\gets$ \texttt{valid} and remove
+      $\pnew$ from \texttt{front}.
+    \item For each $\hat{p} \in \neib(\pnew)$, set
       $\hat{p}$\texttt{.state} $\gets$ \texttt{trial} if
       $\hat{p}$\texttt{.state} $=$ \texttt{far}.\label{enum:set-trial}
-    \item For each $\hat{p} \in \neib(p)$ such that
+    \item For each $\hat{p} \in \neib(\pnew)$ such that
       $\hat{p}$\texttt{.state} $=$ \texttt{trial}, update
       $\hat{U} = U(\hat{p})$ and merge $\hat{p}$ into
       \texttt{front}.\label{enum:update-U}
@@ -151,11 +170,11 @@ the following ways:
   $g = \left. u \right|_D$~\cite{chopp2001some}
 \item How we keep track of the node with the smallest value is
   variable: most frequently, as in Dijkstra's algorithm, a heap
-  storing pointers to the nodes is used, leading to $O(N \log N)$
-  update operations overall, where $N$ is the number of nodes. In
-  fact, there are $O(N)$ variations using Dial's algorithm (a bucketed
-  version of Dijkstra's algorithm), but these have not been used as
-  extensively as Dijkstra-like
+  storing pointers to the nodes is used, leading to $O(N^n \log N)$
+  update operations overall, where $N^n$ is the number of nodes. In
+  fact, there are $O(N^n)$ variations using Dial's algorithm (a
+  bucketed version of Dijkstra's algorithm), but these have not been
+  used as extensively as Dijkstra-like
   algorithms~\cite{tsitsiklis1995efficient,kim2001calo,yatziv2006n}.
 \item Related to the foregoing point, the arrangement of the nodes
   (into a grid or otherwise) varies; hence, the neighborhood of each
@@ -181,14 +200,14 @@ method~\cite{tsai2003fast,zhao2005fast}. Unlike Dijkstra-like methods,
 which are direct solvers, the fast sweeping method is an iterative
 solver using an upwind scheme and rotating cardinal sweep
 directions. For problems where the characteristics of the solution
-change direction infrequently, the algorithm obtains $O(N)$
+change direction infrequently, the algorithm obtains $O(N^n)$
 complexity. A drawback of the method is that the asymptotic constant
 for this complexity guarantee cannot be bound a priori and depends
 heavily on the geometry of the problem. Fast sweeping methods have
 been extended to Hamilton-Jacobi
-equations~\cite{kao2004lax,tsai2003fast}, and hybrid methods combining
-the fast sweeping method with a Dijkstra-like method have been
-introduced recently~\cite{chacon2012fast,chacon2015parallel}.
+equations~\cite{tsai2003fast,kao2008legendre}, and hybrid methods
+combining the fast sweeping method with a Dijkstra-like method have
+been introduced recently~\cite{chacon2012fast,chacon2015parallel}.
 
 \end{document}
 
