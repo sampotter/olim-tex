@@ -57,11 +57,10 @@ of \cref{eq:action-functional}. We then present theoretical results.
     \caption{An example showing an update interval for $d = 2$ (a
       tetrahedron update).}\label{fig:tetra-diagram}
   \end{subfigure}
-  \caption{Characteristics emanate from the set
-    $p_0 + \delP \Delta^d = \set{p_0 + \lambda_1 \delp_1 + \cdots +
-      \lambda_d \delp_d}$, which approximates the front of the
-    numerical solution. These figures depict the quantities involved
-    in a tetrahedron update.}\label{fig:simplex-diagrams}
+  \caption{Characteristics emanate from $p_0 + \delP \Delta^d$, which
+    approximates the front of the solution. These figures depict the
+    quantities involved in a tetrahedron
+    update.}\label{fig:simplex-diagrams}
 \end{figure}
 
 \subsection{Notation}\label{ssec:notation}
@@ -86,8 +85,8 @@ we shift the coordinates so that the update node $\hat{p}$ coincides
 with the origin: $\hat{p} = 0$. Then, the vectors
 $\hat{p}, p_0, \hdots, p_d$ are the vertices of a simplex with affine
 dimension $d$. In this work, we only use uniform square or cubic
-meshes; hence, we only consider vectors $p_i$ which satisfy
-$\norm{p_i}_\infty = 1$ (larger neighborhoods may be required for a
+grids; hence, we only consider vectors $p_i$ which satisfy
+$\norm{p_i}_\infty = 1$ (larger neighborhoods are required for a
 Hamilton-Jacobi solver). Our results here are straightforwardly
 generalized to nonuniform rectangular grids. For each
 $i = 0, \hdots, d$, we also define $x_i$ to be the preimage of $p_i$
@@ -108,10 +107,11 @@ We define the set $\Delta^d$, the parameter space for the simplex, by:
 \end{equation}
 We will also occasionally write $\Delta^d$ as a linear matrix inequality:
 \begin{equation}\label{eq:Delta-LMI}
-  \lambda \in \Delta^d \iff A\lambda \leq b, \hspace{1em} \mbox{where } A = \begin{bmatrix}
-    -I_d \\ \m{1}_{1 \times d}
-  \end{bmatrix} \in \mathbb{R}^{(d + 1) \times d}, \hspace{1em} \mbox{and }
-  b = \begin{bmatrix} \m{0}_{d \times 1} \\ 1 \end{bmatrix} \in \mathbb{R}^{d + 1}.
+  \lambda \in \Delta^d \iff A\lambda \leq b, \mbox{ where } A = \begin{bmatrix}
+    -I_d \\ \m{1}_{d}^\top
+  \end{bmatrix} \in \mathbb{R}^{(d + 1) \times d}, \mbox{ and } b
+  = \begin{bmatrix} \m{0}_{d} \\ 1 \end{bmatrix} \in \mathbb{R}^{d +
+    1}.
 \end{equation}
 For each $\lambda = (\lambda_1, \hdots, \lambda_d) \in \Delta^d$, we
 will write $\lambda_0 = 1 - \lambda_1 - \cdots - \lambda_d$. Then,
@@ -172,9 +172,7 @@ this case, which we call \texttt{rhr}. If $\theta = \nicefrac{1}{2}$,
 then $F_0 \neq F_1$ in general, leading us to define a separate
 midpoint quadrature rule for each of $F_0$ and $F_1$, named
 \texttt{mp0} and \texttt{mp1}, respectively. The case of \texttt{mp0}
-requires special care and is handled in \cref{ssec:validation}. The
-distinction between these quadrature rules and their impact on our
-solvers is a key consideration of this paper.
+requires special care and is handled in \cref{ssec:validation}.
 
 \subsection{The minimization problem}\label{ssec:minimization-problem}
 
@@ -220,10 +218,7 @@ in this section can be found in \cref{sec:minimization-proofs}.
 
 Our task is to minimize $F_0$ and $F_1$ over the convex set
 $\Delta^n$; so, we need to determine whether $F_0$ and $F_1$ are
-convex themselves. The next two lemmas address this point. We also
-examine whether $F_0$ and $F_1$ are strictly convex or just
-convex. This relates to the definiteness of their Hessians, which are
-computed above.
+convex functions. The next two lemmas address this point.
 
 \begin{lemma}\label{lemma:dPt-cprojp-dP-pd}
   Let $p_0, \hdots, p_d$ form a nondegenerate simplex (i.e.,
@@ -450,8 +445,6 @@ numerical evidence suggesting that this is not the case in
 importance and limits the number of nodes that can be processed in
 parallel without violating causality.
 
-We now present a simple characterization of causality and a formula
-for computing the update gap.
 \begin{theorem}\label{thm:causality}
   For $\nu_i = p_i/\|p_i\|$, an update simplex is causal for $F_0$ if
   and only if $\nu_i^\top \nu_j \geq 0$ for all $i$ and $j$ such that
@@ -482,8 +475,9 @@ Near rarefaction fans, for example if $D$ is a point source or the
 domain contains obstacles with corners, the rate of convergence of the
 eikonal equation is diminished. For the eikonal equation with point
 source data and constant slowness, this degrades the rate of
-convergence to $O(h \log h^{-1})$~\cite{qi2018corner}. Different
-factored eikonal equations which treat this problem have been
+convergence to $O(h \log
+h^{-1})$~\cite{qi2018corner,zhao2005fast}. Different factored eikonal
+equations which treat this problem have been
 developed~\cite{fomel2009fast,luo2012fast}. In this section, we show
 how the ordered line integral method can be easily adapted to additive
 factoring, and provide numerical tests that show that it recovers the
@@ -495,18 +489,18 @@ occuring at corners or discontinuities~\cite{qi2018corner}.
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{factoring-example.eps}
-  \caption{Running \texttt{olim4rhr} (or, equivalently, the four-point
-    fast marching method with factoring~\cite{qi2018corner}) for three
-    steps. Ordered clockwise from the top left, the nodes are
-    $p_{0, 0}, p_{0, 1}, p_{1, 1}$, and $p_{1, 0}$, with $h = 1$ (so
-    we assume our domain is identified with $\mathbb{Z}^2$). We assume
-    a constant slowness function: $s \equiv 1$. Initially,
-    $p^\circ = p_{1, 0}$ is the only node in \texttt{bd} and is
-    factored. The first two steps proceed exactly the same as for the
-    unfactored method, since the steps between the source nodes and
-    the updated nodes lie along characteristics of the solution,
-    $u$. In the third step, the unfactored method would set
-    $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. For the factored
+  \caption{\emph{An example of running \texttt{olim4\_rhr} with local
+      factoring for three steps.} Note that \texttt{olim4\_rhr} is
+    equivalent to the standard FMM in 2D. Ordered clockwise from the
+    top left, the nodes are $p_{0, 0}, p_{0, 1}, p_{1, 1}$, and
+    $p_{1, 0}$, with $h = 1$ (so we assume our domain is identified
+    with $\mathbb{Z}^2$). We assume a constant slowness function:
+    $s \equiv 1$. Initially, $p^\circ = p_{1, 0}$ is the only node in
+    \texttt{bd} and is factored. The first two steps proceed exactly
+    the same as for the unfactored method, since the steps between the
+    source nodes and the updated nodes lie along characteristics of
+    the solution, $u$. In the third step, the unfactored method would
+    set $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. For the factored
     method, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we find that
     $U_{0,1} \gets 0 + s^\circ l^\circ_{\nicefrac{1}{2}} + s^\theta h
     l_{\nicefrac{1}{2}} = \nicefrac{\sqrt{2}}{2} +

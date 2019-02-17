@@ -5,7 +5,7 @@
 \section{Introduction}\label{sec:introduction}
 
 We develop fast, memory efficient, and accurate solvers for the
-\emph{eikonal equation}, a nonlinear hyperbolic PDE encountered in
+eikonal equation, a nonlinear hyperbolic PDE encountered in
 high-frequency wave propagation~\cite{engquist2003computational} and
 the modeling of a wide variety of problems in computational and
 applied science~\cite{sethian1999level}, such as photorealistic
@@ -20,15 +20,14 @@ acoustics~\cite{prislan2016ray}, which are key to enabling a higher
 degree of verisimilitude in virtual reality simulations
 (see~\cite{raghuvanshi2014parametric,raghuvanshi2018parametric} for a
 cutting-edge time-domain approach which is useful up to moderate
-frequencies); higher accuracy leads to more faithful results, and fast
-algorithms allow for more economical use. Current approaches to
-acoustics simulations rely on methods whose complexity depends on the
-highest frequency of the sound being simulated. For moderately
-high-frequency wave propagation problems, the eikonal equation comes
-about as the first term in an asymptotic WKB expansion of the
-Helmholtz equation and corresponds to the first arrival time of rays
-propagating under geometric optics, although approaches for computing
-multiple arrivals exist~\cite{fomel2002fast}.
+frequencies). Current approaches to acoustics simulations rely on
+methods whose complexity depends on the highest frequency of the sound
+being simulated. For moderately high-frequency wave propagation
+problems, the eikonal equation comes about as the first term in an
+asymptotic WKB expansion of the Helmholtz equation and corresponds to
+the first arrival time of rays propagating under geometric optics,
+although approaches for computing multiple arrivals
+exist~\cite{fomel2002fast}.
 
 In this work, we develop direct solvers for the eikonal equation which
 are fast and accurate, particularly in 3D. We develop two separate
@@ -37,7 +36,7 @@ computing updates in 3D in separate ways. These algorithms are
 analyzed and extensive numerical studies are carried out. Both
 approaches use knowledge of the problem gleaned from its Lagrangian
 representation to reduce the amount of computational work necessary to
-compute an accurate result. These approaches are competitve with
+compute an accurate result. These approaches are competitive with
 existing direct solvers for the eikonal equation and readily
 generalize to related equations (the static Hamilton-Jacobi equation)
 and higher dimensions. This research was conducted in tandem with

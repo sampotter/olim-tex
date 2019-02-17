@@ -26,18 +26,21 @@
   solvers for the eikonal equation and factored eikonal equation,
   which compute solutions on a regular grid by solving local
   variational minimization problems. Our methods converge linearly but
-  compute significantly more accurate solutions than competing
+  compute significantly more accurate solutions than competing linear
   methods, due to improved directional coverage and the use of more
   accurate quadrature rules. In 3D, we present two different families
   of algorithms which significantly reduce the number of FLOPs needed
-  to solve the eikonal equation. One method employs a fast
-  neighborhood search to prune unnecessary updates, and the other uses
-  the theory of constrained optimization to achieve the same end. The
-  proposed solvers are more efficient than the standard fast marching
-  method in terms of the relationship between error and CPU time. We
-  conduct extensive numerical simulations and provide theoretical
-  justification for our approach. A library that implements the
-  proposed solvers is available online.
+  to obtain an accurate solution to the eikonal equation. One method
+  employs a fast search using local characteristic directions to prune
+  unnecessary updates, and the other uses the theory of constrained
+  optimization to achieve the same end. The proposed solvers are more
+  efficient than the standard fast marching method in terms of the
+  relationship between error and CPU time. We also modify our method
+  for use with the additively factored eikonal equation, which can be
+  solved locally around point sources to maintain linear
+  convergence. We conduct extensive numerical simulations and provide
+  theoretical justification for our approach. A library that
+  implements the proposed solvers is available online.
 \end{abstract}
 
 \begin{keywords}

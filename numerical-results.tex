@@ -1,28 +1,37 @@
 \documentclass[sisc-eikonal.tex]{subfiles}
 
 \begin{document}
+\section{Numerical Results}\label{sec:numerical-results} We test on several different
+slowness functions with available exact solutions for point source
+data, and a linear speed function (i.e., $1/s$) which has been shown
+to be amenable to local factoring. For each quadrature rule described
+in \cref{ssec:quadrature} (\texttt{mp0}, \texttt{mp1}, or
+\texttt{rhr}), we have two 2D algorithms, \texttt{olim4} and
+\texttt{olim8}, corresponding to 4-\ and 8-point stencils,
+respectively. Since there is no advantage in 2D, we don't apply the
+top-down or bottom-up approaches. In 3D, we have three top-down
+algorithms: \texttt{olim6} (group IVa), \texttt{olim18} (groups I,
+IVa, and IVb), and \texttt{olim26} (group V). We also test the
+bottom-up algorithm \texttt{olim3d} (see \cref{fig:hu-neighborhoods}).
+
+\subsection{Implementation Notes}\label{ssec:impl-notes}
 
 \begin{figure}
   \centering \includegraphics[width=\linewidth]{speed-comparison.eps}%
   \vspace{-1.5em}
-  \caption{
-    To see how much of a slowdown we get by using \texttt{olim6\_rhr}
-    instead of the standard fast marching method (noting that they
-    compute the same solution), we compare runtimes on two different
-    computers. The first (labeled ``2.2 GHz'') is a 2015 MacBook Air
-    with a 2.2 GHz Intel Core i7 CPU, 8 GB of 1600 MHz DDR3 RAM, a 256
-    KiB L2 cache, and a 4 MiB L3 cache. The second (``4.6 GHz'') is a
-    custom built workstation running Linux with a 4.6 GHz Intel Core
+  \caption{\emph{Slowdown incurred by using \texttt{olim6\_rhr}
+      instead of the FMM.} From left to right: 1) the ratio of
+    runtimes versus $N$, 2) the total CPU runtime of each solver. We
+    compare results on two different computers: ``2.2 GHz'' is a 2015
+    MacBook Air with a 2.2 GHz Intel Core i7 CPU, 8 GB of 1600 MHz
+    DDR3 RAM, a 256 KiB L2 cache, and a 4 MiB L3 cache; ``4.6 GHz'' is
+    a custom built workstation running Linux with a 4.6 GHz Intel Core
     i7 CPU, 64 GB of 2133 MHz DDR4 RAM, a 1536 KiB L2 cache, and 12
-    MiB L3 cache. Both computers have L1 instruction caches and data
-    caches that are each 32 KiB. From the plots, we can see that the
-    difference in memory speeds has a significant impact on the
-    relative slowdown. The plots here use our standard
-    $\Omega = [-1, 1]^3$ domain $s \equiv 1$ and a point source at the
-    origin, and discretized into $N = 2^p + 1$ nodes in each
-    direction. From left to right, we plot: 1) the ratio of runtimes
-    (slowdown factor) versus $N$, 2) the total CPU runtime of each solver.
-  }\label{fig:speed-comparison}
+    MiB L3 cache. Both computers have 32 KiB L1 instruction caches and
+    data caches. The plots here use our standard $\Omega = [-1, 1]^3$
+    domain discretized into $N = 2^p + 1$ nodes in each direction,
+    with $s \equiv 1$ and a point source at the
+    origin.}\label{fig:speed-comparison}
 \end{figure}
 
 \begin{figure}
@@ -43,43 +52,26 @@
     profiler.}\label{fig:tasks}
 \end{figure}
 
-\section{Numerical Results}\label{sec:numerical-results} In this
-section, we collect our numerical tests. We first test our factored
-method on several different slowness functions with available exact
-solutions for point source data. We also test our method on a linear
-speed function (reciprocal of slowness) which has been shown to be
-amenable to local factoring. For each quadrature rule described in
-\cref{ssec:quadrature} (\texttt{mp0}, \texttt{mp1}, or \texttt{rhr}),
-we have two 2D algorithms, \texttt{olim4} and \texttt{olim8},
-corresponding to 4- and 8-point stencils, respectively. Since there is
-no advantage in 2D, we don't apply the top-down or bottom-up
-approaches. In 3D, we have three top-down algorithms: \texttt{olim6}
-(group IVa), \texttt{olim18} (groups I, IVa, and IVb), and
-\texttt{olim26} (group V). We also test the bottom-up algorithm
-\texttt{olim3d} (see \cref{fig:hu-neighborhoods}).
-
-\subsection{Implementation Notes}\label{ssec:impl-notes}
-
 Before describing our numerical tests, we briefly comment on our
-implementation and make some observations about its
-performance. Different design decisions can be made when implementing
-a Dijkstra-like algorithm which significantly affect its performance
-characteristics. We list the following choices that we made in our
-implementation:
+implementation and make some observations about its performance. A
+discussion of some of the choices that we made in our implementation
+follows:
 \begin{itemize}
 \item We precompute and cache all values of $s$ on the grid $\calG$,
-  as opposed to reevaluating $s$ each time a value is needed. We chose
-  to do this because we assume that $s$ will generally be provided as
-  gridded input data (consider, e.g., the shape from shading
+  as opposed to reevaluating $s$, because we assume that $s$ will be
+  provided as gridded data (consider, e.g., the shape from shading
   problem~\cite{kimmel2001optimal}, where the input data is an image).
-\item We maintain the front using a priority queue implemented using
-  an array-based heap, which is updated using the \texttt{sink} and
-  \texttt{swim} functions described in Sedgewick and
+\item We maintain \texttt{front} using a priority queue implemented
+  using an array-based heap, which is updated using the \texttt{sink}
+  and \texttt{swim} functions described in Sedgewick and
   Wayne~\cite{sedgewick2011algorithms}.
-\item The \texttt{front} data structure is stored as a dense grid of
-  states: for each node in $p \in \calG$, we keep track of
-  $p$\texttt{.state} for all time. Note that it is possible to
-  maintain a sparse front which saves space but is slower to update.
+\item We store \texttt{front} as a dense grid of states: for each node
+  in $p \in \calG$, we track $p$\texttt{.state} for all time for every
+  node. We could implement a sparse \texttt{front} using a hash map or
+  a quadtree or octree, which would save space, but would also be much
+  slower to update. In fact, since updating these data structures
+  frequently takes $O(\log n)$ time, using a sparse front has the
+  potential to degrade the overall complexity to $O(n \log^2 n)$.
 \end{itemize}
 
 We use a policy-based design~\cite{alexandrescu2001modern} written in
@@ -94,10 +86,8 @@ have found that only a modest slowdown is incurred by using
 the two is greater for smaller problem sizes, which is due to cache
 effects.
 
-As a consequence of our design decisions, we note that our solvers
-spend almost no time maintaing the front data structure. Using
-Valgrind~\cite{nethercote2007valgrind}, we profiled running our solver
-on the numerical tests below for different problem sizes and
+Using Valgrind~\cite{nethercote2007valgrind}, we profiled running our
+solver on the numerical tests below for different problem sizes and
 categorized the resulting profile data. See \cref{fig:tasks}. The
 ``update'' task corresponds to time spent actually computing updates,
 the ``logic'' task is a grab bag category for time spent on program
@@ -106,25 +96,22 @@ implements \texttt{front}. Since the asymptotic complexity of the
 ``update'' and ``logic'' sections is $O(N^n)$, and since ``heap'' is
 $O(N^n \log N)$, we can see from \cref{fig:tasks} that since so little
 time is spent updating the heap, \emph{the algorithm's runtime is
-  better thought of as $O(N^n)$ for practical problem sizes.}
+  better thought of as $O(N^n)$ for practical problem sizes.} This is
+a consequence of using an array-based heap, which is cheap to update,
+and a dense grid of states, which can be read from and written to in
+$O(1)$ time.
 
 \subsection[Single point source]{Slowness functions with an analytic
   solution for a point source}\label{ssec:point-source-problems}
 
 Using \cref{eq:eikonal} directly, a simple recipe to create pairs of
 slowness functions and solutions is to prescribe a continuous function
-$u$ with level sets homeomorphic to balls, and compute
+$u$ with level sets homeomorphic to balls and compute
 $s(x) = \norm{\nabla u(x)}_2$ analytically, which is valid for a
-single point source at the origin. The motivation for this set of
-tests is that it allows us to observe the effect of local factoring,
-and allows us to see how \texttt{mp0}, \texttt{mp1}, and \texttt{rhr}
-perform on different slowness functions. There is also a degree of
-compensation between the accuracy obtained by improved directional
-coverage (e.g., using \texttt{olim26} or \texttt{olim3d} instead of
-\texttt{olim18}) and the error due to quadrature.
-
-The following table shows our slowness function definitions:
-\vspace{0.5em}
+single point source at the origin. Such tests allow us to observe the
+effect of local factoring, and to see how \texttt{mp0}, \texttt{mp1},
+and \texttt{rhr} compare. The following table lists our test
+functions: \vspace{0.5em}
 \begin{center}
   \begin{tabular}{cccc}
     Name & $u(x)$ & $s(x)$ \\
@@ -175,36 +162,31 @@ time. We summarize our observations:
   discussion).
 \item If we scan each graph horizontally, we can see that the
   difference in error between \texttt{mp0} and \texttt{mp1} is
-  difficult to discern. For each \texttt{mp1} graph, the corresponding
-  \texttt{mp0} graph has the same error, but is shifted to the left,
-  reflecting the fact that the \texttt{mp0} OLIMs are substantially
-  faster. This fact is consistent with \cref{theorem:mp0-newton}, which
-  justifies the use of \texttt{mp0}.
+  minimal. For each \texttt{mp1} graph, the corresponding \texttt{mp0}
+  graph has the same error, but is shifted to the left, reflecting the
+  fact that the \texttt{mp0} OLIMs are substantially faster. This is
+  consistent with \cref{theorem:mp0-newton}, which justifies the use
+  of \texttt{mp0}.
 \item With respect to the choice of neighborhood, \texttt{olim6} is
   the fastest; and, for each choice of neighborhood, \texttt{mp0}
   provides the best combination of speed and accuracy. If we are
   willing to pay somewhat in speed, we can dramatically improve the
   error constant by improving the directional coverage and using a
-  solver like \texttt{olim3d\_mp0}, which appears to be the best
-  overall. This tradeoff is more pronounced for smaller problem
-  sizes. A theme running through this work is that, as the problem
-  size increases, memory access patterns come to dominate the runtime,
-  and the disparity between the faster and slower neighborhoods
-  becomes less pronounced. To see this, compare the start of each
-  graph in the top-left of the plots, and their ends in the
-  bottom-right. We can observe, e.g., that the maximum horizontal
-  distance between starting points and ending points has decreased
-  significantly, which confirms this observation.
-\item One benefit of our high accuracy algorithms is that they allow
-  us to obtain a better solution on rough mesh sizes in 3D. This is
-  important since opportunities to refine the mesh (and decrease $h$,
-  thereby improving the error) are limited for 3D problems. On our
-  workstation, a typical large 2D problem on $\Omega = [-1, 1]^2$ with
-  $\boundary = \set{0}$ was discretized by setting $N = 2^{14} +
-  1$. In 3D, solving the point source problem with
-  $\Omega = [-1, 1]^3$ and $\boundary = \set{0}$ for $N = 2^{9} + 1$
-  required a similar amount of memory. In 2D, $h = 2^{-13}$; in 3D,
-  $h = 2^{-8}$---a significant difference (32 times worse).
+  solver like \texttt{olim3d\_mp0}. This tradeoff is more pronounced
+  for smaller problem sizes. A theme running through this work is
+  that, as the problem size increases, memory access patterns come to
+  dominate the runtime, and the disparity between the faster and
+  slower neighborhoods becomes less pronounced. To see this, compare
+  the start of each graph in the top-left of the plots, and their ends
+  in the bottom-right. We can observe, e.g., that the maximum
+  horizontal distance between starting points and ending points has
+  decreased significantly, which confirms this observation.
+\item Our high accuracy algorithms allow us to obtain a better
+  solution on rough grids: this is helpful since opportunities to
+  refine the mesh are limited in 3D. Discretizing $\Omega = [-1, 1]^2$
+  in each direction into $N = 2^{14} + 1$ nodes requires about as much
+  memory as discretizing $\Omega = [-1, 1]^3$ with $N = 2^{9} + 1$,
+  which leads to $h$ being 32 times smaller in 2D than in 3D.
 \end{itemize}
 
 \begin{figure}

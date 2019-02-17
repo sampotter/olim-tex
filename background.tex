@@ -7,8 +7,8 @@
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.9\linewidth]{overview.eps}
-  \caption{An overview of a Dijkstra-like algorithm for solving the
-    eikonal equation, \cref{eq:eikonal} (see
+  \caption{\emph{An overview of a Dijkstra-like algorithm for solving
+      the eikonal equation, \cref{eq:eikonal}} (see
     \cref{alg:dijkstra-like}). The box surrounding $p$ depicts its
     neighborhood, \texttt{nb}$(p)$. Triangles represent updates. The
     dashed lines depict local rays: not necessarily the true
@@ -80,23 +80,22 @@ Throughout, we make several simplifying assumptions.
 
 \subsection{Dijkstra-like algorithms}\label{ssec:dijkstra-like}
 If we order nodes in $\mathcal{G}$ so that new solution values are
-only ever computed using upwind nodes, the eikonal equation can be
-solved directly; i.e., without the use of an iterative solver. To be
-clear, this means that each new value of the solution is only ever
-calculated using nodes that have smaller values. This is done using a
-variant of Dijkstra's algorithm for finding shortest paths in a
-network. Other algorithms which solve similar network flow problems
-can also be used, but have different complexity
-guarantees~\cite{chacon2012fast}. In particular, Dijkstra's algorithm
-is a type of \emph{label-setting method} for finding shortest paths in
-a network; there are also \emph{label-correcting
-  methods}~\cite{bertsekas1998network}.
+only computed using upwind nodes, the eikonal equation can be solved
+directly; i.e., without the use of an iterative solver. This means
+that new values of the solution are only involve nodes that have fixed
+smaller values. This is done using a variant of Dijkstra's algorithm
+for finding shortest paths in a network. Other algorithms which solve
+similar network flow problems can also be used, but have different
+complexity guarantees~\cite{chacon2012fast}. In particular, Dijkstra's
+algorithm is a type of label-setting method for finding shortest paths
+in a network; there are also label-correcting
+methods~\cite{bertsekas1998network}.
 
 Using Dijkstra's algorithm to solve a ``continuous shortest path''
 problem has been discovered in several contexts. The earliest such
-development appears to be a theoretical result in computational
-geometry due to Mitchell, Mount, and Papadimitriou, who used this idea
-to compute exact polyhedral shortest paths (``discrete geodesics'') on
+development is a theoretical result in computational geometry due to
+Mitchell, Mount, and Papadimitriou, who used this idea to compute
+exact polyhedral shortest paths (``discrete geodesics'') on
 triangulated surfaces~\cite{mitchell1987discrete}. This was followed
 by Tsitsiklis who developed a first-order semi-Lagrangian method for
 solving isotropic optimal control problems on a uniform
@@ -114,21 +113,18 @@ pieces of information which need to be kept track of. A data structure
 we call \texttt{front} that stores an expanding wavefront is
 maintained throughout the algorithm's execution. For each node $p$,
 apart from the current value of $U(p)$, the most salient piece of
-information is the \emph{state} of each node $p$, written
-$p$\texttt{.state}
-$\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. The meaning
-of each of these states and each node's interaction with the
-\texttt{front} data structure will become clear from the following
-high-level description of the algorithm:
+information is its state, written $p$\texttt{.state}
+$\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. To fix
+ideas, consider the following high-level Dijkstra-like algorithm:
 
 \begin{algorithm}
-  \caption{A schematic Dijkstra-like algorithm for solving the eikonal
+  \caption{A generic Dijkstra-like algorithm for solving the eikonal
     equation.}\label{alg:dijkstra-like}
   \begin{enumerate}[nolistsep]
-  \item For each $p \in \calG$, initially set $p$\texttt{.state} $=$
-    \texttt{far} and $U(p) = \infty$.
-  \item For each $p \in \boundary$, set $p$\texttt{.state} $=$
-    \texttt{trial}, and set $U(p)$ to some user-defined initial value.
+  \item For each $p \in \calG$, set $p$\texttt{.state} $\gets$
+    \texttt{far} and $U(p) \gets \infty$.
+  \item For each $p \in \boundary$, set $p$\texttt{.state} $\gets$
+    \texttt{trial}, and set $U(p)$ to a user-defined value.
   \item While there are \texttt{trial} nodes left in $\calG$:
     \begin{enumerate}[nolistsep]
     \item Let $\pnew$ be the \texttt{trial} node in \texttt{front}
@@ -176,12 +172,11 @@ the following ways:
   bucketed version of Dijkstra's algorithm), but these have not been
   used as extensively as Dijkstra-like
   algorithms~\cite{tsitsiklis1995efficient,kim2001calo,yatziv2006n}.
-\item Related to the foregoing point, the arrangement of the nodes
-  (into a grid or otherwise) varies; hence, the neighborhood of each
-  node varies. This naturally affects the update procedure. A regular
-  grid is simple to deal with, but Dijkstra-like methods have been
-  extended to manifolds and unstructured meshes, where the situation
-  is more
+\item The arrangement of the nodes into a grid or otherwise varies, as
+  do the neighborhoods of each node. This affects the update
+  procedure. A regular grid is simple to deal with, but Dijkstra-like
+  methods have been extended to manifolds and unstructured meshes,
+  where the situation is more
   involved~\cite{kimmel1998computing,sethian2000fast,bronstein2008numerical}.
 \end{itemize}
 Other problems can be solved using Dijkstra-like algorithms: the
@@ -198,11 +193,10 @@ involved~\cite{dahiya2017ordered,dahiya2018ordered,yang2019computing}.
 discretized version of \cref{eq:eikonal} is the fast sweeping
 method~\cite{tsai2003fast,zhao2005fast}. Unlike Dijkstra-like methods,
 which are direct solvers, the fast sweeping method is an iterative
-solver using an upwind scheme and rotating cardinal sweep
-directions. For problems where the characteristics of the solution
-change direction infrequently, the algorithm obtains $O(N^n)$
-complexity. A drawback of the method is that the asymptotic constant
-for this complexity guarantee cannot be bound a priori and depends
+solver using an upwind scheme and rotating sweep directions. For
+problems where the characteristics of the solution change direction
+infrequently, the algorithm obtains $O(N^n)$ complexity. A drawback of
+the method is that the constant cannot be bound a priori and depends
 heavily on the geometry of the problem. Fast sweeping methods have
 been extended to Hamilton-Jacobi
 equations~\cite{tsai2003fast,kao2008legendre}, and hybrid methods
