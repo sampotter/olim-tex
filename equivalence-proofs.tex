@@ -69,10 +69,11 @@
     p_i^\top \mathcal{P}_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \mathcal{P}^\perp_{\delP} p_{\lambda^*}} = \langle p_i, p_{\lambda^*} \rangle_{\mathcal{P}_{\delP}} + \norm{p_i}_{\mathcal{P}^\perp_{\delP}} \norm{p_{\lambda^*}}_{\mathcal{P}^\perp_{\delP}}.
   \end{equation}
   Since $\mathcal{P}^\perp_{\delP}$ orthogonally projects onto
-  $\range(\delP)^\perp$, and since the dimension of this subspace
-  is 1, $\mathcal{P}^\perp_{\delP} p_i$ and
+  $\range(\delP)^\perp$, and since the dimension of this subspace is
+  1, $\mathcal{P}^\perp_{\delP} p_i$ and
   $\mathcal{P}^\perp_{\delP} p_{\lambda^*}$ are multiples of one
-  another; furthermore, the angle between them is since our simplex is
+  another and their directions coincide (see \cref{fig:f0-exact});
+  furthermore, the angle between them is since our simplex is
   nondegenerate. So, by Cauchy-Schwarz:
   \begin{equation}\label{eq:cauchy-schwarz}
     \norm{p_i}_{\mathcal{P}^\perp_{\delP}} \norm{p_{\lambda^*}}_{\mathcal{P}^\perp_{\delP}} = \langle p_i, p_{\lambda^*} \rangle_{\mathcal{P}^\perp_{\delP}}.
@@ -89,10 +90,11 @@
   $\hat{p}$ is colinear with $\nabla \hat{U}$. If we let $\tilde{\nu}$
   be the normal pointing from $\hat{p}$ in the direction of the
   arriving characteristic, let $\tilde{p}$ be the point of
-  intersection between $p_0 + \langle \delP \rangle$ and
-  $\langle \tilde{\nu} \rangle$, and let
+  intersection between
+  $p_0 + \operatorname{range}\hspace{-0.15em}{(\delP)}$ and
+  $\operatorname{span}\hspace{-0.15em}{(\tilde{\nu})}$, and let
   $\tilde{l} = \norm{\tilde{p}}$, then, since
-  $\tilde{p} - p_0 \in \langle \delP \rangle$:
+  $\tilde{p} - p_0 \in \operatorname{range}\hspace{-0.15em}{(\delP)}$:
   \begin{equation}
     \numin^\top (\tilde{p} - p_0) = 0.
   \end{equation}

@@ -69,8 +69,8 @@ implementation:
 \begin{itemize}
 \item We precompute and cache all values of $s$ on the grid $\calG$,
   as opposed to reevaluating $s$ each time a value is needed. We chose
-  to do this we assume that $s$ will generally be provided as gridded
-  input data (consider, e.g., the shape from shading
+  to do this because we assume that $s$ will generally be provided as
+  gridded input data (consider, e.g., the shape from shading
   problem~\cite{kimmel2001optimal}, where the input data is an image).
 \item We maintain the front using a priority queue implemented using
   an array-based heap, which is updated using the \texttt{sink} and
@@ -119,8 +119,8 @@ single point source at the origin. The motivation for this set of
 tests is that it allows us to observe the effect of local factoring,
 and allows us to see how \texttt{mp0}, \texttt{mp1}, and \texttt{rhr}
 perform on different slowness functions. There is also a degree of
-compensation between the accuracy obtain by improved directional
-coverage (e.g., using \texttt{olim26} or \texttt{olim3d} istead of
+compensation between the accuracy obtained by improved directional
+coverage (e.g., using \texttt{olim26} or \texttt{olim3d} instead of
 \texttt{olim18}) and the error due to quadrature.
 
 The following table shows our slowness function definitions:
@@ -157,7 +157,7 @@ time. We summarize our observations:
   \texttt{olim18\_rhr} $\to$ \texttt{olim26\_rhr}), our accuracy
   deteriotes---we should not lose the overall $O(h)$ convergence
   (although, see \cref{table:qv-least-squares} to see what happens to
-  the converage rate for the linear speed function), but the error
+  the convergance rate for the linear speed function), but the error
   constant becomes worse. On the other hand, using one of the midpoint
   rules allows improved directional coverage to translate into an
   improved error constant. Indeed, for all slowness functions and
@@ -195,6 +195,16 @@ time. We summarize our observations:
   bottom-right. We can observe, e.g., that the maximum horizontal
   distance between starting points and ending points has decreased
   significantly, which confirms this observation.
+\item One benefit of our high accuracy algorithms is that they allow
+  us to obtain a better solution on rough mesh sizes in 3D. This is
+  important since opportunities to refine the mesh (and decrease $h$,
+  thereby improving the error) are limited for 3D problems. On our
+  workstation, a typical large 2D problem on $\Omega = [-1, 1]^2$ with
+  $\boundary = \set{0}$ was discretized by setting $N = 2^{14} +
+  1$. In 3D, solving the point source problem with
+  $\Omega = [-1, 1]^3$ and $\boundary = \set{0}$ for $N = 2^{9} + 1$
+  required a similar amount of memory. In 2D, $h = 2^{-13}$; in 3D,
+  $h = 2^{-8}$---a significant difference (32 times worse).
 \end{itemize}
 
 \begin{figure}

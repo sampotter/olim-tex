@@ -32,7 +32,7 @@
       &s^{\theta}_\lambda \parens{\frac{1}{2 p_\lambda^\top p_\lambda} \nabla p_\lambda^\top p_\lambda {(\nabla p_\lambda^\top p_\lambda)}^\top - \nabla^2_\lambda p_\lambda^\top p_\lambda} \Bigg).
     \end{aligned}
   \end{equation*}
-  Simplfying this gives us the result.
+  Simplifying this gives us the result.
 \end{proof}
 
 \begin{proof}[Proof of \cref{lemma:dPt-cprojp-dP-pd}]
@@ -92,11 +92,10 @@
   provided that $s > \smin > 0$, as assumed. This gives us a bound for
   the positive definite part of $\nabla F_1^2$.
 
-  Now, consider the indefinite perturbation,
-  $B = \set{\delP^\top \nu_\lambda, \theta h \dels}$. Since
-  $\norm{\dels} = O(h)$, we find that:
+  The perturbation $B = \set{\delP^\top \nu_\lambda, \theta h \dels}$
+  is indefinite. Since $\norm{\dels} = O(h)$, we find that:
   \begin{equation}
-    \lambda_{\max}(B) = \norm{\anticom{\delP^\top \nu_\lambda,
+    |\lambda_{\max}(B)| = \norm{\anticom{\delP^\top \nu_\lambda,
         \theta h \dels}}_2 \leq \theta h \sqrt{n} \norm{\anticom{\delP^\top \nu_\lambda, \dels}}_\infty = O(h^2),
   \end{equation}
   where we use the fact that the Lipschitz constant of $s$ is

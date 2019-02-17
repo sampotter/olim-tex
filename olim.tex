@@ -96,8 +96,8 @@ $h \Z^n$). The numerical solution $U$ and the slowness function $s$
 are evaluated at the points $x_i$; we write $U_i = U(x_i)$ and
 $s_i = s(x_i)$. For a fixed update, we ``forget'' $x_i$ and think of
 $U_i$ and $s_i$ being ``evaluated'' at $p_i$. For a given $n$, it is
-necessary to do updates for simplexes with affine dimension up to and
-including $n$. We will cover this in more detail in
+necessary to do updates for simplexes with affine dimension
+$d = 0, \hdots, n - 1$. We will cover this in more detail in
 \cref{sec:implementation}; presently, we will derive the updates for
 general dimension since there is no need to specialize. So, for this
 section, we simply assume that $d = n - 1$.
@@ -156,9 +156,9 @@ geometric sense of $\theta$ and the aggregates in
 \cref{eq:f0-definition,eq:F1-definition} is as follows:
 \begin{itemize}
 \item The parameter $\theta$ is a convex coefficient that selects a
-  section of $\Delta^d$ transverse to the characteristic. It is used
-  to linearly interpolate between $\hat{s}$ and the interpolated value
-  of $s$ at the base of $\Delta^d$.
+  section of $\Delta^d$ parallel to its base. It is used to linearly
+  interpolate between $\hat{s}$ and the interpolated value of $s$ at
+  the base of $\Delta^d$.
 \item The slowness is interpolated differently for $F_0$ and
   $F_1$. For $F_0$, we use the sample mean of $s_0, \hdots, s_d$; for
   $F_1$, we linearly interpolate between $s_0, \hdots, s_d$ using the
@@ -418,16 +418,14 @@ Dijkstra's method itself. To compute shortest paths in a network,
 Dijkstra's method uses dynamic programming to compute globally optimal
 shortest paths using local information~\cite{dijkstra1959note}. In
 this way, the distance to each downwind vertex must be greater than
-its upwind neighboring vertices. In the continuous setting, for our
-scheme to converge to the correct viscosity solution, it is necessary
-for our scheme to be consistent and
-monotone~\cite{crandall1983viscosity}. Our methods based on the
-\texttt{rhr} and \texttt{mp0} quadrature rules automatically inherit
-the consistency and causality of the finite difference methods that
-they relate to if they use the same 4 or 6 point neighborhoods in 2D
-and 3D. We consider many different update neighborhoods involving
-geometrically distinct simplexes. To this end, we provide a simple way
-of checking whether each simplex is causal.
+its upwind neighboring vertices. To ensure convergence to the correct
+viscosity solution, our scheme must be consistent and
+monotone~\cite{crandall1983viscosity}. Our OLIMs using the
+\texttt{rhr} quadrature rule inherit the consistency and causality of
+the finite difference methods which they are equivalent to if they use
+the same 4 (in 2D) or 6 (in 3D) point neighborhoods. Since we consider
+many different update neighborhoods involving distinct simplexes, we
+provide a simple way of checking whether each simplex is causal.
 
 The causality of an update depends on the underlying simplex and the
 problem data. In particular, an update is causal for $F_i$ if:

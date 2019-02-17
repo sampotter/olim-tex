@@ -296,7 +296,7 @@ $i \notin \mathcal{I}$, then $\mu_i^* = 0$, and otherwise, $\mu_i^*$
 can be computed easily from \cref{eq:stationarity}. Once the full
 vector of Lagrange multipliers has been computed, if $\mu^* \geq 0$,
 then the update may be skipped. A modified version of this strategy
-for skipping updates was used in our previous work on computing the
+for skipping updates was used in our work on computing the
 quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
 
 \subsection{The top-down and bottom-up algorithms}
@@ -316,8 +316,8 @@ condition is an important optimization. To see why it is correct, fix
 an update set $\calV_d$. If $\set{p_0, \hdots, p_d}$ satisfies the
 first two conditions but not the third, we can see that $\hat{p}$
 would have already been updated from it in a previous iteration. All
-new information affecting $\hat{U}$ this iteration must be computed
-from an update involving $\pnew$.
+new information affecting $\hat{U}$ during this iteration must be
+computed from an update involving $\pnew$.
 
 \begin{algorithm}[H]
   \caption{The top-down hierarchical algorithm for computing
@@ -384,6 +384,13 @@ $p_0 = \pnew$.
       $\mu^* \geq 0$.\label{item:bottom-up-for}
     \item Let $p_i$ be the node which forms the update with the
       minimum value.
+    \item If $F_i = F_0$ (\texttt{mp0} or \texttt{rhr}), compute $U$
+      for $(p_0, \hdots, p_{i})$ using \cref{thm:f0-exact} or
+      \cref{thm:equivalence}.
+    \item Otherwise, if $F_i = F_1$ (\texttt{mp1}), compute $U$ for
+      $(p_0, \hdots, p_{i})$ by solving
+      \cref{eq:constrained-minimization}.
+    \item Set $\hat{U} = \min(\hat{U}, U)$.
     \end{enumerate}
   \end{enumerate}
 \end{algorithm}

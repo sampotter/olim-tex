@@ -17,11 +17,13 @@ Bulirsch~\cite{stoer2013introduction}, from which
 \end{lemma}
 
 \begin{proof}[Proof of \cref{lemma:bounded-inv-hess-F1}]
-  From \cref{eq:hess-F1}, if we temporarily define:
+  To simplify \cref{eq:hess-F1}, we temporarily define:
   \begin{equation}
-    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \mathcal{P}^\perp_\lambda \delP \mbox{ and } B = \frac{\theta h}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels},
+    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \mathcal{P}^\perp_\lambda \delP \mbox{ and } B = \frac{\theta h}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels}.
   \end{equation}
-  we can see that:
+  Observe that $\|A\| = O(h)$ and $\|B\| = O(h^2)$, since
+  $\|\delta s\| = O(h)$ and since all other factors involved in $A$
+  and $B$ (excluding $h$ itself) are independent of $h$. Hence:
   \begin{equation}
     \norm{A^{-1} B} = \frac{\theta}{s^\theta_\lambda} \norm{\parens{\delP^\top \mathcal{P}^\perp_\lambda \delP}^{-1} \anticom{\delP^\top p_\lambda, \dels}} = O(h),
   \end{equation}
@@ -29,10 +31,15 @@ Bulirsch~\cite{stoer2013introduction}, from which
   $\norm{A^{-1} B} < 1$ for $h$ small enough, and we can Taylor
   expand:
   \begin{equation}
-    \nabla^2 F_1(\lambda)^{-1} = \parens{A + B}^{-1} = A \parens{I - A^{-1} B + A^{-2} B^2 - + \cdots},
+    \begin{aligned}
+      \nabla^2 F_1(\lambda)^{-1} &= \parens{A + B}^{-1} = {(I + A^{-1} B)}^{-1} A^{-1} \\
+      &= \parens{I - A^{-1} B + {(A^{-1} B)}^2 - \cdots} A^{-1} \\
+      &= A^{-1} - A^{-1} B A^{-1} + {(A^{-1} B)}^2 A^{-1} - \,\cdots,
+    \end{aligned}
   \end{equation}
-  which implies $\norm{\nabla^2 F_1(\lambda)^{-1}} = O(h^{-1})$. To
-  define $\beta$, let:
+  which implies $\norm{\nabla^2 F_1(\lambda)^{-1}} = O(h^{-1})$. Note
+  that when we Taylor expand, $\|A^{-1} B\| = O(h)$, so that
+  $\|A^{-1} B\| < 1$ for $h$ small enough. To define $\beta$, let:
   \begin{equation}
     \beta = \max_{\lambda \in \Delta^n} \norm{\nabla^2 F_1(\lambda)^{-1}} = O(h^{-1}),
   \end{equation}
@@ -82,20 +89,25 @@ Bulirsch~\cite{stoer2013introduction}, from which
 \begin{proof}[Proof of \cref{lemma:hess-F1-lipschitz}]
   If we restrict our attention to $\Delta^n$, we see that
   $l_\lambda^{-1} \delP^\top \mathcal{P}_\lambda^\perp \delP$ is
-  Lipschitz continuous with $O(1)$ Lipschitz constant and
-  $\tfrac{\theta}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels}$ is
-  Lipschitz continuous with $O(h)$ Lipschitz constant. Then, since
-  $s^\theta_\lambda$ is Lipschitz continuous with an $O(1)$ Lipschitz
-  constant, it follows that
-  $A(\lambda) = \tfrac{s^\theta_\lambda h}{l_\lambda} \delP^\top
-  \mathcal{P}^\perp_\lambda \delP$ is Lipschitz with a constant that
-  is $O(h)$ over $\Delta^n$, using the notation of
-  \cref{lemma:bounded-inv-hess-F1}; the same is true of
-  $B(\lambda) = \tfrac{\theta h}{l_\lambda} \anticom{\delP^\top
-    p_\lambda, \dels}$. Since
-  $\nabla^2 F_1(\lambda) = A(\lambda) + B(\lambda)$, we can see
-  immediately that it is also Lipschitz on $\Delta^n$ with a constant
-  that is $O(h)$.
+  Lipschitz continuous function of $\lambda$ with $O(1)$ Lipschitz
+  constant and $\theta \{{\delP}^\top p_\lambda, \dels\} /l_{\lambda}$
+  is Lipschitz continuous with $O(h)$ Lipschitz constant since
+  $\|\delta s\| = O(h)$. Then, since $s^\theta_\lambda$ is $O(1)$
+  Lipschitz, it follows that:
+  \begin{equation}
+    A(\lambda) = \tfrac{s^\theta_\lambda h}{l_\lambda} \delP^\top
+    \mathcal{P}^\perp_\lambda \delP
+  \end{equation}
+  has a Lipschitz constant that is $O(h)$ for $\lambda \in \Delta^n$,
+  using the notation of \cref{lemma:bounded-inv-hess-F1}. Likewise,
+  \begin{equation}
+    B(\lambda) = \tfrac{\theta h}{l_\lambda} \anticom{\delP^\top
+      p_\lambda, \dels} = O(h^2),
+  \end{equation}
+  since it is a sum of two terms involving products of $h$ and
+  $\delta s$. Since $\nabla^2 F_1(\lambda) = A(\lambda) + B(\lambda)$,
+  we can see immediately that it is also Lipschitz on $\Delta^n$ with
+  a constant that is $O(h)$.
 \end{proof}
 
 \begin{proof}[Proof of \cref{theorem:mp0-newton}]
@@ -131,18 +143,18 @@ Bulirsch~\cite{stoer2013introduction}, from which
   For our situation, Theorem 5.3.2 of Stoer and
   Bulirsch~\cite{stoer2013introduction} indicates that if:
   \begin{align}
-    \norm{\nabla F_1(\lambda)^{-1}} &\leq \beta,\label{item:sb-newton-1} \\
-    \norm{\nabla F_1(\lambda_0^*)^{-1} \nabla F_1(\lambda_0^*)} &\leq \alpha,\label{item:sb-newton-2} \mbox{ and} \\
-    \norm{\nabla F_1(\lambda) - \nabla F_1(\lambda')} &\leq \gamma \norm{\lambda - \lambda'} \mbox{ for each } \lambda, \lambda' \in \Delta^n,\label{item:sb-newton-3}
+    \|\nabla F_1(\lambda)^{-1}\| &\leq \beta, \mbox{where } \beta = O(h^{-1}) \label{item:sb-newton-1}, \\
+    \|\nabla F_1(\lambda_0^*)^{-1} \nabla F_1(\lambda_0^*)\| &\leq \alpha, \mbox{where } \alpha = O(h), \label{item:sb-newton-2} \mbox{ and} \\
+    \|\nabla F_1(\lambda) - \nabla F_1(\lambda')\| &\leq \gamma \norm{\lambda - \lambda'} \mbox{ for each } \lambda, \lambda' \in \Delta^n, \mbox{where } \gamma = O(h), \label{item:sb-newton-3}
   \end{align}
   then with $\lambda_0 = \lambda_0^*$, the iteration
   \cref{eq:lam0-iter-to-lam1} is well-defined, with each iterate
   satisfying $\norm{\lambda_k - \lambda_0} \leq r$, where
   $r = \alpha/(1 - \alpha\beta\gamma/2)$. Additionally, the limit of
   this iteration exists, and the iteration converges to it
-  quadratically; we note that since $F_1$ is strictly convex, the
-  limit of the iteration must be $\lambda_1^*$, so the theorem also
-  gives us
+  quadratically; we note that since $F_1$ is strictly convex for $h$
+  small enough, the limit of the iteration must be $\lambda_1^*$, so
+  the theorem also gives us
   $\norm{\dellam^*} = \norm{\lambda_1^* - \lambda_0^*} \leq r$.
 
   Now, we note that
