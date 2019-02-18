@@ -167,22 +167,18 @@ relative $\ell_\infty$ error plotted versus problem size and time, as
 well as $\ell_\infty$ error plotted versus $N$. We summarize our
 observations:
 \begin{itemize}
-\item For all slowness functions, we can see that for \texttt{rhr}, as
-  we increase directional coverage (\texttt{olim6\_rhr} $\to$
-  \texttt{olim18\_rhr} $\to$ \texttt{olim26\_rhr}), the accuracy of
-  the method deteriorates---we should not lose the overall $O(h)$
-  convergence (although, see \cref{table:qv-least-squares} to see what
-  happens to the convergance rate for the linear speed function), but
-  the error constant becomes worse. On the other hand, using one of
-  the midpoint rules allows improved directional coverage to translate
-  into an improved error constant. Indeed, for all slowness functions
-  and \texttt{mp0} or \texttt{mp1}, the error constants appear to be
-  sorted by degree of directionality (\texttt{olim6} $<$
-  \texttt{olim18} $<$ \texttt{olim26} $<$ \texttt{olim3d}). Although
-  the exact range and deviation of error constants for the different
-  slowness functions varies somewhat, the overall pattern remains the
-  same---see~\cite{yang2019computing} for a partial explanation of
-  this phenomenon.
+\item For \texttt{rhr}, as we increase directional coverage
+  (\texttt{olim6\_rhr} $\to$ \texttt{olim18\_rhr} $\to$
+  \texttt{olim26\_rhr}), the error constant does not improve; in fact,
+  for \texttt{s1}, \texttt{s3}, and \texttt{s4}, increasing the
+  directional coverages causes the accuracy to deteriorate (see
+  \cref{fig:size-vs-error}). This can be due to the fact that the
+  errors due to quadrature and due to linear interpolation have
+  different signs, and may partially compensate each other (e.g., in
+  \texttt{olim6}), and that this balance may worsen with increased
+  directional coverage, leading to a reduction in interpolation error.
+  On the other hand, using one of the midpoint rules allows improved
+  directional coverage to translate into an improved error constant.
 \item If we scan each graph horizontally, we can see that the
   difference in error between \texttt{mp0} and \texttt{mp1} is
   minimal. For each \texttt{mp1} graph, the corresponding \texttt{mp0}
