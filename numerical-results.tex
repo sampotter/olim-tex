@@ -37,19 +37,19 @@ bottom-up algorithm \texttt{olim3d} (see \cref{fig:hu-neighborhoods}).
 \begin{figure}
   \includegraphics[width=\linewidth]{tasks.eps}%
   \vspace{-0.5em}
-  \caption{ The percentage of time spent doing different tasks. The
-    ``update'' tasks and ``heap'' tasks are clearly defined, while the
-    ``logic'' task contains a variety of things related to
-    control-flow, finding neighbors, and memory movement---basically,
-    the parts of \cref{alg:dijkstra-like} that don't clearly pertain
-    to computing new $\hat{U}$ values or keeping \texttt{front}
-    updated. From these plots, it is clear that memory speed plays a
-    large role in determining efficiency. To some extent, even though
-    the more complicated update procedures are slower, their slowness
-    is hidden somewhat by memory latency as problem sizes grow. For
-    large $N$ and some solvers (the middle and right plots), ``heap''
-    takes too little time, and is not picked up by the
-    profiler.}\label{fig:tasks}
+  \caption{\emph{Percentage of time spent on different tasks as
+      determined by profiling.} The ``update'' tasks and ``heap''
+    tasks are clearly defined, while the ``logic'' task contains a
+    variety of things related to control-flow, finding neighbors, and
+    memory movement---basically, the parts of \cref{alg:dijkstra-like}
+    that don't clearly pertain to computing new $\hat{U}$ values or
+    keeping \texttt{front} updated. From these plots, it is clear that
+    memory speed plays a large role in determining efficiency. To some
+    extent, even though the more complicated update procedures are
+    slower, their slowness is hidden somewhat by memory latency as
+    problem sizes grow. For large $N$ and some solvers (the middle and
+    right plots), ``heap'' takes too little time, and is not picked up
+    by the profiler.}\label{fig:tasks}
 \end{figure}
 
 Before describing our numerical tests, we briefly comment on our
@@ -104,6 +104,32 @@ $O(1)$ time.
 \subsection[Single point source]{Slowness functions with an analytic
   solution for a point source}\label{ssec:point-source-problems}
 
+\begin{figure}
+  \centering \includegraphics[width=\linewidth]{time_vs_error_3d.eps}
+  \caption{\emph{Relative $\ell_\infty$ error plotted against CPU
+      runtime in seconds.} The domain is $\Omega = [-1, 1]^3$
+    discretized uniformly in each direction into $N = 2^p + 1$ points,
+    where $p = 3, \hdots, 9$, so that there are $N^3$ points
+    overall. The slowness functions used are listed in
+    \cref{ssec:point-source-problems}. We note that the horizontal and
+    vertical axes of each subplot are the
+    same.}\label{fig:time-vs-error}
+\end{figure}
+
+\begin{figure}
+  \centering \includegraphics[width=\linewidth]{size_vs_error_3d.eps}
+  \caption{\emph{Relative $\ell_\infty$ error plotted versus $N$.} The
+    setup is the same as in \cref{fig:time-vs-error}, except that
+    $p = 3, \hdots, 8$, so that the largest $N$ is $257$ instead of
+    $513$. For \texttt{olim26} and \texttt{olim3d}, we can see that
+    \texttt{mp0} is initially less accurate than \texttt{mp1} but
+    quickly attains parity, in accordance with
+    \cref{theorem:mp0-newton}. For \texttt{olim6} and \texttt{olim18},
+    the error is the same between \texttt{mp0} and \texttt{mp1} for
+    all slowness functions, so these plots
+    overlap.}\label{fig:size-vs-error}
+\end{figure}
+
 Using \cref{eq:eikonal} directly, a simple recipe to create pairs of
 slowness functions and solutions is to prescribe a continuous function
 $u$ with level sets homeomorphic to balls and compute
@@ -135,31 +161,28 @@ are:\begin{equation} A_{\texttt{s3}} = \begin{bmatrix}
   \end{bmatrix} = A_{\texttt{s4}}^{1/2}
 \end{equation}
 
-Our results are displayed in \cref{fig:time-vs-error}. We include
-plots of relative $\ell_\infty$ error plotted versus problem size and
-time. We summarize our observations:
+Our results are displayed in
+\cref{fig:time-vs-error,fig:size-vs-error}. We include plots of
+relative $\ell_\infty$ error plotted versus problem size and time, as
+well as $\ell_\infty$ error plotted versus $N$. We summarize our
+observations:
 \begin{itemize}
 \item For all slowness functions, we can see that for \texttt{rhr}, as
   we increase directional coverage (\texttt{olim6\_rhr} $\to$
-  \texttt{olim18\_rhr} $\to$ \texttt{olim26\_rhr}), our accuracy
-  deteriotes---we should not lose the overall $O(h)$ convergence
-  (although, see \cref{table:qv-least-squares} to see what happens to
-  the convergance rate for the linear speed function), but the error
-  constant becomes worse. On the other hand, using one of the midpoint
-  rules allows improved directional coverage to translate into an
-  improved error constant. Indeed, for all slowness functions and
-  \texttt{mp0} or \texttt{mp1}, the error constants appear to be
+  \texttt{olim18\_rhr} $\to$ \texttt{olim26\_rhr}), the accuracy of
+  the method deteriorates---we should not lose the overall $O(h)$
+  convergence (although, see \cref{table:qv-least-squares} to see what
+  happens to the convergance rate for the linear speed function), but
+  the error constant becomes worse. On the other hand, using one of
+  the midpoint rules allows improved directional coverage to translate
+  into an improved error constant. Indeed, for all slowness functions
+  and \texttt{mp0} or \texttt{mp1}, the error constants appear to be
   sorted by degree of directionality (\texttt{olim6} $<$
   \texttt{olim18} $<$ \texttt{olim26} $<$ \texttt{olim3d}). Although
   the exact range and deviation of error constants for the different
   slowness functions varies somewhat, the overall pattern remains the
-  same. This phenomenon, surprising at first glance, is due to the
-  fact that the contributions to the local error by \texttt{rhr} and
-  the linear interpolation of $s$ partially compensate each other. The
-  improvement of directional coverage reduces the interpolation error,
-  and hence reduces the compensation of the error generated by
-  \texttt{rhr} (see~\cite{yang2019computing} for a more detailed
-  discussion).
+  same---see~\cite{yang2019computing} for a partial explanation of
+  this phenomenon.
 \item If we scan each graph horizontally, we can see that the
   difference in error between \texttt{mp0} and \texttt{mp1} is
   minimal. For each \texttt{mp1} graph, the corresponding \texttt{mp0}
@@ -189,36 +212,24 @@ time. We summarize our observations:
   which leads to $h$ being 32 times smaller in 2D than in 3D.
 \end{itemize}
 
-\begin{figure}
-  \centering \includegraphics[width=\linewidth]{time_vs_error_3d.eps}
-  \caption{Relative $\ell_\infty$ error plotted against CPU runtime in
-    seconds. The domain is $\Omega = [-1, 1]^3$ discretized uniformly
-    in each direction into $N = 2^p + 1$ points, where
-    $p = 3, \hdots, 9$, so that there are $N^3$ points overall. The
-    slowness functions used are listed in
-    \cref{ssec:point-source-problems}. We note that the horizontal and
-    vertical axes of each subplot are the
-    same.}\label{fig:time-vs-error}
-\end{figure}
-
 \subsection{A linear speed function}\label{ssec:slotnick}
 
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{factoring-error-example.eps}%
   \vspace{-1.4em}
-  \caption{Comparing different ways of selecting factored nodes. For
-    the test problem, $\Omega = [-1, 1]^n$, with $n = 2$ (left) and
-    $n = 3$ (right). The domain is descretized into $N^3$ nodes, where
-    $N = 2^p + 1$, so that $h = 2/(N - 1)$. The slowness function is
-    constant ($s \equiv 1$). For the 2D problem, \texttt{olim8rhr} is
-    used; \texttt{olim26rhr} is used for the 3D problem. Solutions for
-    the unfactored problem are plotted, along with solutions using a
-    disk/sphere neighborhood with constant factoring radius given by
-    $\rfac = 0.05, 0.1, 0.15, 0.2$. We note that for this problem the
-    choice $\rfac = \sqrt{n}$ results in an exact solution. This only
-    applies to the constant slowness function, $s \equiv 1$.
-  }\label{fig:factoring-error-example}
+  \caption{\emph{Comparing different ways of selecting factored
+      nodes.} For the test problem, $\Omega = [-1, 1]^n$, with $n = 2$
+    (left) and $n = 3$ (right). The domain is descretized into $N^3$
+    nodes, where $N = 2^p + 1$, so that $h = 2/(N - 1)$. The slowness
+    function is constant ($s \equiv 1$). For the 2D problem,
+    \texttt{olim8rhr} is used; \texttt{olim26rhr} is used for the 3D
+    problem. Solutions for the unfactored problem are plotted, along
+    with solutions using a disk/sphere neighborhood with constant
+    factoring radius given by $\rfac = 0.05, 0.1, 0.15, 0.2$. We note
+    that for this problem the choice $\rfac = \sqrt{n}$ results in an
+    exact solution. This only applies to the constant slowness
+    function, $s \equiv 1$.  }\label{fig:factoring-error-example}
 \end{figure}
 
 \begin{figure}
@@ -232,8 +243,8 @@ time. We summarize our observations:
   \caption{Wall clock time plotted versus $N$ in 2D (left) and 3D
     (right).}\label{fig:qv-time-plots}
   \vspace{-1em}
-  \caption*{Numerical results for \cref{ssec:slotnick}. Problem sizes
-    are $N = 2^p + 1$, where $p = 3, \hdots, 14$ in 2D and
+  \caption*{\emph{Numerical results for \cref{ssec:slotnick}.} Problem
+    sizes are $N = 2^p + 1$, where $p = 3, \hdots, 14$ in 2D and
     $p = 3, \hdots, 9$ in 3D. The total number of nodes is $N^n$,
     where $n = 2, 3$. See \cref{ssec:slotnick} for least squares
     fits.}
@@ -342,9 +353,9 @@ to $\beta \approx 1.3$.
     \caption{$E_N \sim C_E h^\beta$}
   \end{subtable}
   \vspace{-1em}
-  \caption{Least-squares fits of the runtime and relative
-    $\ell_\infty$ error for OLIMs in 2D and 3D. We denote the time for
-    a given $N$ by $T_N$; likewise, $E_N$ denotes the relative
+  \caption{\emph{Least-squares fits of the runtime and relative
+      $\ell_\infty$ error for OLIMs in 2D and 3D.} We denote the time
+    for a given $N$ by $T_N$; likewise, $E_N$ denotes the relative
     $\ell_\infty$ error for a specific $N$. We fit $T_N$ to a power
     $C_T N^\alpha$. In 2D, we expect $\alpha \approx 2$; in 3D,
     $\alpha \approx 3$. In 3D, we fit $E_N$ to $C_E h^\beta$, and

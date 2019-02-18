@@ -166,26 +166,6 @@ neighboring vertices and perform the corresponding triangle updates,
 then enumerate vertices which are sufficiently close to the minimum
 triangle update, doing any relevant tetrahedron updates along the way.
 
-While the top-down algorithm is parametrized by the choice of
-tetrahedron groups to include, the bottom-up algorithm is parametrized
-by the norms used to search for neighboring vertices as well as the
-permitted search radii. In 3D, let $p_0$ be the vertex that admits the
-minimum line update; then, $p_1$ must satisfy
-$\norm{p_1 - p_0}_{q_1} \leq d_1$, where $q_1 = 1, 2$, or $\infty$ and
-$d_1$ is a positive integer. Likewise, when searching for tetrahedron
-updates, for a candidate vertex $p_2$, we require
-$\norm{p_2 - p_1}_{q_2} \leq d_2$ and
-$\norm{p_2 - p_0}_{q_2} \leq d_2$ to hold simultaneously.
-
-For our numerical tests, we use the $\ell_1$ norm in both cases
-($q_1 = 1 = q_2$), and set $(d_1, d_2) = (1, 2)$ (see
-\cref{fig:hu-neighborhoods}). We found this choice of parameters to be
-a good compromise between speed and accuracy. Using larger
-neighborhoods does lead to a more accurate solution, but causes the
-solver to run more slowly. We do not explore the effect of this
-parametrization in this paper, since our choice of parameters performs
-well enough already (see \cref{sec:numerical-results}).
-
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.85\linewidth]{hu-neighborhoods.eps}
@@ -202,8 +182,6 @@ well enough already (see \cref{sec:numerical-results}).
     and VIb.}\label{fig:hu-neighborhoods}
 \end{figure}
 
-\subsection{Minimization algorithms and skipping
-  updates}\label{ssec:algorithms-and-skipping}
 
 \begin{figure}
   \centering
@@ -223,6 +201,28 @@ well enough already (see \cref{sec:numerical-results}).
     and it would only be possible to skip one
     update.}\label{fig:skip-zones}
 \end{figure}
+
+While the top-down algorithm is parametrized by the choice of
+tetrahedron groups to include, the bottom-up algorithm is parametrized
+by the norms used to search for neighboring vertices as well as the
+permitted search radii. In 3D, let $p_0$ be the vertex that admits the
+minimum line update; then, $p_1$ must satisfy
+$\norm{p_1 - p_0}_{q_1} \leq d_1$, where $q_1 = 1, 2$, or $\infty$ and
+$d_1$ is a positive integer. Likewise, when searching for tetrahedron
+updates, for a candidate vertex $p_2$, we require
+$\norm{p_2 - p_1}_{q_2} \leq d_2$ and
+$\norm{p_2 - p_0}_{q_2} \leq d_2$ to hold simultaneously.
+
+For our numerical tests, we use the $\ell_1$ norm in both cases
+($q_1 = 1 = q_2$), and set $(d_1, d_2) = (1, 2)$ (see
+\cref{fig:hu-neighborhoods}). We found this choice of parameters to be
+a good compromise between speed and accuracy. Using larger
+neighborhoods does lead to a more accurate solution, but causes the
+solver to run more slowly. We do not explore the effect of this
+parametrization in this paper, since our choice of parameters performs
+well enough already (see \cref{sec:numerical-results}).
+\subsection{Minimization algorithms and skipping
+  updates}\label{ssec:algorithms-and-skipping}
 
 Performing an update is the same as solving
 \cref{eq:constrained-minimization} for fixed problem data. When
@@ -290,25 +290,7 @@ quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
 
 \subsection{The top-down and bottom-up algorithms}
 
-To describe our top-down algorithm, we define:
-\begin{equation}\label{eq:calU}
-  \begin{aligned}
-    \calV_d = \big\{\set{p_0, \hdots, p_d}: \; &p_i\texttt{.state}=\texttt{valid} \mbox{ for } i = 0, \hdots, d, \\
-    &\mbox{and } \set{p_0, \hdots, p_d} \mbox{ belongs to the selected update group}, \\
-    &\mbox{and } \pnew \in \set{p_0, \hdots, p_d} \big\}
-  \end{aligned}
-\end{equation}
-for $d = 0, \hdots, n - 1$. These sets collect all possible simplex
-updates: i.e., updates which both belong to a group as defined in
-\cref{ssec:simplex-enumeration} and are \texttt{valid}. The third
-condition is an important optimization. To see why it is correct, fix
-an update set $\calV_d$. If $\set{p_0, \hdots, p_d}$ satisfies the
-first two conditions but not the third, we can see that $\hat{p}$
-would have already been updated from it in a previous iteration. All
-new information affecting $\hat{U}$ during this iteration must be
-computed from an update involving $\pnew$.
-
-\begin{algorithm}[H]
+\begin{algorithm}[t]
   \caption{The top-down hierarchical algorithm for computing
     $U(\hat{p})$ (\cref{enum:update-U} of
     \cref{alg:dijkstra-like}).}\label{alg:top-down}
@@ -345,12 +327,7 @@ computed from an update involving $\pnew$.
   \end{enumerate}
 \end{algorithm}
 
-The bottom-up algorithm builds up each update $(p_0, \hdots, p_d)$ one
-vector at a time by searching for adjacent minimizing updates of
-higher dimension. The optimization involving $\pnew$ described above
-can be incorporated by initially setting $p_0 \gets \pnew$.
-
-\begin{algorithm}[H]
+\begin{algorithm}[t]
   \caption{The bottom-up hierarchical algorithm for computing
     $U(\hat{p})$ (\cref{enum:update-U} of
     \cref{alg:dijkstra-like}).}\label{alg:bottom-up}
@@ -382,6 +359,31 @@ can be incorporated by initially setting $p_0 \gets \pnew$.
     \end{enumerate}
   \end{enumerate}
 \end{algorithm}
+
+To describe our top-down algorithm (see \cref{alg:top-down}), we
+define:
+\begin{equation}\label{eq:calU}
+  \begin{aligned}
+    \calV_d = \big\{\set{p_0, \hdots, p_d}: \; &p_i\texttt{.state}=\texttt{valid} \mbox{ for } i = 0, \hdots, d, \\
+    &\mbox{and } \set{p_0, \hdots, p_d} \mbox{ belongs to the selected update group}, \\
+    &\mbox{and } \pnew \in \set{p_0, \hdots, p_d} \big\}
+  \end{aligned}
+\end{equation}
+for $d = 0, \hdots, n - 1$. These sets collect all possible simplex
+updates: i.e., updates which both belong to a group as defined in
+\cref{ssec:simplex-enumeration} and are \texttt{valid}. The third
+condition is an important optimization. To see why it is correct, fix
+an update set $\calV_d$. If $\set{p_0, \hdots, p_d}$ satisfies the
+first two conditions but not the third, we can see that $\hat{p}$
+would have already been updated from it in a previous iteration. All
+new information affecting $\hat{U}$ during this iteration must be
+computed from an update involving $\pnew$.
+
+The bottom-up algorithm (\cref{alg:bottom-up}) builds up each update
+$(p_0, \hdots, p_d)$ one vector at a time by searching for adjacent
+minimizing updates of higher dimension. The optimization involving
+$\pnew$ described above can be incorporated by initially setting
+$p_0 \gets \pnew$.
 
 \end{document}
 
