@@ -1,0 +1,81 @@
+\ProvidesPackage{eikonal}
+
+%% BeginIpePreamble
+
+\usepackage[]{hyperref}
+\hypersetup{
+  pdftitle={OLIMs for Solving the Eikonal Equation},
+  pdfauthor={Samuel F. Potter and Maria Cameron},
+  colorlinks=true
+}
+\usepackage{algorithm}
+\usepackage{amsmath}
+\usepackage{amssymb}
+% \usepackage{blindtext}
+\usepackage{booktabs}
+\usepackage{enumitem}
+% \usepackage{float}
+% \usepackage{fullpage}
+% \usepackage[T1]{fontenc}
+\usepackage{graphicx}
+% \usepackage[framemethod=default]{mdframed}
+% \usepackage[retainorgcmds]{IEEEtrantools}
+% \usepackage{multirow}
+\usepackage{nicefrac}
+% \usepackage{relsize}
+% \usepackage{soul}
+\usepackage{subcaption}
+% \usepackage{xcolor}
+
+% \graphicspath{{/Volumes/Molly/Dropbox/Projects/all-olim/eikonal/misc/data}}
+
+\newcommand{\Fmpone}{F_1^{\operatorname{mp}}}
+\newcommand{\Fmpzero}{F_0^{\operatorname{mp}}}
+\newcommand{\Frhr}{F^{\operatorname{rhr}}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\anticom}[1]{\curlyb{#1}}
+\newcommand{\argmax}{\operatorname{argmax}}
+\newcommand{\argmin}{\operatorname{argmin}}
+\newcommand{\boundary}{\texttt{bd}}
+\newcommand{\calC}{\mathcal{C}}
+\newcommand{\calG}{\mathcal{G}}
+\newcommand{\calP}{\mathcal{P}}
+\newcommand{\calU}{\mathcal{U}}
+\newcommand{\calV}{\mathcal{V}}
+\newcommand{\cone}{\operatorname{cone}}
+\newcommand{\conv}{\operatorname{conv}}
+\newcommand{\curlyb}[1]{\left\{#1\right\}}
+\newcommand{\delP}{{\delta \hspace{-0.14em} P}}
+\newcommand{\delU}{{\delta \hspace{-0.09em} U}}
+\newcommand{\dellam}{{\delta \hspace{-0.1em} \lambda}}
+\newcommand{\delp}{{\delta \hspace{-0.08em} p}}
+\newcommand{\dels}{{\delta \hspace{-0.1em} s}}
+\newcommand{\deltau}{{\delta \hspace{-0.05em} \tau}}
+\newcommand{\eatpunct}[1]{}
+\newcommand{\epsmach}{\epsilon_{\operatorname{mach}}}
+\newcommand{\groupmarker}{\bullet}
+\newcommand{\hthresh}{h_{\operatorname{thresh}}}
+\newcommand{\lambdamin}{\lambda_{\operatorname{min}}}
+\newcommand{\lambdaopt}{\lambda_{\operatorname{opt}}}
+\newcommand{\m}[1]{\boldsymbol{#1}}
+\newcommand{\neib}{\texttt{nb}}
+\newcommand{\norm}[1]{\left\|#1\right\|}
+\newcommand{\numin}{\nu_{\operatorname{min}}}
+\newcommand{\onevec}{\m{1}}
+\newcommand{\one}{\onevec}
+\newcommand{\parens}[1]{\left(#1\right)}
+\newcommand{\pmin}{p_{\operatorname{min}}}
+\newcommand{\pnew}{p_{\operatorname{new}}}
+\newcommand{\range}{\operatorname{range}}
+\newcommand{\rfac}{r^\circ}
+\newcommand{\sbar}{\overline{s}}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\smin}{s_{\operatorname{min}}}
+\newcommand{\squareb}[1]{\left[#1\right]}
+\newcommand{\umax}{u_{\operatorname{max}}}
+\newcommand{\umin}{u_{\operatorname{min}}}
+\newcommand{\xopt}{x_{\operatorname{opt}}}
+
+%%EndIpePreamble
