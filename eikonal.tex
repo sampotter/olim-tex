@@ -88,25 +88,21 @@ although approaches for computing multiple arrivals
 exist~\cite{fomel2002fast}.
 
 In this work, we develop direct solvers for the eikonal equation which
-are fast and accurate, particularly in 3D. We develop two separate
-families of algorithms which approach the problem of efficiently
-computing updates in 3D in separate ways. These algorithms are
-analyzed and extensive numerical studies are carried out. Both
-approaches use knowledge of the problem gleaned from its Lagrangian
-representation to reduce the amount of computational work necessary to
-compute an accurate result. These approaches are competitive with
-existing direct solvers for the eikonal equation and readily
-generalize to related equations (the static Hamilton-Jacobi equation)
-and higher dimensions. This research was conducted in tandem with
-research into ordered line integral methods for computing the
+are fast and accurate, particularly in 3D. We develop a family of
+algorithms which approach the problem of efficiently computing updates
+in 3D in different ways. This family of algorithms is analyzed and
+extensive numerical studies are carried out. Both approaches are
+semi-Lagrangian and use information about local characteristics to
+reduce the work necessary to get an accurate result. These approaches
+are competitive with existing direct solvers for the eikonal equation
+and generalize higher dimensions, and related equations, such as the
+static Hamilton-Jacobi equation. In fact, this research was done in
+tandem with research on the ordered line integral methods for the
 quasipotential of nongradient stochastic differential equations
-(SDEs)~\cite{dahiya2017ordered,dahiya2018ordered,yang2019computing};
-however, because of the comparative simplicity of the eikonal
-equation, we were led to develop two separate families of algorithms
-(one based on the original quasipotential ordered line integral
-method, but modified) that were more amenable to analysis, which
-allowed us to obtain theoretical results that justify our experimental
-findings.
+(SDEs)~\cite{dahiya2017ordered,dahiya2018ordered,yang2019computing}.
+Due to the relative simplicity of the eikonal equation, the algorithms
+presented here are more amenable to analysis, allowing us to obtain
+theoretical results that justify our experimental findings.
 
 \subsection{Results}
 
