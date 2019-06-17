@@ -1,0 +1,525 @@
+<?xml version="1.0"?>
+<!DOCTYPE ipe SYSTEM "ipe.dtd">
+<ipe version="70206" creator="Ipe 7.2.10">
+<info created="D:20190617150442" modified="D:20190617151459"/>
+<preamble>\newlabel{sec:implementation}{{4}{15}{Implementation of the ordered line integral method}{section.4}{}}
+\newlabel{ssec:quadrature}{{3.2}{9}{Quadrature}{subsection.3.2}{}}</preamble>
+<ipestyle name="basic">
+<symbol name="arrow/arc(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/farc(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/ptarc(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/fptarc(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="mark/circle(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</symbol>
+<symbol name="mark/disk(sx)" transformations="translations">
+<path fill="sym-stroke">
+0.6 0 0 0.6 0 0 e
+</path>
+</symbol>
+<symbol name="mark/fdisk(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+0.5 0 0 0.5 0 0 e
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+0.6 0 0 0.6 0 0 e
+0.4 0 0 0.4 0 0 e
+</path>
+</group>
+</symbol>
+<symbol name="mark/box(sx)" transformations="translations">
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</symbol>
+<symbol name="mark/square(sx)" transformations="translations">
+<path fill="sym-stroke">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+</path>
+</symbol>
+<symbol name="mark/fsquare(sfx)" transformations="translations">
+<group>
+<path fill="sym-fill">
+-0.5 -0.5 m
+0.5 -0.5 l
+0.5 0.5 l
+-0.5 0.5 l
+h
+</path>
+<path fill="sym-stroke" fillrule="eofill">
+-0.6 -0.6 m
+0.6 -0.6 l
+0.6 0.6 l
+-0.6 0.6 l
+h
+-0.4 -0.4 m
+0.4 -0.4 l
+0.4 0.4 l
+-0.4 0.4 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="mark/cross(sx)" transformations="translations">
+<group>
+<path fill="sym-stroke">
+-0.43 -0.57 m
+0.57 0.43 l
+0.43 0.57 l
+-0.57 -0.43 l
+h
+</path>
+<path fill="sym-stroke">
+-0.43 0.57 m
+0.57 -0.43 l
+0.43 -0.57 l
+-0.57 0.43 l
+h
+</path>
+</group>
+</symbol>
+<symbol name="arrow/fnormal(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/pointed(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/fpointed(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-0.8 0 l
+-1 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/linear(spx)">
+<path stroke="sym-stroke" pen="sym-pen">
+-1 0.333 m
+0 0 l
+-1 -0.333 l
+</path>
+</symbol>
+<symbol name="arrow/fdouble(spx)">
+<path stroke="sym-stroke" fill="white" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<symbol name="arrow/double(spx)">
+<path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
+0 0 m
+-1 0.333 l
+-1 -0.333 l
+h
+-1 0 m
+-2 0.333 l
+-2 -0.333 l
+h
+</path>
+</symbol>
+<pen name="heavier" value="0.8"/>
+<pen name="fat" value="1.2"/>
+<pen name="ultrafat" value="2"/>
+<symbolsize name="large" value="5"/>
+<symbolsize name="small" value="2"/>
+<symbolsize name="tiny" value="1.1"/>
+<arrowsize name="large" value="10"/>
+<arrowsize name="small" value="5"/>
+<arrowsize name="tiny" value="3"/>
+<color name="red" value="1 0 0"/>
+<color name="green" value="0 1 0"/>
+<color name="blue" value="0 0 1"/>
+<color name="yellow" value="1 1 0"/>
+<color name="orange" value="1 0.647 0"/>
+<color name="gold" value="1 0.843 0"/>
+<color name="purple" value="0.627 0.125 0.941"/>
+<color name="gray" value="0.745"/>
+<color name="brown" value="0.647 0.165 0.165"/>
+<color name="navy" value="0 0 0.502"/>
+<color name="pink" value="1 0.753 0.796"/>
+<color name="seagreen" value="0.18 0.545 0.341"/>
+<color name="turquoise" value="0.251 0.878 0.816"/>
+<color name="violet" value="0.933 0.51 0.933"/>
+<color name="darkblue" value="0 0 0.545"/>
+<color name="darkcyan" value="0 0.545 0.545"/>
+<color name="darkgray" value="0.663"/>
+<color name="darkgreen" value="0 0.392 0"/>
+<color name="darkmagenta" value="0.545 0 0.545"/>
+<color name="darkorange" value="1 0.549 0"/>
+<color name="darkred" value="0.545 0 0"/>
+<color name="lightblue" value="0.678 0.847 0.902"/>
+<color name="lightcyan" value="0.878 1 1"/>
+<color name="lightgray" value="0.827"/>
+<color name="lightgreen" value="0.565 0.933 0.565"/>
+<color name="lightyellow" value="1 1 0.878"/>
+<dashstyle name="dashed" value="[4] 0"/>
+<dashstyle name="dotted" value="[1 3] 0"/>
+<dashstyle name="dash dotted" value="[4 2 1 2] 0"/>
+<dashstyle name="dash dot dotted" value="[4 2 1 2 1 2] 0"/>
+<textsize name="large" value="\large"/>
+<textsize name="Large" value="\Large"/>
+<textsize name="LARGE" value="\LARGE"/>
+<textsize name="huge" value="\huge"/>
+<textsize name="Huge" value="\Huge"/>
+<textsize name="small" value="\small"/>
+<textsize name="footnote" value="\footnotesize"/>
+<textsize name="tiny" value="\tiny"/>
+<textstyle name="center" begin="\begin{center}" end="\end{center}"/>
+<textstyle name="itemize" begin="\begin{itemize}" end="\end{itemize}"/>
+<textstyle name="item" begin="\begin{itemize}\item{}" end="\end{itemize}"/>
+<gridsize name="4 pts" value="4"/>
+<gridsize name="8 pts (~3 mm)" value="8"/>
+<gridsize name="16 pts (~6 mm)" value="16"/>
+<gridsize name="32 pts (~12 mm)" value="32"/>
+<gridsize name="10 pts (~3.5 mm)" value="10"/>
+<gridsize name="20 pts (~7 mm)" value="20"/>
+<gridsize name="14 pts (~5 mm)" value="14"/>
+<gridsize name="28 pts (~10 mm)" value="28"/>
+<gridsize name="56 pts (~20 mm)" value="56"/>
+<anglesize name="90 deg" value="90"/>
+<anglesize name="60 deg" value="60"/>
+<anglesize name="45 deg" value="45"/>
+<anglesize name="30 deg" value="30"/>
+<anglesize name="22.5 deg" value="22.5"/>
+<opacity name="10%" value="0.1"/>
+<opacity name="30%" value="0.3"/>
+<opacity name="50%" value="0.5"/>
+<opacity name="75%" value="0.75"/>
+<tiling name="falling" angle="-60" step="4" width="1"/>
+<tiling name="rising" angle="30" step="4" width="1"/>
+</ipestyle>
+<page>
+<layer name="alpha"/>
+<view layers="alpha" active="alpha"/>
+<text layer="alpha" matrix="1 0 0 1 92 0" transformations="translations" pos="160 704" stroke="black" type="minipage" width="192" height="13.164" depth="8.2" valign="top" style="center">Ordered line integral methods (OLIMs) for the eikonal equation in 3D</text>
+<path matrix="1 0 0 1 112 4" stroke="black" arrow="normal/normal">
+192 672 m
+144 624 l
+</path>
+<path matrix="1 0 0 1 136 4" stroke="black" arrow="normal/normal">
+256 672 m
+304 624 l
+</path>
+<text matrix="1 0 0 1 112 4" transformations="translations" pos="112 616" stroke="black" type="minipage" width="64" height="6.865" depth="1.88" valign="top" style="center">Bottom-up</text>
+<text matrix="1 0 0 1 136 4" transformations="translations" pos="272 616" stroke="black" type="minipage" width="64" height="6.926" depth="1.93" valign="top" style="center">Top-down</text>
+<text matrix="1 0 0 1 284 0" transformations="translations" pos="72 552" stroke="black" type="minipage" width="48" height="5.538" depth="0.55" valign="top" style="center">\texttt{rhr}</text>
+<text matrix="1 0 0 1 296 0" transformations="translations" pos="120 552" stroke="black" type="minipage" width="48" height="6.642" depth="1.66" valign="top" style="center">\texttt{mp0}</text>
+<text matrix="1 0 0 1 308 0" transformations="translations" pos="168 552" stroke="black" type="minipage" width="48" height="6.642" depth="1.66" valign="top" style="center">\texttt{mp1}</text>
+<path matrix="1 0 0 1 124 0" stroke="black" arrow="normal/normal">
+256 536 m
+256 504 l
+</path>
+<text matrix="1 0 0 1 124 0" transformations="translations" pos="248 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">18</text>
+<text matrix="1 0 0 1 128 0" transformations="translations" pos="264 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">26</text>
+<text matrix="1 0 0 1 120 0" transformations="translations" pos="232 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">6</text>
+<path matrix="1 0 0 1 184 0" stroke="black" arrow="normal/normal">
+256 536 m
+256 504 l
+</path>
+<text matrix="1 0 0 1 184 0" transformations="translations" pos="248 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">18</text>
+<text matrix="1 0 0 1 188 0" transformations="translations" pos="264 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">26</text>
+<text matrix="1 0 0 1 180 0" transformations="translations" pos="232 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">6</text>
+<path matrix="1 0 0 1 244 0" stroke="black" arrow="normal/normal">
+256 536 m
+256 504 l
+</path>
+<text matrix="1 0 0 1 244 0" transformations="translations" pos="248 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">18</text>
+<text matrix="1 0 0 1 248 0" transformations="translations" pos="264 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">26</text>
+<text matrix="1 0 0 1 240 0" transformations="translations" pos="232 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">6</text>
+<text matrix="1 0 0 1 100 0" transformations="translations" pos="72 552" stroke="black" type="minipage" width="48" height="5.538" depth="0.55" valign="top" style="center">\texttt{rhr}</text>
+<text matrix="1 0 0 1 112 0" transformations="translations" pos="120 552" stroke="black" type="minipage" width="48" height="6.642" depth="1.66" valign="top" style="center">\texttt{mp0}</text>
+<text matrix="1 0 0 1 124 0" transformations="translations" pos="168 552" stroke="black" type="minipage" width="48" height="6.642" depth="1.66" valign="top" style="center">\texttt{mp1}</text>
+<path matrix="1 0 0 1 -60 0" stroke="black" arrow="normal/normal">
+256 536 m
+256 504 l
+</path>
+<text matrix="1 0 0 1 -76 0" transformations="translations" pos="264 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">26</text>
+<path stroke="black" arrow="normal/normal">
+256 536 m
+256 504 l
+</path>
+<text matrix="1 0 0 1 -16 0" transformations="translations" pos="264 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">26</text>
+<path matrix="1 0 0 1 60 0" stroke="black" arrow="normal/normal">
+256 536 m
+256 504 l
+</path>
+<text matrix="1 0 0 1 44 0" transformations="translations" pos="264 496" stroke="black" type="minipage" width="16" height="5.7" depth="0.72" valign="top" style="center">26</text>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+72 560 m
+116 604 l
+116 604 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+132 560 m
+132 604 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+192 560 m
+148 604 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+316 560 m
+316 604 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+256 560 m
+300 604 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+376 560 m
+332 604 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 144 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 164 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 184 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 204 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 224 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 244 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 264 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 284 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 -40 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 20 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 80 0" stroke="black">
+228 500 m
+228 484 l
+244 484 l
+244 500 l
+h
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+236 504 m
+244 536 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black" rarrow="normal/normal">
+276 504 m
+268 536 l
+</path>
+<path matrix="1 0 0 1 184 0" stroke="black" rarrow="normal/normal">
+236 504 m
+244 536 l
+</path>
+<path matrix="1 0 0 1 184 0" stroke="black" rarrow="normal/normal">
+276 504 m
+268 536 l
+</path>
+<path matrix="1 0 0 1 244 0" stroke="black" rarrow="normal/normal">
+236 504 m
+244 536 l
+</path>
+<path matrix="1 0 0 1 244 0" stroke="black" rarrow="normal/normal">
+276 504 m
+268 536 l
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black">
+236 540 m
+236 556 l
+276 556 l
+276 540 l
+h
+</path>
+<path matrix="1 0 0 1 184 0" stroke="black">
+236 540 m
+236 556 l
+276 556 l
+276 540 l
+h
+</path>
+<path matrix="1 0 0 1 244 0" stroke="black">
+236 540 m
+236 556 l
+276 556 l
+276 540 l
+h
+</path>
+<path matrix="1 0 0 1 -60 0" stroke="black">
+236 540 m
+236 556 l
+276 556 l
+276 540 l
+h
+</path>
+<path stroke="black">
+236 540 m
+236 556 l
+276 556 l
+276 540 l
+h
+</path>
+<path matrix="1 0 0 1 60 0" stroke="black">
+236 540 m
+236 556 l
+276 556 l
+276 540 l
+h
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black">
+100 624 m
+100 608 l
+164 608 l
+164 624 l
+h
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black">
+284 624 m
+284 608 l
+348 608 l
+348 624 l
+h
+</path>
+<path matrix="1 0 0 1 124 0" stroke="black">
+128 708 m
+128 680 l
+320 680 l
+320 708 l
+h
+</path>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 -159.55 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="5.538" depth="0.55" valign="top">\texttt{olim3d\_rhr}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 -99.55 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim3d\_mp0}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 -39.55 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim3d\_mp1}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 4.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="5.538" depth="0.55" valign="top">\texttt{olim6\_rhr}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 24.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="5.538" depth="0.55" valign="top">\texttt{olim18\_rhr}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 44.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="5.538" depth="0.55" valign="top">\texttt{olim26\_rhr}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 64.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim6\_mp0}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 84.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim18\_mp0}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 104.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim26\_mp0}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 124.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim6\_mp1}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 144.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim18\_mp1}</text>
+<text matrix="0.735493 -0.677532 0.677532 0.735493 164.45 196.092" pos="68 448" stroke="black" type="minipage" width="60" height="6.642" depth="1.66" valign="top">\texttt{olim26\_mp1}</text>
+<text pos="80 704" stroke="black" type="minipage" width="80" height="11.924" depth="6.95" valign="top" style="center">Classification of OLIMs</text>
+<text matrix="1 0 0 1 0 -64" pos="80 624" stroke="black" type="minipage" width="80" height="13.164" depth="8.2" valign="top" style="center">Quadrature rule (section 3.2)</text>
+<text pos="80 628" stroke="black" type="minipage" width="80" height="13.164" depth="8.2" valign="top" style="center">Update algorithm (section 4)</text>
+<text matrix="1 0 0 1 -8 0" pos="80 504" stroke="black" type="minipage" width="96" height="13.164" depth="8.2" valign="top" style="center">Update neighborhood (sections 4.1 and 4.3)</text>
+</page>
+</ipe>
