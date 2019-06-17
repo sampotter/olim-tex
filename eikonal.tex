@@ -267,7 +267,7 @@ $s \equiv 1$ and $g \equiv 0$, then the solution of equation
   u(x) = d(x, D) = \min_{y \in D} \norm{x - y}.
 \end{equation}
 That is, $u$ is the distance to $D$ at each point in
-$\Omega$. 
+$\Omega$.
 
 To numerically solve equation \ref{eq:eikonal}, first let
 $\calG = \{p_i\} \subseteq \Omega$ be the set or grid of \emph{nodes}
@@ -771,7 +771,7 @@ efficiently in a solver in subsection
   F_0^\theta(\lambda)$, then:
   \begin{align}
     l_{\lambda^*} &= \sqrt{\frac{p_0^\top {(I - QQ^\top)} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},\label{eq:l-star-expression} \\
-    \lambda^* &= -R^{-1} \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delU}{s^\theta h}},\label{eq:f0-exact-lambda} \\ 
+    \lambda^* &= -R^{-1} \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delU}{s^\theta h}},\label{eq:f0-exact-lambda} \\
     \hat{U} &= U_0 + \frac{s^\theta h}{l_{\lambda^*}} p_0^\top p_{\lambda^*}.\label{eq:f0-exact}
   \end{align}
 \end{theorem}
@@ -1928,7 +1928,7 @@ of methods presented here discretizes equation
   positive definite; consequently, $F_1$ is strictly convex in this case.
 \end{proof}
 
-\section{Proofs for 
+\section{Proofs for
   subsection \ref{ssec:validation}}\label{app:validation-proofs} In this section, we establish some technical lemmas that we will use
 to validate the use of \texttt{mp0}. Lemmas
 \ref{lemma:bounded-inv-hess-F1}, \ref{lemma:bounded-first-step}, and
