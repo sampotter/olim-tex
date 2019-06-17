@@ -991,13 +991,13 @@ modifications of the gradient and Hessian for $F_i$.
 \begin{figure}
   \centering
   \includegraphics[width=0.95\linewidth]{neighborhoods.eps}
-  \caption{\emph{Neighborhoods for the top-down family of algorithms.}
+  \caption{\emph{Neighborhoods for the \emph{top-down} family of algorithms.}
     Algorithms \texttt{olim4} and \texttt{olim8} are 2D solvers and
     the rest are 3D solvers. The color coding of tetrahedron updates
     is the same for this figure and figure \ref{fig:octant-numbering}
     below.}\label{fig:neighborhoods}%
   \includegraphics[width=0.95\linewidth]{simplex-groups.eps}
-  \caption{\emph{Numbering scheme for update groups for the top-down solvers.} In this
+  \caption{\emph{Numbering scheme for update groups for the \emph{top-down} solvers.} In this
     diagram, $\hat{p}$ is being updated. The diagonally opposite node
     is the sixth (last) node, with the other six nodes numbered 0--5
     cyclically.}\label{fig:octant-numbering}
@@ -1031,7 +1031,7 @@ modifications of the gradient and Hessian for $F_i$.
     omitted.}\label{fig:tetrahedra-groups}
 \end{figure}
 
-In this section, we describe our ``top-down'' and ``bottom-up''
+In this section, we describe our \emph{bottom-up} and \emph{top-down}
 algorithms. We emphasize the 3D solver, since in 2D, the distinction
 between the two is less important. Each algorithm reduces the number
 of updates that are done without degrading solution accuracy by using
@@ -1041,14 +1041,14 @@ difference between the algorithms is in how this is done.
 In subsection \ref{ssec:simplex-enumeration}, we start by showing how
 to enumerate update tetrahedra and put them into separate groups of
 congruent tetrahedra. By only performing updates from these groups, we
-obtain top-down algorithms with stencils of different sizes. Our
+obtain \emph{top-down} algorithms with stencils of different sizes. Our
 numerical tests (section \ref{sec:numerical-results}) will show how
 neighborhoods of different sizes lead to different patterns of
 directional coverage, which can significantly affect the error. We
 also discuss the update gaps attainable using these tetrahedron groups
 in subsection \ref{ssec:update-gaps}.
 
-Following this, we describe our bottom-up algorithm in subsection
+Following this, we describe our \emph{bottom-up} algorithm in subsection
 \ref{ssec:bottom-up-search}, which involves first finding the minimal
 update of smallest dimension ($d = 0$, a line update), then finding
 the minimal update of the next highest dimension ($d = 1$, a triangle
@@ -1066,9 +1066,9 @@ unnecessary lower or higher dimensional updates. We describe this
 procedure in subsection \ref{ssec:algorithms-and-skipping}. How this
 is done varies depending on the choice of quadrature rule
 (\texttt{mp0}, \texttt{mp1}, or \texttt{rhr}) and type of algorithm
-(top-down or bottom-up).
+(\emph{bottom-up} or \emph{top-down}).
 
-\subsection{Simplex enumeration for the top-down
+\subsection{Simplex enumeration for the \emph{top-down}
   algorithm}\label{ssec:simplex-enumeration}
 
 When a node is first removed from \texttt{front} and has just become
@@ -1080,7 +1080,7 @@ convergence of the solver, but can significantly improve the accuracy
 of the solution. For all of the solvers considered in this paper, in
 3D, we only ever consider neighborhoods with at most 26 neighbors.
 
-For the top-down solver, we simplify things by treating a node's
+For the \emph{top-down} solver, we simplify things by treating a node's
 neighboring octants separately. That is, we iterate over each octant
 and do all updates that lie inside that octant before moving onto the
 next. To do this, we enumerate all update tetrahedra with vertices
@@ -1134,7 +1134,7 @@ on a combination of Groups I and VIb has a larger update gap than a
 solver based on Group V. This should have a positive impact on the
 performance of any parallel Dijkstra-like method.
 
-\subsection{The search procedure used by the bottom-up
+\subsection{The search procedure used by the \emph{bottom-up}
   algorithm}\label{ssec:bottom-up-search}
 
 Another approach is to take advantage of the fact that lower
@@ -1149,7 +1149,7 @@ triangle update, doing any relevant tetrahedron updates along the way.
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.85\linewidth]{hu-neighborhoods.eps}
-  \caption{\emph{The three types of neighborhoods for the bottom-up
+  \caption{\emph{The three types of neighborhoods for the \emph{bottom-up}
       algorithm with $q_1 = 1 = q_2$, $d_1 = 1$, and $d_2 = 2$.} The
     yellow and blue regions indicate where triangle and tetrahedron
     updates may be performed, respectively. For instance, with $p_0$
@@ -1181,8 +1181,8 @@ triangle update, doing any relevant tetrahedron updates along the way.
     only be possible to skip one update.}\label{fig:skip-zones}
 \end{figure}
 
-While the top-down algorithm is parametrized by the choice of
-tetrahedron groups to include, the bottom-up algorithm is parametrized
+While the \emph{top-down} algorithm is parametrized by the choice of
+tetrahedron groups to include, the \emph{bottom-up} algorithm is parametrized
 by the norms used to search for neighboring vertices as well as the
 permitted search radii. In 3D, let $p_0$ be the vertex that admits the
 minimum line update; then, $p_1$ must satisfy
@@ -1216,15 +1216,15 @@ options~\cite{bertsekas1999nonlinear,nocedal2006numerical}. It is
 possible to skip some updates; and, indeed, the performance of our
 algorithms depends on this happening. We skip updates in three
 different ways. The first two strategies for skipping updates are used
-by the top-down algorithms, and the third is used by the bottom-up
+by the \emph{top-down} algorithms, and the third is used by the \emph{bottom-up}
 family of algorithms.
 
-\paragraph{Top-down constrained skipping} When computing an update
+\paragraph{\emph{top-down} constrained skipping} When computing an update
 using a constrained solver, we can rule out all incident
 lower-dimensional updates, since we have computed the global
 constrained optimum on $\Delta^d$.
 
-\paragraph{Top-down unconstrained skipping} If we do an update using
+\paragraph{\emph{top-down} unconstrained skipping} If we do an update using
 an unconstrained solver, then depending on where the optimum
 $\lambda_0^*$ lies, we can skip some lower-dimensional updates. The
 idea is simple: since $F_0$ is strictly convex, if we consider a
@@ -1235,7 +1235,7 @@ tetrahedron update, if $\lambda_0^* \notin \Delta^2$, then we can skip
 all updates which are not ``visible'' (in parameter space) from
 $\lambda_0^*$. This is illustrated in the figure \ref{fig:skip-zones}.
 
-\paragraph{Bottom-up KKT skipping} We can also skip higher-dimensional
+\paragraph{\emph{Bottom-up} KKT skipping} We can also skip higher-dimensional
 updates. For example, if we do the three triangle updates on the
 boundary of a tetrahedron update, we can use the Karush-Kuhn-Tucker
 necessary conditions for optimality of a constrained optimization
@@ -1270,10 +1270,11 @@ this strategy for skipping updates was used in our work on computing
 the quasipotential for nongradient SDEs in
 3D~\cite{yang2019computing}.
 
-\subsection{The top-down and bottom-up algorithms}
+\subsection{The \emph{bottom-up} and \emph{top-down}}
+  algorithms}\label{ssec:top-down-and-bottom-up}
 
 \begin{algorithm}[t]
-  \caption{The top-down algorithm.}\label{alg:top-down}
+  \caption{The \emph{top-down} algorithm.}\label{alg:top-down}
   \textbf{Input:} the neighboring update points $(p_0, \hdots, p_d)$,
   and, for $i = 0, \hdots, d$, the downwind solution value
   $U_i = U(p_i)$ and the slowness $s_i = s(p_i)$. \\
@@ -1308,7 +1309,7 @@ the quasipotential for nongradient SDEs in
 \end{algorithm}
 
 \begin{algorithm}[t]
-  \caption{The bottom-up algorithm.}\label{alg:bottom-up}
+  \caption{The \emph{bottom-up} algorithm.}\label{alg:bottom-up}
   \textbf{Input:} for $i = 0, \hdots, d$, the update point $p_i$, the
   values
   $U_i = U(p_i)$, and $s_i = s(p_i)$. \\
@@ -1338,11 +1339,11 @@ the quasipotential for nongradient SDEs in
   \end{enumerate}
 \end{algorithm}
 
-In this section, we describe our top-down and bottom-up algorithms. We
+In this section, we describe our \emph{bottom-up} and \emph{top-down} algorithms. We
 note for clarity that these algorithms correspond to item
 \ref{enum:update-U} of algorithm \ref{alg:dijkstra-like}.
 
-To describe our top-down algorithm (see algorithm \ref{alg:top-down}),
+To describe our \emph{top-down} algorithm (see algorithm \ref{alg:top-down}),
 we define:
 \begin{equation}\label{eq:calU}
   \begin{aligned}
@@ -1361,7 +1362,7 @@ $\hat{p}$ would have already been updated from it in a previous
 iteration. All new information affecting $\hat{U}$ during this
 iteration must be computed from an update involving $\pnew$.
 
-The bottom-up algorithm (algorithm \ref{alg:bottom-up}) builds up each
+The \emph{bottom-up} algorithm (algorithm \ref{alg:bottom-up}) builds up each
 update $(p_0, \hdots, p_d)$ one vector at a time by searching for
 adjacent minimizing updates of higher dimension. The optimization
 involving $\pnew$ described above can be incorporated by initially
@@ -1375,10 +1376,10 @@ in subsection \ref{ssec:quadrature} (\texttt{mp0}, \texttt{mp1}, or
 \texttt{rhr}), we have two 2D algorithms, \texttt{olim4} and
 \texttt{olim8}, corresponding to 4-\ and 8-point stencils,
 respectively. Since there is no advantage in 2D, we don't apply the
-top-down or bottom-up approaches. In 3D, we have three top-down
+\emph{top-down} or \emph{bottom-up} approaches. In 3D, we have three \emph{top-down}
 algorithms: \texttt{olim6} (group IVa), \texttt{olim18} (groups I,
 IVa, and IVb), and \texttt{olim26} (group V). We also test the
-bottom-up algorithm \texttt{olim3d} (see figure
+\emph{bottom-up} algorithm \texttt{olim3d} (see figure
 \ref{fig:hu-neighborhoods}).
 
 \subsection{Implementation Notes}\label{ssec:impl-notes}
