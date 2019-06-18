@@ -701,6 +701,17 @@ $\lambda_0^*$ and letting $\lambda_1^*$ denote the optimum of eq.\@
 convergence theory of Newton's method to bound the distance between
 $\lambda_0^*$ and $\lambda_1^*$, thereby bounding the error incurred
 by using \texttt{mp0} instead of \texttt{mp1}.
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{continuity.eps}
+  \caption{\emph{The cost function $F$ must be continuous across the
+      boundaries of adjacent update simplexes.} In this case, two
+    adjacent update simplies share a common boundary on their base,
+    shown here as the line segment $[p_0, p_1]$. Two layers of
+    surrounding grid points from $\mathcal{G}$ are
+    shown.}\label{fig:continuity}
+\end{figure}
+
 
 \begin{theorem}\label{thm:mp0-newton}
   Using lemma \ref{lemma:F-strictly-convex}, let $h$ be sufficiently
