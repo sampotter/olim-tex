@@ -331,7 +331,11 @@ propagation~\cite{sethian1996fast}. Many variations of these methods
 have since been
 developed~\cite{sethian2003ordered,kao2008legendre}. Our own
 development resembles Tsitsisklis's, but extends it past its original
-formulation.
+formulation. In particular, Tsitsiklis considers \texttt{olim8\_rhr}
+and \texttt{olim26\_rhr}, and does not treat the 3D case in depth. We
+generalize this approach, considering higher accuracy quadrature rules
+(\texttt{mp0} and \texttt{mp1}) and algorithms which make 3D solvers
+fast (our \emph{bottom-up} and \emph{top-down} algorithms).
 
 To write down a generic Dijkstra-like algorithm, there are several
 pieces of information which need to be kept track of. A data structure
