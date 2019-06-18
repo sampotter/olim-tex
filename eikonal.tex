@@ -903,10 +903,13 @@ parallel without violating causality.
   See section\@ \ref{sec:causality-proofs}.
 \end{proof}
 
-\noindent The fact that our methods are causal for all practical
-problem sizes follows from the fact that the term preventing causality
-decays rapidly---see eq.\@ \ref{eq:F1-in-terms-of-F0}. This can be
-seen easily by rewriting $F_1(\lambda)$ as $F_0(\lambda)$ plus a small
+In section\@ \ref{ssec:update-gaps} we present a table of update gaps
+for all update simplices considered in this paper.
+
+The fact that our methods are causal for all practical problem sizes
+follows from the fact that the term preventing causality decays
+rapidly---see eq.\@ \ref{eq:F1-in-terms-of-F0}. This can be seen
+easily by rewriting $F_1(\lambda)$ as $F_0(\lambda)$ plus a small
 perturbation (which is $O(h^2)$) and using the Lipschitz continuity of
 $s$.
 
