@@ -452,20 +452,21 @@ target point, $\hat{u} = u(\hat{x})$, and $u_0 = u(\alpha(0))$ (see
 section\@ \ref{sec:minimum-action-integral} for a derivation of eq.\
 \ref{eq:action-functional}). By constrast, Lagrangian methods (i.e.,
 raytracing methods) trace a bundle of rays from a common locus by
-integrating equation \ref{eq:action-functional} for different initial
-conditions. In this section, we describe our approach to discretizing
-and approximately minimizing equation \ref{eq:action-functional}. As
-we mentioned in subsection \ref{ssec:dijkstra-like}, to compute
-$\hat{U} = U(\hat{p})$ in item \ref{enum:update-U} of algorithm
-\ref{alg:dijkstra-like}, we need to approximately minimize several
-instances of equation \ref{eq:action-functional}; details of this
-procedure will be discussed in section \ref{sec:implementation}. In
-this section, we focus on a single instance of the discretized version
-of equation \ref{eq:action-functional}, presenting our notation,
-deriving prelimary results, and describing the different quadrature
-rules we use, detailing useful exact solutions to the approximate
-minimization of equation \ref{eq:action-functional}. We then present
-theoretical results.
+integrating Hamilton's equations for the eikonal equation for
+different initial conditions. In this section, we describe our
+approach to discretizing and approximately minimizing eq.\@
+\ref{eq:action-functional}. As we mentioned in section\@
+\ref{ssec:dijkstra-like}, to compute $\hat{U} = U(\hat{p})$ in item
+\ref{enum:update-U} of algorithm \ref{alg:dijkstra-like}, we need to
+approximately minimize several instances of eq.\@
+\ref{eq:action-functional}; details of this procedure will be
+discussed in section\@ \ref{sec:implementation}. In this section, we
+focus on a single instance of the discretized version of eq.\@
+\ref{eq:action-functional}, presenting our notation, deriving
+prelimary results, and describing the different quadrature rules we
+use, detailing useful exact solutions to the approximate minimization
+of eq.\@ \ref{eq:action-functional}. We then present theoretical
+results.
 
 \begin{figure}
   \centering
