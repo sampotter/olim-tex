@@ -228,13 +228,17 @@ instructions~\cite{libolim-github-plotting}.
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.9\linewidth]{overview.eps}
+  \includegraphics[width=0.9\linewidth]{overview-2.eps}
   \caption{\emph{An overview of a Dijkstra-like algorithm for solving
-      the eikonal equation, equation \ref{eq:eikonal}} (see algorithm
-    \ref{alg:dijkstra-like}). The box surrounding $p$ depicts its
-    neighborhood, \texttt{nb}$(p)$. Triangles represent updates. The
-    dashed lines depict local rays: not necessarily the true
-    minimizing rays.}
+      the eikonal equation (eq.\@ \ref{eq:eikonal}) in 2D.} See alg.\
+    \ref{alg:dijkstra-like} for details. In this diagram, the node
+    $\pnew$ has been removed from \texttt{front} and had its state set
+    to \texttt{valid}. All \texttt{far} nodes in $\neib(\pnew)$ are
+    set to \texttt{trial}, and then all \texttt{trial} nodes in
+    $\neib(\pnew)$ are updated. The updates are depicted: there are
+    three line updates and three triangles, since it is only necessary
+    to perform updates that involve $\pnew$. The OLIM shown here is
+    \texttt{olim8}.}
   \label{fig:overview}
 \end{figure}
 
