@@ -1075,13 +1075,14 @@ is done varies depending on the choice of quadrature rule
   algorithm}\label{ssec:simplex-enumeration}
 
 When a node is first removed from \texttt{front} and has just become
-\texttt{valid} (item \ref{enum:get-node}), an isotropic solver must do
-updates involving, at the very least, the node's $2n$ von Neumann
-neighbors. We can use larger neighborhoods to improve the accuracy of
-the result. Doing so does not necessarily improve the order of
-convergence of the solver, but can significantly improve the accuracy
-of the solution. For all of the solvers considered in this paper, in
-3D, we only ever consider neighborhoods with at most 26 neighbors.
+\texttt{valid} (item\@ \ref{enum:get-node} in algorithm\@
+\ref{alg:dijkstra-like}), an isotropic solver must do updates
+involving, at the very least, the node's $2n$ nearest neighbors. We
+can use larger neighborhoods to improve the accuracy of the
+result. Doing so does not necessarily improve the order of convergence
+of the solver, but can significantly improve the accuracy of the
+solution. For all of the solvers considered in this paper, in 3D, we
+only ever consider neighborhoods with at most 26 neighbors.
 
 For the \emph{top-down} solver, we simplify things by treating a node's
 neighboring octants separately. That is, we iterate over each octant
