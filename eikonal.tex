@@ -617,26 +617,29 @@ particular form for them to be convenient for both implementation and
 analysis. The proofs of all propositions and lemmas in this section
 can be found in section\@ \ref{sec:minimization-proofs}.
 
+In what follows, we will use the notation:
+\begin{equation}
+  \proj_p = \frac{p p^\top}{p^\top p}, \qquad \proj_p^\perp = I - \proj_p = I - \frac{p p^\top}{p^\top p}
+\end{equation}
+for orthogonal projection matrices. Here, $\proj_p$ projects
+orthogonally onto $\operatorname{span}(p)$, and $\proj_p^\perp$ onto
+its orthogonal complement.
+
 \begin{proposition}\label{prop:F0-grad-and-Hess}
   The gradient and Hessian of $F_0(\lambda; \theta)$ are given by:
   \begin{align}
     \nabla F_0(\lambda) &= \delU + s^{\theta} h \delP^\top \nu_\lambda,\label{eq:F0-grad} \\
-    \nabla^2 F_0(\lambda) &= \frac{s^{\theta} h}{l_\lambda} \delP^\top \calP^\perp_{p_\lambda} \delP,
+    \nabla^2 F_0(\lambda) &= \frac{s^{\theta} h}{l_\lambda} \delP^\top \proj^\perp_{p_\lambda} \delP,
   \end{align}
   where $\nu_\lambda = p_\lambda/l_\lambda$ is the unit vector in the
-  direction of $p_\lambda$,
-  $\calP_{p_\lambda} = \nu_\lambda \nu_\lambda^\top$ denotes the
-  orthogonal projector onto $\operatorname{span}(p_\lambda)$ and
-  $\calP_{p_\lambda}^\perp = I - \nu_\lambda \nu_\lambda^\top$ is the
-  orthogonal projector onto $\operatorname{span}(p_\lambda)^\perp$,
-  the orthogonal complement of $\operatorname{span}(p_\lambda)$.
+  direction of $p_\lambda$.
 \end{proposition}
 
 \begin{proposition}\label{prop:F1-grad-and-Hess}
   The gradient and Hessian of $F_1(\lambda; \theta)$ satisfy:
   \begin{align}
     \nabla F_1(\lambda) &= \delU + \theta h l_\lambda \dels + s^{\theta}_\lambda h \delP^\top \nu_\lambda, \\
-    \nabla^2 F_1(\lambda) &= \set{\delP^\top \nu_\lambda, \theta h \dels} + \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \calP^\perp_{p_\lambda} \delP, \label{eq:hess-F1}
+    \nabla^2 F_1(\lambda) &= \set{\delP^\top \nu_\lambda, \theta h \dels} + \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \proj^\perp_{p_\lambda} \delP, \label{eq:hess-F1}
   \end{align}
   where $\set{a, b} = ab^\top + ba^\top$ is the anticommutator of two
   vectors.
@@ -981,7 +984,7 @@ modifications of the gradient and Hessian for $F_i$.
   \begin{align}
     \label{eq:G-grad-hess}
     \nabla G_i(\lambda) &= \nabla F_i(\lambda) - \deltau + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top {(p_\lambda - p^\circ)}, \\
-    \nabla^2 G_i(\lambda) &= \nabla^2 F_i(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top \calP^\perp_{p_\lambda - p^\circ} \delP.
+    \nabla^2 G_i(\lambda) &= \nabla^2 F_i(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top \proj^\perp_{p_\lambda - p^\circ} \delP.
   \end{align}
 \end{lemma}
 
@@ -1846,17 +1849,17 @@ of methods presented here discretizes eq.\@
 \end{proof}
 
 \begin{proof}[Proof of lemma \ref{lemma:dPt-cprojp-dP-pd}]
-  % To show that $\delP^\top \mathcal{P}^\perp_{p_\lambda} \delP$
+  % To show that $\delP^\top \proj^\perp_{p_\lambda} \delP$
   % is positive semidefinite, we simply note that since
-  % $\mathcal{P}^\perp_{p_\lambda}$ is an orthogonal projector, it is
+  % $\proj^\perp_{p_\lambda}$ is an orthogonal projector, it is
   % positive semidefinite, and its singular value decomposition can be
   % written $UU^\top$, where $U \in \mathbb{R}^{n+1 \times n}$. Then:
   % \begin{equation}\label{eq:dPt-cprojp-dP-gram}
-  %   \delP^\top \mathcal{P}^\perp_{p_\lambda} \delP = {(U^\top \delP)}^\top {(U^\top \delP)}.
+  %   \delP^\top \proj^\perp_{p_\lambda} \delP = {(U^\top \delP)}^\top {(U^\top \delP)}.
   % \end{equation}
   % From the factorization in eq.\@ \ref{eq:dPt-cprojp-dP-gram}, we
   % can see
-  % that $\delP^\top \mathcal{P}^\perp_{p_\lambda} \delP$ is a
+  % that $\delP^\top \proj^\perp_{p_\lambda} \delP$ is a
   % Gram matrix, hence positive semidefinite.
 
   Let $\nu_\lambda = p_\lambda/l_\lambda \in \mathbb{R}^n$ be the unit
@@ -1864,9 +1867,9 @@ of methods presented here discretizes eq.\@
   $Q = \begin{bmatrix} \nu_\lambda & U \end{bmatrix} \in \mathbb{R}^{n
     \times n}$ is orthonormal. Then:
   \begin{equation}
-    \delP^\top \mathcal{P}^\perp_{p_\lambda} \delP = \delP^\top {(I - \nu_\lambda \nu_\lambda^\top)} \delP = \delP^\top {(QQ^\top - \nu_\lambda \nu_\lambda^\top)} \delP = \delP^\top U U^\top \delP.
+    \delP^\top \proj^\perp_{p_\lambda} \delP = \delP^\top {(I - \nu_\lambda \nu_\lambda^\top)} \delP = \delP^\top {(QQ^\top - \nu_\lambda \nu_\lambda^\top)} \delP = \delP^\top U U^\top \delP.
   \end{equation}
-  Hence, $\delP^\top \mathcal{P}^\perp \delP$ is a Gram matrix
+  Hence, $\delP^\top \proj^\perp \delP$ is a Gram matrix
   and positive semidefinite.
 
   Next, since $\Delta^n$ is nondegenerate, the vectors $p_i$ for
@@ -1875,11 +1878,11 @@ of methods presented here discretizes eq.\@
   the vector $p_0$ is not in the range of $\delP$; hence, there is
   no vector $\mu$ such that $\delP \mu = \alpha p_\lambda$, for any
   $\alpha \neq 0$. What's more, by definition,
-  $\text{ker}(\mathcal{P}_{p_\lambda}^\perp) = \langle p_\lambda
+  $\text{ker}(\proj_{p_\lambda}^\perp) = \langle p_\lambda
   \rangle$. So, we can see that
-  $\mathcal{P}^\perp_{p_\lambda} \delP \mu = 0$ only if $\mu = 0$,
+  $\proj^\perp_{p_\lambda} \delP \mu = 0$ only if $\mu = 0$,
   from which we can conclude
-  $\delP^\top \mathcal{P}^\perp_{p_\lambda} \delP \succ
+  $\delP^\top \proj^\perp_{p_\lambda} \delP \succ
   0$. Altogether, bearing in mind that $\smin$ is assumed to be
   positive, we conclude that $\nabla^2 F_0$ is positive definite.
 \end{proof}
@@ -1889,14 +1892,14 @@ of methods presented here discretizes eq.\@
   enough, note from eq.\@ \ref{eq:hess-F1} that $\nabla^2 F_1$ is
   the sum of a positive definite matrix and a small, indefinite
   perturbation. To use this fact, note that since
-  $\delP^\top \mathcal{P}^\perp_\lambda \delP$ is symmetric positive
+  $\delP^\top \proj^\perp_\lambda \delP$ is symmetric positive
   definite, it has an eigenvalue decomposition $Q \Lambda Q^\top$
   where $\Lambda_{ii} > 0$ for all $i$. Since
-  $\delP^\top \mathcal{P}^\perp_\lambda \delP$ doesn't depend on $h$,
+  $\delP^\top \proj^\perp_\lambda \delP$ doesn't depend on $h$,
   for a fixed set of vectors $p_0, \hdots, p_n$, we can expect its
   eigenvalues to be constant with respect to $h$. So, if we write:
   \begin{equation}
-    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \mathcal{P}^\perp_\lambda \delP = Q \parens{\frac{s^\theta_\lambda h}{l_\lambda} \Lambda} Q^\top
+    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \proj^\perp_\lambda \delP = Q \parens{\frac{s^\theta_\lambda h}{l_\lambda} \Lambda} Q^\top
   \end{equation}
   we can expect this matrix's eigenvalues to be $\Theta(h)$; in
   particular, $\lambda_{\min} \geq C h$ for some constant $C$,
@@ -1945,13 +1948,13 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
 \begin{proof}[Proof of lemma \ref{lemma:bounded-inv-hess-F1}]
   To simplify eq.\@ \ref{eq:hess-F1}, we temporarily define:
   \begin{equation}
-    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \mathcal{P}^\perp_\lambda \delP \mbox{ and } B = \frac{\theta h}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels}.
+    A = \frac{s^\theta_\lambda h}{l_\lambda} \delP^\top \proj^\perp_\lambda \delP \mbox{ and } B = \frac{\theta h}{l_\lambda} \anticom{\delP^\top p_\lambda, \dels}.
   \end{equation}
   Observe that $\|A\| = O(h)$ and $\|B\| = O(h^2)$, since
   $\|\delta s\| = O(h)$ and since all other factors involved in $A$
   and $B$ (excluding $h$ itself) are independent of $h$. Hence:
   \begin{equation}
-    \norm{A^{-1} B} = \frac{\theta}{s^\theta_\lambda} \norm{\parens{\delP^\top \mathcal{P}^\perp_\lambda \delP}^{-1} \anticom{\delP^\top p_\lambda, \dels}} = O(h),
+    \norm{A^{-1} B} = \frac{\theta}{s^\theta_\lambda} \norm{\parens{\delP^\top \proj^\perp_\lambda \delP}^{-1} \anticom{\delP^\top p_\lambda, \dels}} = O(h),
   \end{equation}
   since $1/s \leq 1/\smin$ and $\norm{\dels} = O(h)$. Hence,
   $\norm{A^{-1} B} < 1$ for $h$ small enough, and we can Taylor
@@ -2014,7 +2017,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
 
 \begin{proof}[Proof of lemma \ref{lemma:hess-F1-lipschitz}]
   If we restrict our attention to $\Delta^n$, we see that
-  $l_\lambda^{-1} \delP^\top \mathcal{P}_\lambda^\perp \delP$ is
+  $l_\lambda^{-1} \delP^\top \proj_\lambda^\perp \delP$ is
   Lipschitz continuous function of $\lambda$ with $O(1)$ Lipschitz
   constant and $\theta \{{\delP}^\top p_\lambda, \dels\} /l_{\lambda}$
   is Lipschitz continuous with $O(h)$ Lipschitz constant since
@@ -2022,7 +2025,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   Lipschitz, it follows that:
   \begin{equation}
     A(\lambda) = \tfrac{s^\theta_\lambda h}{l_\lambda} \delP^\top
-    \mathcal{P}^\perp_\lambda \delP
+    \proj^\perp_\lambda \delP
   \end{equation}
   has a Lipschitz constant that is $O(h)$ for $\lambda \in \Delta^n$,
   using the notation of lemma
@@ -2134,9 +2137,9 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   \begin{equation}\label{eq:Qt-n}
     - R^{-\top} \frac{\delU}{s^\theta h} = Q^\top \nu_{\lambda^*}
   \end{equation}
-  Let $\mathcal{P}_{\delP} = QQ^\top$ denote the orthogonal
-  projector onto $\range \delP$, and
-  $\mathcal{P}^\perp_{\delP} = I - QQ^\top$ the projector onto its
+  Let $\proj_{\delP} = QQ^\top$ denote the orthogonal
+  projector onto $\range(\delP)$, and
+  $\proj^\perp_{\delP} = I - QQ^\top$ the projector onto its
   orthogonal complement. We can try to write $p_{\lambda^*}$ by
   splitting it into a component that lies in $\range(\delP)$ and
   one that lies in $\range(\delP)^\perp$. Letting $\pmin$ be the
@@ -2153,29 +2156,29 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   \end{equation}
   hence $\lambdamin = -R^{-1} Q^\top p_0$, giving us:
   \begin{equation}\label{eq:pmin}
-    \pmin = p_0 + \delP \lambdamin = \mathcal{P}^\perp_{\delP} p_0.
+    \pmin = p_0 + \delP \lambdamin = \proj^\perp_{\delP} p_0.
   \end{equation}
   This vector is easily obtained. For $p_{\lambda^*} - \pmin$, we note
-  that $\mathcal{P}_{\delP} \nu_{\lambda^*}$ is proportional to
+  that $\proj_{\delP} \nu_{\lambda^*}$ is proportional to
   $p_{\lambda^*} - \pmin$, suggesting that we determine the ratio
   $\alpha$ satisfying
-  $p_{\lambda^*} - \pmin = \alpha \mathcal{P}_{\delP}
+  $p_{\lambda^*} - \pmin = \alpha \proj_{\delP}
   \nu_{\lambda^*}$. In particular, from the similarity of the
   triangles
-  $(\hat{p}, \nu_{\lambda^*}, \mathcal{P}^\perp_{\delP}
+  $(\hat{p}, \nu_{\lambda^*}, \proj^\perp_{\delP}
   \nu_{\lambda^*})$ and $(\hat{p}, p_{\lambda^*}, \pmin)$ in figure
   \ref{fig:f0-exact}, we have, using eqs.\@ \ref{eq:Qt-n} and
   \ref{eq:pmin}:
   \begin{equation}\label{eq:alpha-solve}
-    \alpha = \frac{\norm{\pmin}}{\norm{\mathcal{P}^\perp_{\delP} \nu_{\lambda^*}}} = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{Q^\top \nu_{\lambda^*}}^2}} = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}}.
+    \alpha = \frac{\norm{\pmin}}{\norm{\proj^\perp_{\delP} \nu_{\lambda^*}}} = \sqrt{\frac{p_0^\top \proj^\perp_{\delP} p_0}{1 - \norm{Q^\top \nu_{\lambda^*}}^2}} = \sqrt{\frac{p_0^\top \proj^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}}.
   \end{equation}
   At the same time, since:
   \begin{equation}
-    \nu_{\lambda^*}^\top \mathcal{P}^\perp_{\delP} \nu_{\lambda^*} = \frac{{(\mathcal{P}^\perp_{\delP} p_{\lambda^*})}^\top {(\mathcal{P}^\perp_{\delP} p_{\lambda^*})}}{l_{\lambda_*}^2} = \frac{\pmin^\top \pmin}{l_{\lambda^*}^2} = \frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{l_{\lambda^*}^2}
+    \nu_{\lambda^*}^\top \proj^\perp_{\delP} \nu_{\lambda^*} = \frac{{(\proj^\perp_{\delP} p_{\lambda^*})}^\top {(\proj^\perp_{\delP} p_{\lambda^*})}}{l_{\lambda_*}^2} = \frac{\pmin^\top \pmin}{l_{\lambda^*}^2} = \frac{p_0^\top \proj^\perp_{\delP} p_0}{l_{\lambda^*}^2}
   \end{equation}
   we can conclude that:
   \begin{equation}
-    l_{\lambda^*} = \alpha = \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},
+    l_{\lambda^*} = \alpha = \sqrt{\frac{p_0^\top \proj^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},
   \end{equation}
   giving us eq.\@ \ref{eq:l-star-expression}, proving the first
   part of theorem \ref{thm:f0-exact}.
@@ -2183,7 +2186,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   Next, combining eqs.\@ \ref{eq:Qt-n}, \ref{eq:plam-decomp},
   \ref{eq:pmin}, and \ref{eq:alpha-solve}, we get:
   \begin{equation}\label{eq:plam-final}
-    p_{\lambda^*} = \mathcal{P}^\perp_{\delP} p_0 - \sqrt{\frac{p_0^\top \mathcal{P}^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}} Q R^{-\top} \frac{\delU}{s^\theta h}.
+    p_{\lambda^*} = \proj^\perp_{\delP} p_0 - \sqrt{\frac{p_0^\top \proj^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}} Q R^{-\top} \frac{\delU}{s^\theta h}.
   \end{equation}
   This expression for $p_{\lambda^*}$ can be computed from our problem
   data and $\delP$. Now, note that
@@ -2275,26 +2278,26 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   optimality. Substituting this into eq.\@ \ref{eq:U-finite-diff},
   we first obtain:
   \begin{equation}
-    \hat{U} = U_i + \frac{s^\theta h}{l_{\lambda^*}} \parens{p_i^\top \mathcal{P}_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \mathcal{P}^\perp_{\delP} p_{\lambda^*}}}.
+    \hat{U} = U_i + \frac{s^\theta h}{l_{\lambda^*}} \parens{p_i^\top \proj_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \proj^\perp_{\delP} p_{\lambda^*}}}.
   \end{equation}
   Now, using the notation for weighted norms and inner products, we have:
   \begin{equation}\label{eq:weighted-norms}
-    p_i^\top \mathcal{P}_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \mathcal{P}^\perp_{\delP} p_{\lambda^*}} = \langle p_i, p_{\lambda^*} \rangle_{\mathcal{P}_{\delP}} + \norm{p_i}_{\mathcal{P}^\perp_{\delP}} \norm{p_{\lambda^*}}_{\mathcal{P}^\perp_{\delP}}.
+    p_i^\top \proj_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \proj^\perp_{\delP} p_{\lambda^*}} = \langle p_i, p_{\lambda^*} \rangle_{\proj_{\delP}} + \norm{p_i}_{\proj^\perp_{\delP}} \norm{p_{\lambda^*}}_{\proj^\perp_{\delP}}.
   \end{equation}
-  Since $\mathcal{P}^\perp_{\delP}$ orthogonally projects onto
+  Since $\proj^\perp_{\delP}$ orthogonally projects onto
   $\range(\delP)^\perp$, and since the dimension of this subspace is
-  1, $\mathcal{P}^\perp_{\delP} p_i$ and
-  $\mathcal{P}^\perp_{\delP} p_{\lambda^*}$ are multiples of one
+  1, $\proj^\perp_{\delP} p_i$ and
+  $\proj^\perp_{\delP} p_{\lambda^*}$ are multiples of one
   another and their directions coincide (see figure
   \ref{fig:f0-exact}); furthermore, the angle between them is since
   our simplex is nondegenerate. So, by Cauchy-Schwarz:
   \begin{equation}\label{eq:cauchy-schwarz}
-    \norm{p_i}_{\mathcal{P}^\perp_{\delP}} \norm{p_{\lambda^*}}_{\mathcal{P}^\perp_{\delP}} = \langle p_i, p_{\lambda^*} \rangle_{\mathcal{P}^\perp_{\delP}}.
+    \norm{p_i}_{\proj^\perp_{\delP}} \norm{p_{\lambda^*}}_{\proj^\perp_{\delP}} = \langle p_i, p_{\lambda^*} \rangle_{\proj^\perp_{\delP}}.
   \end{equation}
   Combining eq.\@ \ref{eq:cauchy-schwarz} with eq.\@
   \ref{eq:weighted-norms} and cancelling terms yields:
   \begin{equation}
-    p_i^\top \mathcal{P}_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \mathcal{P}_{\delP} p_{\lambda^*}} = p_i^\top p_{\lambda^*}.
+    p_i^\top \proj_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \proj_{\delP} p_{\lambda^*}} = p_i^\top p_{\lambda^*}.
   \end{equation}
   Eq.\@ \ref{eq:U-from-Ui-exact} follows.
 
@@ -2304,10 +2307,10 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   be the normal pointing from $\hat{p}$ in the direction of the
   arriving characteristic, let $\tilde{p}$ be the point of
   intersection between
-  $p_0 + \operatorname{range}\hspace{-0.15em}{(\delP)}$ and
+  $p_0 + \range(\delP)$ and
   $\operatorname{span}\hspace{-0.15em}{(\tilde{\nu})}$, and let
   $\tilde{l} = \norm{\tilde{p}}$, then, since
-  $\tilde{p} - p_0 \in \operatorname{range}\hspace{-0.15em}{(\delP)}$:
+  $\tilde{p} - p_0 \in \range(\delP)$:
   \begin{equation}
     \numin^\top (\tilde{p} - p_0) = 0.
   \end{equation}
@@ -2327,11 +2330,11 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   $\tilde{\nu} = -\nabla \hat{U}/\norm{\nabla \hat{U}} = -\nabla
   \hat{U}/(s^\theta h)$:
   \begin{equation}
-    \mathcal{P}_{\delP} \tilde{\nu} = \frac{-\mathcal{P}_{\delP} \nabla \hat{U}}{s^\theta h} = \frac{-QR^{-\top} \delU}{s^\theta h} = \mathcal{P}_{\delP} \nu_{\lambda^*}.
+    \proj_{\delP} \tilde{\nu} = \frac{-\proj_{\delP} \nabla \hat{U}}{s^\theta h} = \frac{-QR^{-\top} \delU}{s^\theta h} = \proj_{\delP} \nu_{\lambda^*}.
   \end{equation}
   Since $\tilde{\nu}$ and $\nu_{\lambda^*}$ each lie in the unit
   sphere on the same side of the hyperplane spanned by $\delP$, and
-  since $\mathcal{P}_{\delP}$ orthogonally projects onto
+  since $\proj_{\delP}$ orthogonally projects onto
   $\range(\delP)$, we can see that in fact
   $\tilde{\nu} = \nu_{\lambda^*}$. Hence,
   $\tilde{p} = p_{\lambda^*} \in p_0 + \range(\delP)$. The second and
