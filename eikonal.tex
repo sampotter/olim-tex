@@ -922,17 +922,15 @@ occuring at corners or discontinuities~\cite{qi2018corner}.
   \includegraphics[width=\linewidth]{factoring-example.eps}
   \caption{\emph{An example of running \texttt{olim4\_rhr} with local
       factoring for three steps.} Note that \texttt{olim4\_rhr} is
-    equivalent to the standard FMM in 2D. Ordered clockwise from the
-    top left, the nodes are $p_{0, 0}, p_{0, 1}, p_{1, 1}$, and
-    $p_{1, 0}$, with $h = 1$ (so we assume our domain is identified
-    with $\mathbb{Z}^2$). We assume a constant slowness function:
+    equivalent to the standard 2D fast marching method. We assume
     $s \equiv 1$. Initially, $p^\circ = p_{1, 0}$ is the only node in
     \texttt{bd} and is factored. The first two steps proceed exactly
     the same as for the unfactored method, since the steps between the
-    source nodes and the updated nodes lie along characteristics of
-    the solution, $u$. In the third step, the unfactored method would
-    set $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. For the factored
-    method, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we find that
+    source nodes and the updated nodes lie along characteristics. In
+    the third step, the unfactored method would set
+    $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. However, for the
+    factored solver, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we
+    find that
     $U_{0,1} \gets 0 + s^\circ l^\circ_{\nicefrac{1}{2}} + s^\theta h
     l_{\nicefrac{1}{2}} = \nicefrac{\sqrt{2}}{2} +
     \nicefrac{\sqrt{2}}{2} = \sqrt{2}$.}\label{fig:factoring-example}

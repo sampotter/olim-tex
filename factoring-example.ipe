@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
-<ipe version="70206" creator="Ipe 7.2.7">
-<info created="D:20180805150416" modified="D:20180830164459"/>
+<ipe version="70206" creator="Ipe 7.2.10">
+<info created="D:20180805150416" modified="D:20190618135241"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -281,16 +281,6 @@ h
 <use name="mark/cross(sx)" pos="288 704" size="large" stroke="black"/>
 <use name="mark/cross(sx)" pos="320 768" size="large" stroke="black"/>
 <use name="mark/cross(sx)" pos="384 704" size="large" stroke="black"/>
-<path stroke="black" arrow="normal/normal">
-176 696 m
-208 664
-240 696 c
-</path>
-<path stroke="black" arrow="normal/normal">
-272 696 m
-304 664
-336 696 c
-</path>
 <use name="mark/circle(sx)" pos="192 768" size="large" stroke="black"/>
 <use name="mark/box(sx)" pos="128 768" size="large" stroke="black"/>
 <use name="mark/box(sx)" pos="192 704" size="large" stroke="black"/>
@@ -312,11 +302,6 @@ h
 384 768 l
 h
 </path>
-<path matrix="1 0 0 1 96 0" stroke="black" arrow="normal/normal">
-272 696 m
-304 664
-336 696 c
-</path>
 <path stroke="black">
 416 768 m
 480 704 l
@@ -329,27 +314,43 @@ h
 <use name="mark/cross(sx)" pos="416 704" size="large" stroke="black"/>
 <use name="mark/cross(sx)" pos="480 704" size="large" stroke="black"/>
 <use name="mark/cross(sx)" pos="480 768" size="large" stroke="black"/>
-<text matrix="1 0 0 1 -0.506897 3.04138" transformations="translations" pos="112 688" stroke="black" type="label" width="35.874" height="6.808" depth="2.85" valign="baseline" style="math">U_{1,0} = 0</text>
-<text matrix="1 0 0 1 -7.60345 -16.7276" transformations="translations" pos="256 728" stroke="black" type="label" width="35.874" height="6.808" depth="2.85" valign="baseline" style="math">U_{1,1} = 1</text>
-<text matrix="1 0 0 1 48 49.5207" transformations="translations" pos="256 728" stroke="black" type="label" width="35.874" height="6.808" depth="2.85" valign="baseline" style="math">U_{0,0} = 1</text>
-<text matrix="1 0 0 1 202.71 50.0276" transformations="translations" pos="256 728" stroke="black" type="label" width="44.176" height="9.039" depth="2.85" valign="baseline" style="math">U_{0,1} = \sqrt{2}</text>
-<path stroke="black" arrow="normal/normal">
-88 752 m
-88 768
-120 768 c
+<text matrix="1 0 0 1 32.099 -25.2213" transformations="translations" pos="112 688" stroke="black" type="label" width="38.088" height="6.808" depth="2.85" valign="baseline" style="math">U_{1,0} \gets 0</text>
+<text matrix="1 0 0 1 -42.3646 -58.0681" transformations="translations" pos="256 728" stroke="black" type="label" width="38.088" height="6.808" depth="2.85" valign="baseline" style="math">U_{1,1} \gets 1</text>
+<text matrix="1 0 0 1 59.9418 -60.512" transformations="translations" pos="256 728" stroke="black" type="label" width="38.088" height="6.808" depth="2.85" valign="baseline" style="math">U_{0,0} \gets 1</text>
+<text matrix="1 0 0 1 159.839 -53.8124" transformations="translations" pos="256 728" stroke="black" type="label" width="46.39" height="9.039" depth="2.85" valign="baseline" style="math">U_{0,1} \gets \sqrt{2}</text>
+<use name="mark/fdisk(sfx)" pos="192 768" size="large" stroke="black" fill="white"/>
+<use name="mark/fsquare(sfx)" pos="128 768" size="large" stroke="black" fill="white"/>
+<use name="mark/fsquare(sfx)" pos="192 704" size="large" stroke="black" fill="white"/>
+<use name="mark/fsquare(sfx)" pos="224 768" size="large" stroke="black" fill="white"/>
+<use name="mark/fsquare(sfx)" pos="288 768" size="large" stroke="black" fill="white"/>
+<use name="mark/fsquare(sfx)" pos="384 768" size="large" stroke="black" fill="white"/>
+<text matrix="1 0 0 1 -10.2508 -8.74376" transformations="translations" pos="112 784" stroke="black" type="label" width="22.139" height="7.473" depth="2.49" valign="baseline" style="math">(0, 0)</text>
+<text matrix="1 0 0 1 -10.2508 -8.74376" transformations="translations" pos="176 784" stroke="black" type="label" width="22.139" height="7.473" depth="2.49" valign="baseline" style="math">(0, 1)</text>
+<text matrix="1 0 0 1 5.74918 -8.74376" transformations="translations" pos="96 720" stroke="black" type="label" width="22.139" height="7.473" depth="2.49" valign="baseline" style="math">(1, 0)</text>
+<text matrix="1 0 0 1 -10.2508 -8.74376" transformations="translations" pos="176 720" stroke="black" type="label" width="22.139" height="7.473" depth="2.49" valign="baseline" style="math">(1, 1)</text>
+<path matrix="1 0 0 1 -3.70932 2.13116" stroke="black" arrow="normal/small">
+142.225 665.251 m
+101.869 675.289
+126.261 697.305 c
 </path>
-<path stroke="black" arrow="normal/normal">
-88 720 m
-88 704
-120 704 c
+<path stroke="black" arrow="normal/small">
+257.877 673.111 m
+281.058 678.059
+286.226 697.92 c
 </path>
-<text matrix="1 0 0 1 0 -4" transformations="translations" pos="64 752" stroke="black" type="minipage" width="48" height="5.538" depth="0.55" valign="top" style="center">\texttt{trial}</text>
-<text matrix="1 0 0 1 0 -6" transformations="translations" pos="64 736" stroke="black" type="minipage" width="48" height="5.538" depth="0.55" valign="top" style="center">\texttt{valid}</text>
-<path stroke="black" arrow="normal/normal">
-168 736 m
-168 744
-184 760 c
+<path stroke="black" arrow="normal/small">
+441.986 685.723 m
+469.66 728.174
+476.494 760.319 c
 </path>
-<text transformations="translations" pos="144 732" stroke="black" type="minipage" width="48" height="5.538" depth="0.55" valign="top" style="center">\texttt{far}</text>
+<path stroke="black" arrow="normal/small">
+336.051 678.925 m
+359.497 741.42
+326.575 762.679 c
+</path>
+<text matrix="1 0 0 1 0 -16" transformations="translations" pos="128 816" stroke="black" type="minipage" width="64" height="6.865" depth="1.88" valign="top" style="center">Step 1:</text>
+<text matrix="1 0 0 1 96 -16" transformations="translations" pos="128 816" stroke="black" type="minipage" width="64" height="6.865" depth="1.88" valign="top" style="center">Step 2:</text>
+<text matrix="1 0 0 1 192 -16" transformations="translations" pos="128 816" stroke="black" type="minipage" width="64" height="6.865" depth="1.88" valign="top" style="center">Step 3:</text>
+<text matrix="1 0 0 1 288 -16" transformations="translations" pos="128 816" stroke="black" type="minipage" width="64" height="6.865" depth="1.88" valign="top" style="center">Step 4:</text>
 </page>
 </ipe>
