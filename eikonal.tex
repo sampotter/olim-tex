@@ -389,10 +389,9 @@ be consulted~\cite{sethian1999level}. In addition to item
 \ref{enum:update-U}, algorithm \ref{alg:dijkstra-like} is generic in
 the following ways:
 \begin{itemize}
-\item As we mentioned before, there are different ways of computing
-  $\boundary$ and subsequently approximating the initial value of $U$
-  for $p \in \boundary$ using
-  $g = \left. u \right|_D$~\cite{chopp2001some}
+\item As we mentioned before, there are different ways of initializing
+  the boundary data $\boundary$ if only off-grid boundary data is
+  provided~\cite{chopp2001some}.
 \item How we keep track of the node with the smallest value is
   variable: most frequently, as in Dijkstra's algorithm, a heap
   storing pointers to the nodes is used, leading to $O(N^n \log N)$
@@ -1046,11 +1045,12 @@ modifications of the gradient and Hessian for $F_i$.
 \end{figure}
 
 In this section, we describe our \emph{bottom-up} and \emph{top-down}
-algorithms. We emphasize the 3D solver, since in 2D, the distinction
-between the two is less important. Each algorithm reduces the number
-of updates that are done without degrading solution accuracy by using
-an efficient enumeration or search of the neighboring simplexes. The
-difference between the algorithms is in how this is done.
+algorithms (see fig.\@ \ref{fig:classification}). We emphasize the 3D
+solver, since in 2D, the distinction between the two is less
+important. Each algorithm reduces the number of updates that are done
+without degrading solution accuracy by using an efficient enumeration
+or search of the neighboring simplexes. The difference between the
+algorithms is in how this is done.
 
 In section\@ \ref{ssec:simplex-enumeration}, we start by showing how
 to enumerate update tetrahedra and put them into separate groups of
@@ -1095,10 +1095,9 @@ of the solver, but can significantly improve the accuracy of the
 solution. For all of the solvers considered in this paper, in 3D, we
 only ever consider neighborhoods with at most 26 neighbors.
 
-For the \emph{top-down} solver, we simplify things by treating a node's
-neighboring octants separately. That is, we iterate over each octant
-and do all updates that lie inside that octant before moving onto the
-next. To do this, we enumerate all update tetrahedra with vertices
+For the \emph{top-down} solver, we simplify things by only doing
+updates which have $p_i = \pnew$ for some $i$. To iterate over
+updates, we enumerate all update tetrahedra with vertices
 $p \in \{0, 1\}^3$ in a symmetric fashion. Since we assume our update
 tetrahedra have been translated so that $\hat{p} = 0 \in \mathbb{Z}^n$
 (see section\@ \ref{ssec:quadrature}), this means enumerating
@@ -1153,31 +1152,21 @@ performance of any parallel Dijkstra-like method.
 \subsection{The search procedure used by the \emph{bottom-up}
   algorithm}\label{ssec:bottom-up-search}
 
-Another approach is to take advantage of the fact that lower
-dimensional updates provide some information about the likely
-direction of arrival of the first arrival time characteristic. If we
-know where the minimum line update is, then the characteristic is
-nearby. Starting with the minimum line update, we enumerate
-neighboring vertices and perform the corresponding triangle updates,
-then enumerate vertices which are sufficiently close to the minimum
-triangle update, doing any relevant tetrahedron updates along the way.
-
 \begin{figure}[t]
   \centering
   \includegraphics[width=0.85\linewidth]{hu-neighborhoods.eps}
-  \caption{\emph{The three types of neighborhoods for the \emph{bottom-up}
-      algorithm with $q_1 = 1 = q_2$, $d_1 = 1$, and $d_2 = 2$.} The
-    yellow and blue regions indicate where triangle and tetrahedron
-    updates may be performed, respectively. For instance, with $p_0$
-    the minimizing line update vertex, candiates for $p_1$ consist of
-    the yellow nodes: triangle updates involving these candidates and
-    $p_0$ will be performed. Once a yellow node ($p_1$) has been
-    selected, tetrahedron updates involving the neighboring blue nodes
+  \caption{\emph{The three types of neighborhoods for the
+      \emph{bottom-up} algorithm.} The yellow and blue regions
+    indicate where triangle and tetrahedron updates may be performed,
+    respectively. For instance, with $p_0$ the minimizing line update
+    vertex, candiates for $p_1$ consist of the yellow nodes: triangle
+    updates involving these candidates and $p_0$ will be
+    performed. Once a yellow node ($p_1$) has been selected,
+    tetrahedron updates involving the neighboring blue nodes
     (candidates for $p_2$) will be performed. Note that the updates
     performed correspond roughly to a combination of groups I, V, VIa,
     and VIb.}\label{fig:hu-neighborhoods}
 \end{figure}
-
 
 \begin{figure}
   \centering
@@ -1190,101 +1179,73 @@ triangle update, doing any relevant tetrahedron updates along the way.
     on where $\lambda_0^*$ lies, it is possible to skip one or two
     triangle updates. In this case, we label the different regions by
     the number of updates that it is possible to skip: $\lambda^*$
-    here lies in a region labeled ``2'', since it is possible to skip
-    the two triangle updates on the opposite side of $\Delta^2$. Along
-    the same lines, if $\lambda^*$ were to lie in a region labeled
-    ``1'', two triangle updates would be ``visible'', and it would
-    only be possible to skip one update.}\label{fig:skip-zones}
+    here lies in ``zone 2'', since it is possible to skip the two
+    triangle updates on the opposite side of $\Delta^2$. Along the
+    same lines, if $\lambda^*$ were to lie in ``zone 1'', two triangle
+    updates would be ``visible'', and it would only be possible to
+    skip one update.}\label{fig:skip-zones}
 \end{figure}
 
-While the \emph{top-down} algorithm is parametrized by the choice of
-tetrahedron groups to include, the \emph{bottom-up} algorithm is parametrized
-by the norms used to search for neighboring vertices as well as the
-permitted search radii. In 3D, let $p_0$ be the vertex that admits the
-minimum line update; then, $p_1$ must satisfy
-$\norm{p_1 - p_0}_{q_1} \leq d_1$, where $q_1 = 1, 2$, or $\infty$ and
-$d_1$ is a positive integer. Likewise, when searching for tetrahedron
-updates, for a candidate vertex $p_2$, we require
-$\norm{p_2 - p_1}_{q_2} \leq d_2$ and
-$\norm{p_2 - p_0}_{q_2} \leq d_2$ to hold simultaneously.
+Another approach is to use local characteristic information obtained
+by performing lower-dimensional updates to help us avoid performing
+unnecessary higher-dimensional updates. Intuitively, if we find the
+minimum line update ($d = 0$), then we can avoid triangle updates
+($d = 1$) that don't include the minimizing line update. Since we only
+perform updates for $d > 0$ that include the newly \texttt{valid} node
+$\pnew$, we can start our search with $d = 1$.
 
-For our numerical tests, we use the $\ell_1$ norm in both cases
-($q_1 = 1 = q_2$), and set $(d_1, d_2) = (1, 2)$ (see figure
-\ref{fig:hu-neighborhoods}). We found this choice of parameters to be
-a good compromise between speed and accuracy. Using larger
-neighborhoods does lead to a more accurate solution, but causes the
-solver to run more slowly. We do not explore the effect of this
-parametrization in this paper, since our choice of parameters performs
-well enough already (see section\@ \ref{sec:numerical-results}).
+For the \emph{top-down} algorithm, we require an efficient method of
+enumerating simpexes, starting with $d = n - 1$. On the other hand,
+for the \emph{bottom-up} algorithm, for a minimizing update of
+dimension $d$, we need a method of finding neighboring updates of
+dimension $d + 1$. For $n = 3$ and $d = 1$, for each $p_0$, we find
+points $p_1$ that satisfy $\|p_0 - p_1\|_1 \leq 1$. For $d = 2$, for
+each pair $(p_0, p_1)$, we find points $p_2$ that satisfy
+$\|p_0 - p_2\|_1 \leq 2$ and $\|p_1 - p_2\|_1 \leq 2$
+simultaneously. In practice, we only find these neighbors once and
+precompute an array of indices to be used later. The neighborhoods
+computed this way are shown in fig.\@ \ref{fig:hu-neighborhoods}.
+
+
 \subsection{Minimization algorithms and skipping
   updates}\label{ssec:algorithms-and-skipping}
 
-Performing an update is the same as solving eq.\@
-\ref{eq:constrained-minimization} for fixed problem data. When
-$F_i = F_0$, we can use theorem \ref{thm:f0-exact} or
-\ref{thm:equivalence} to compute $\lambda_0^*$. In this case,
-$\lambda_0^*$ may lie outside $\Delta^d$. On the other hand, if
-$F_i = F_1$, we need to use an algorithm that can solve the
-constrained optimization problem defined by eq.\@
-\ref{eq:constrained-minimization}. Our approach has been to use
-sequential quadratic programming (SQP), although there are many other
+When $F_i = F_0$, we can use theorem \ref{thm:f0-exact} or
+\ref{thm:equivalence} to compute $\lambda_0^*$. If $F_i = F_1$, we
+need to use an algorithm that can solve the constrained optimization
+problem defined by eq.\@ \ref{eq:constrained-minimization}. Our
+approach has been to use sequential quadratic programming (SQP),
+although there are many other
 options~\cite{bertsekas1999nonlinear,nocedal2006numerical}. It is
 possible to skip some updates; and, indeed, the performance of our
-algorithms depends on this happening. We skip updates in three
-different ways. The first two strategies for skipping updates are used
-by the \emph{top-down} algorithms, and the third is used by the \emph{bottom-up}
-family of algorithms.
+algorithms comes about largely because of this happening.
 
-\paragraph{\emph{top-down} constrained skipping} When computing an update
+We skip updates in three different ways. The first two approaches are
+used by the \emph{top-down} algorithms, and the third by the
+\emph{bottom-up} algorithms.
+
+\paragraph{Top-down constrained skipping.} When computing an update
 using a constrained solver, we can rule out all incident
 lower-dimensional updates, since we have computed the global
 constrained optimum on $\Delta^d$.
 
-\paragraph{\emph{top-down} unconstrained skipping} If we do an update using
+\paragraph{Top-down unconstrained skipping.} If we do an update using
 an unconstrained solver, then depending on where the optimum
-$\lambda_0^*$ lies, we can skip some lower-dimensional updates. The
-idea is simple: since $F_0$ is strictly convex, if we consider a
-straight line starting at $\lambda_0^*$ and extending in some
-direction, then $f$ restricted to that line is monotonically
-increasing as we move away from $\lambda_0^*$. Hence, for a
-tetrahedron update, if $\lambda_0^* \notin \Delta^2$, then we can skip
-all updates which are not ``visible'' (in parameter space) from
-$\lambda_0^*$. This is illustrated in the figure \ref{fig:skip-zones}.
+$\lambda_0^*$ lies, we can skip some or all lower-dimensional
+updates. The idea is simple and is best depicted visually, see fig.\@
+\ref{fig:skip-zones}.
 
-\paragraph{\emph{Bottom-up} KKT skipping} We can also skip higher-dimensional
-updates. For example, if we do the three triangle updates on the
-boundary of a tetrahedron update, we can use the Karush-Kuhn-Tucker
-necessary conditions for optimality of a constrained optimization
-problem~\cite{nocedal2006numerical} to determine if the minimizer on
-the boundary is also a global minimizer for the constrained
-minimization problem given by eq.\@
-\ref{eq:constrained-minimization}. Let
-$L(\lambda, \mu) = F_i(\lambda) + (A\lambda - b)^\top \mu$ be the
-Lagrangian function, where $\mu \in \mathbb{R}^{d + 1}$ is the vector
-of Lagrange multipliers. Since $F_0$ is strictly convex and since we
-assume $h$ is small enough for $F_1$ to be strictly convex, if
-$\lambda^*$ lies on the boundary of $\Delta^d$, we only need to check
-that the optimum Lagrange multipliers $\mu^*$ are dual feasible; i.e.,
-whether
-$\mu^* \geq 0$~\cite{bertsekas1999nonlinear,nocedal2006numerical}. For
-$\lambda^* \in \partial \Delta^d$, letting
-$\mathcal{I} = \set{i : (A\lambda - b)_i = 0}$ be the set of active
-constraints' indices, stationarity requires:
-\begin{equation}\label{eq:stationarity}
-  A^\top_{\mathcal{I}} \mu_{\mathcal{I}}^* = \nabla F_i(\lambda).
-\end{equation}
-See eq.\@ \ref{eq:Delta-LMI} for the definition of $A$; the
-notation $A_{\mathcal{I}}$ refers to the submatrix consisting of rows
-of $A$ indexed by $\mathcal{I}$. For a tetrahedron update in 3D,
-$A \in \mathbb{R}^{3 \times 2}$ and $|\mathcal{I}| \leq 2$ (not all
-three constraints be active simultaneously). In particular, if
-$i \notin \mathcal{I}$, then $\mu_i^* = 0$, and otherwise, $\mu_i^*$
-can be computed easily from eq.\@ \ref{eq:stationarity}. Once the
-full vector of Lagrange multipliers has been computed, if
-$\mu^* \geq 0$, then the update may be skipped. A modified version of
-this strategy for skipping updates was used in our work on computing
-the quasipotential for nongradient SDEs in
-3D~\cite{yang2019computing}.
+\paragraph{Bottom-up KKT skipping.} We can also skip
+higher-dimensional updates. For example, if we do the three triangle
+updates on the boundary of a tetrahedron update, we can use the
+Karush-Kuhn-Tucker necessary conditions for optimality of a
+constrained optimization problem~\cite{nocedal2006numerical} to
+determine if the minimizer on the boundary is also a global minimizer
+for the constrained minimization problem given by eq.\@
+\ref{eq:constrained-minimization}. See appendix\@
+\ref{sec:kkt-skipping}. We note that a modified version of this
+strategy for skipping updates was used in our work on computing the
+quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
 
 \subsection{The \emph{bottom-up} and \emph{top-down} algorithms}\label{ssec:top-down-and-bottom-up}
 
@@ -1358,24 +1319,25 @@ In this section, we describe our \emph{bottom-up} and \emph{top-down} algorithms
 note for clarity that these algorithms correspond to item
 \ref{enum:update-U} of algorithm \ref{alg:dijkstra-like}.
 
-To describe our \emph{top-down} algorithm (see algorithm \ref{alg:top-down}),
-we define:
+To describe our \emph{top-down} algorithm (see algorithm
+\ref{alg:top-down}), we define the update set for $\hat{p}$ by:
 \begin{equation}\label{eq:calU}
   \begin{aligned}
     \calV_d = \big\{\set{p_0, \hdots, p_d}: \; &p_i\texttt{.state}=\texttt{valid} \mbox{ for } i = 0, \hdots, d, \\
-    &\mbox{and } \set{p_0, \hdots, p_d} \mbox{ belongs to the selected update group}, \\
+    &\mbox{and} \set{p_0, \hdots, p_d} \mbox{belongs to the selected update group}, \\
     &\mbox{and } \pnew \in \set{p_0, \hdots, p_d} \big\}
   \end{aligned}
 \end{equation}
-for $d = 0, \hdots, n - 1$. These sets collect all possible simplex
-updates: i.e., updates which both belong to a group as defined in
-section\@ \ref{ssec:simplex-enumeration} and are \texttt{valid}. The
-third condition is an important optimization. To see why it is
-correct, fix an update set $\calV_d$. If $\set{p_0, \hdots, p_d}$
-satisfies the first two conditions but not the third, we can see that
-$\hat{p}$ would have already been updated from it in a previous
-iteration. All new information affecting $\hat{U}$ during this
-iteration must be computed from an update involving $\pnew$.
+for $d = 0, \hdots, n - 1$. The update set $\calV_d$ collects all
+admissible simplex updates of a given dimension: i.e., updates which
+both belong to a group as defined in section\@
+\ref{ssec:simplex-enumeration} and are \texttt{valid}. The third
+condition is an important optimization. To see why it is correct, fix
+an update set $\calV_d$. If $\set{p_0, \hdots, p_d}$ satisfies the
+first two conditions but not the third, we can see that $\hat{p}$
+would have already been updated from it in a previous iteration. All
+new information affecting $\hat{U}$ during this iteration must be
+computed from an update involving $\pnew$.
 
 The \emph{bottom-up} algorithm (algorithm \ref{alg:bottom-up}) builds up each
 update $(p_0, \hdots, p_d)$ one vector at a time by searching for
@@ -1451,20 +1413,17 @@ follows:
   in $p \in \calG$, we track $p$\texttt{.state} for all time for every
   node. We could implement a sparse \texttt{front} using a hash map or
   a quadtree or octree, which would save space, but would also be much
-  slower to update. In fact, since updating these data structures
-  frequently takes $O(\log n)$ time, using a sparse front has the
-  potential to degrade the overall complexity to $O(n \log^2 n)$.
+  slower to update.
 \end{itemize}
 
 We use a policy-based design~\cite{alexandrescu2001modern} written in
-the C++ programmed language which makes heavy use of templates. This
-allows us to conditionally compile different features and reuse logic
-to implement different Dijkstra-like algorithms. In particular, we
-implement the standard FMM~\cite{sethian1996fast} and make a direct
-comparison between it and the ordered line integral method which it is
-equivalent to, \texttt{olim6rhr} (see figure
+C++. This allows us to conditionally compile different features and
+reuse logic to implement different Dijkstra-like algorithms. In
+particular, we implement the standard FMM~\cite{sethian1996fast} and
+make a direct comparison between it and the ordered line integral
+method which it is equivalent to, \texttt{olim6\_rhr} (see figure
 \ref{fig:speed-comparison}). We have found that only a modest slowdown
-is incurred by using \texttt{olim6rhr} for problems of moderate
+is incurred by using \texttt{olim6\_rhr} for problems of moderate
 size. The disparity between the two is greater for smaller problem
 sizes, which is due to cache effects.
 
@@ -1548,25 +1507,25 @@ Our results are displayed in figures \ref{fig:time-vs-error} and
 error plotted versus problem size and time, as well as $\ell_\infty$
 error plotted versus $N$. We summarize our observations:
 \begin{itemize}
-\item For \texttt{rhr}, as we increase directional coverage
+\item Using one of the midpoint rules allows improved directional
+  coverage to translate into an improved error constant.
+\item For \texttt{rhr}, increased directional coverage
   (\texttt{olim6\_rhr} $\to$ \texttt{olim18\_rhr} $\to$
-  \texttt{olim26\_rhr}), the error constant does not improve; in fact,
+  \texttt{olim26\_rhr}) does not lead to an improved error. In fact,
   for \texttt{s1}, \texttt{s3}, and \texttt{s4}, increasing the
   directional coverages causes the accuracy to deteriorate (see figure
-  \ref{fig:size-vs-error}). This can be due to the fact that the
-  errors due to quadrature and due to linear interpolation have
-  different signs, and may partially compensate each other (e.g., in
-  \texttt{olim6}), and that this balance may worsen with increased
-  directional coverage, leading to a reduction in interpolation error.
-  On the other hand, using one of the midpoint rules allows improved
-  directional coverage to translate into an improved error constant.
-\item If we scan each graph horizontally, we can see that the
-  difference in error between \texttt{mp0} and \texttt{mp1} is
-  minimal. For each \texttt{mp1} graph, the corresponding \texttt{mp0}
-  graph has the same error, but is shifted to the left, reflecting the
-  fact that the \texttt{mp0} OLIMs are substantially faster. This is
-  consistent with theorem \ref{thm:mp0-newton}, which justifies the
-  use of \texttt{mp0}.
+  \ref{fig:size-vs-error}). This may be due to the fact that
+  quadrature error and linear interpolation error have different
+  signs, and may partially compensate each other (e.g., in
+  \texttt{olim6}). This compensated effect may get worse with
+  increased directional coverage.
+\item If we scan each graph horizontally, focusing on the plot
+  markers, we can see that the difference in error between
+  \texttt{mp0} and \texttt{mp1} is minimal. For each \texttt{mp1}
+  graph, the corresponding \texttt{mp0} graph has the same error, but
+  is shifted to the left, reflecting the fact that the \texttt{mp0}
+  OLIMs are substantially faster. This is consistent with theorem
+  \ref{thm:mp0-newton}, which justifies the use of \texttt{mp0}.
 \item With respect to the choice of neighborhood, \texttt{olim6} is
   the fastest; and, for each choice of neighborhood, \texttt{mp0}
   provides the best combination of speed and accuracy. If we are
@@ -1587,6 +1546,8 @@ error plotted versus $N$. We summarize our observations:
   in each direction into $N = 2^{14} + 1$ nodes requires about as much
   memory as discretizing $\Omega = [-1, 1]^3$ with $N = 2^{9} + 1$,
   which leads to $h$ being 32 times smaller in 2D than in 3D.
+\item In general, \texttt{olim26} and \texttt{olim3d} are
+  significantly more accurate than \texttt{olim6} and \texttt{olim18}.
 \end{itemize}
 
 \subsection{A linear speed function}\label{ssec:slotnick}
@@ -1599,13 +1560,14 @@ error plotted versus $N$. We summarize our observations:
     (left) and $n = 3$ (right). The domain is descretized into $N^3$
     nodes, where $N = 2^p + 1$, so that $h = 2/(N - 1)$. The slowness
     function is constant ($s \equiv 1$). For the 2D problem,
-    \texttt{olim8rhr} is used; \texttt{olim26rhr} is used for the 3D
-    problem. Solutions for the unfactored problem are plotted, along
-    with solutions using a disk/sphere neighborhood with constant
-    factoring radius given by $\rfac = 0.05, 0.1, 0.15, 0.2$. We note
-    that for this problem the choice $\rfac = \sqrt{n}$ results in an
-    exact solution. This only applies to the constant slowness
-    function, $s \equiv 1$.  }\label{fig:factoring-error-example}
+    \texttt{olim8\_rhr} is used; \texttt{olim26\_rhr} is used for the
+    3D problem. Solutions for the unfactored problem are plotted,
+    along with solutions using a disk/sphere neighborhood with
+    constant factoring radius given by $\rfac = 0.05, 0.1, 0.15,
+    0.2$. We note that for this problem the choice $\rfac = \sqrt{n}$
+    results in an exact solution. This only applies to the constant
+    slowness function, $s \equiv 1$.
+  }\label{fig:factoring-error-example}
 \end{figure}
 
 We consider a problem that has a known analytical solution and has
@@ -1637,17 +1599,16 @@ rewritten with respect to a different source.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{qv_plots.eps}%
-  \caption{Relative $\ell_\infty$ error plotted versus $N$ in 2D
-    (left) and 3D (right).}\label{fig:qv}
-  \includegraphics[width=\linewidth]{qv-time-plots.eps}%
-  \caption{Wall clock time plotted versus $N$ in 2D (left) and 3D
-    (right).}\label{fig:qv-time-plots}
-  \caption*{\emph{Numerical results for section\@
-      \ref{ssec:slotnick}.} Problem sizes are $N = 2^p + 1$, where
-    $p = 3, \hdots, 14$ in 2D and $p = 3, \hdots, 9$ in 3D. The total
-    number of nodes is $N^n$, where $n = 2, 3$. See section\@
-    \ref{ssec:slotnick} for least squares fits.}
+  \includegraphics[width=\linewidth]{qv_plots.eps}
+  \includegraphics[width=\linewidth]{qv-time-plots.eps}
+  \caption{\emph{Numerical results for the linear speed function of
+      section\@ \ref{ssec:slotnick}.} Problem sizes are $N = 2^p + 1$,
+    where $p = 3, \hdots, 14$ in 2D and $p = 3, \hdots, 9$ in 3D. The
+    total number of nodes is $N^n$, where $n = 2, 3$. See section\@
+    \ref{ssec:slotnick} for least squares fits. Top row: relative
+    $\ell_\infty$ error plotted versus $N$ in 2D (left) and 3D
+    (right). Bottom row: wall clock time plotted versus $N$ in 2D
+    (left) and 3D (right).}\label{fig:slotnick-plots}
 \end{figure}
 
 If $\set{x_i}$ is a set of point sources and $u_i$ is the solution of
@@ -1669,11 +1630,7 @@ For this choice of slowness function, we plot the CPU runtime versus
 $N$ (see figure \ref{fig:qv-time-plots}), along with the relative
 $\ell_\infty$ error versus $N$ (see figure \ref{fig:qv}). We also do
 least squares fits for these plots to get an overall sense of the
-accuracy and speed (see \ref{table:qv-least-squares}). Since we have
-established that \texttt{olim8}, \texttt{olim26}, and \texttt{olim3d}
-are the best choice of neighborhoods in the previous section, we do
-not plot these results for \texttt{olim4}, \texttt{olim6}, and
-\texttt{olim18}.
+accuracy and speed (see \ref{table:qv-least-squares}).
 
 We can see that our conclusions from section\@
 \ref{ssec:point-source-problems} also hold for the multiple point
@@ -1746,35 +1703,50 @@ the eikonal equation. One of these relies on enumerating valid update
 simplexes, while the other employs a fast search for the first arrival
 characteristic. These methods use different quadrature rules: a
 simplified midpoint rule (\texttt{mp0}), a midpoint rule
-(\texttt{mp1}), and a righthand rule (\texttt{rhr}). We analyze the
-relationship between these quadrature rules and prove error bounds. We
-conduct numerical experiments measuring runtime and relative
-$\ell_\infty$ error. We make a comparison with the standard fast
-marching method which is equivalent to our \texttt{olim6\_rhr},
-showing that they are comparable in terms of speed and accuracy, with
-\texttt{olim6\_rhr} being slightly slower. To determine the relative
-time spent on different tasks, we profile our C++ implementation using
-Valgrind, separating time spent into several coarse-grained
-categories. From this, we show that for practical problem sizes, the
-runtime of Dijkstra-like algorithms behaves like $C N^n$, where
-$n = 2, 3$, and $N^n$ is the total number of gridpoints (even if this
-is not strictly true from a computational complexity viewpoint); we
-also emphasize that memory access patterns play a large role in
-algorithm runtime, especially for large $N$.
+(\texttt{mp1}), and a righthand rule (\texttt{rhr}).
 
-Overall, we conclude that ordered line integral methods are a powerful
-approach to obtaining a higher degree of accuracy when solving the
-eikonal equation in 3D. With an appropriate choice of quadrature rule,
-we are able to exploit improved directional coverage to drive down the
-error constant. The improved accuracy more than makes up for the
-modest price paid in speed, and we fully expect it to be possible to
-find ways to optimize this family of algorithms further. We have also
-tried to demonstrate that memory access patterns dominate both update
-time and time spent maintaining the front data structure, from which
-we can conclude two things: 1) the exact time spent updating a node is
-important but not paramount (improving accuracy is more important than
-improving speed), 2) using memory optimally will lead to a substantial
-speed-up for large problems.
+We have analyzed the relationship between these quadrature rules,
+showing that the \texttt{mp0} rule can be used to compute an
+approximate local characteristic direction, and $\hat{U}$ evaluated
+using this direction, while incurring only $O(h^3)$ error per update,
+which justifies its use.
+
+We have conducted extensive numerical experiments that show that
+\texttt{olim3d\_mp0} provides the best overall trade-off between
+runtime and error. We also compare the speed of the standard fast
+marching method in 3D with the equivalent \texttt{olim6\_rhr}
+(equivalent in the sense that they compute the same solution to
+machine precision). We demonstrate that \texttt{olim6\_rhr} incurs
+only a very modest overhead, suggesting that the \emph{top-down}
+approach is an efficient way of generalizing the fast marching method;
+it also suggests that the \emph{bottom-up} approach is a viable
+approach to speeding up Dijkstra-like algorithms in 3D, and should be
+viable for other types of algorithms that solve related equations
+(indeed, this has already been demonstrated for the
+quasipotential~\cite{yang2019computing}).
+
+To determine the relative time spent on different tasks, we have
+profiled our C++ implementation using Valgrind, separating time spent
+into several coarse-grained categories. From this, we show that for
+practical problem sizes, the runtime of Dijkstra-like algorithms
+behaves like $C N^n$, where $n = 2, 3$, and $N^n$ is the total number
+of gridpoints (even if this is not strictly true from a computational
+complexity viewpoint); we also emphasize that memory access patterns
+play a large role in algorithm runtime, especially for large $N$.
+
+We conclude that ordered line integral methods are a powerful approach
+to obtaining a higher degree of accuracy when solving the eikonal
+equation in 3D. With an appropriate choice of quadrature rule, we are
+able to exploit improved directional coverage to drive down the error
+constant. The improved accuracy more than makes up for the modest
+price paid in speed, and we fully expect it to be possible to find
+ways to optimize this family of algorithms further. We have also
+attempted to demonstrate that memory access patterns dominate both
+update time and time spent maintaining the front data structure, from
+which we can conclude two things: 1) the exact time spent updating a
+node is important but not paramount (improving accuracy is more
+important than improving speed), 2) using memory optimally will lead
+to a substantial speed-up for large problems.
 
 \section{Acknowledgements}
 
@@ -1825,6 +1797,58 @@ is what interests us primarily in this work. While the standard finite
 difference method effectively discretizes the Hamiltonian, the family
 of methods presented here discretizes eq.\@
 \ref{eq:eikonal-minimum-action-path}.
+
+\section{Skipping updates in the \emph{top-down} family of
+  algorithms}\label{sec:kkt-skipping}
+
+In this section, we describe how to use the KKT conditions to skip
+updates in the \emph{top-down} algorithms. In this section, we write:
+\begin{equation}
+  A = \begin{bmatrix}
+    -1 & & \\
+    & \ddots & \\
+    & & -1 \\
+    1 & \cdots & 1
+  \end{bmatrix} \in \mathbb{R}^{d + 1 \times d}, \qquad b = \begin{bmatrix}
+    0 \\ \vdots \\ 0 \\ 1
+  \end{bmatrix} \in \mathbb{R}^{d + 1}
+\end{equation}
+Using these, the set $\Delta^d$ can be written as a linear matrix
+inequality:
+\begin{equation}
+  \lambda \in \Delta^d \iff A\lambda \leq b
+\end{equation}
+Let $\mu \in \mathbb{R}^{d + 1}$ be the vector of Lagrange
+multipliers. Then, the Lagrangian function for eq.\@
+\ref{eq:constrained-minimization} is:
+\begin{equation}
+  L(\lambda, \mu) = F(\lambda) + (A\lambda - b)^\top \mu.
+\end{equation}
+Since $F_0$ is strictly convex and since we assume $h$ is small enough
+for $F_1$ to be strictly convex, if $\lambda^*$ lies on the boundary
+of $\Delta^d$, we only need to check that the optimum Lagrange
+multipliers $\mu^*$ are dual feasible; i.e., whether $\mu^* \geq 0$
+(this follows directly from the standard KKT
+conditions~\cite{bertsekas1999nonlinear,nocedal2006numerical}). For a
+fixed $\lambda \in \Delta^d$, define the set of indices of active
+constraints:
+\begin{equation}
+  \mathcal{I} = \set{i : (A\lambda - b)_i = 0}
+\end{equation}
+That is, $i \in \mathcal{I}$ if the $i$th inequality holds with
+equality (``is active''). Stationarity then requires:
+\begin{equation}\label{eq:stationarity}
+  A^\top_{\mathcal{I}} \mu_{\mathcal{I}}^* = \nabla F_i(\lambda).
+\end{equation}
+If $i \notin \mathcal{I}$, we set $\mu_i^* = 0$. If $\mu^*_i \geq 0$
+for all $i$, then the update may be skipped.
+
+When implementing this, since $A$ is sparse, it is simplest and most
+efficient to write out the system given by eq.\@ \ref{eq:stationarity}
+and write a specialized function to solve it. Note that since we
+always start with a lower-dimensional interior point solution lying on
+the boundary of a higher-dimensional problem, we only have to compute
+one Lagrange multiplier.
 
 \section{Proofs for section\@
   \ref{ssec:minimization-problem}}\label{sec:minimization-proofs}
