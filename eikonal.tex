@@ -339,10 +339,10 @@ fast (our \emph{bottom-up} and \emph{top-down} algorithms).
 
 To write down a generic Dijkstra-like algorithm, there are several
 pieces of information which need to be kept track of. A data structure
-we call \texttt{front} that stores an expanding wavefront is
-maintained throughout the algorithm's execution. For each node $p$,
-apart from the current value of $U(p)$, the most salient piece of
-information is its state, written $p$\texttt{.state}
+called \texttt{front} tracks \texttt{trial} nodes while the solver
+runs (typically an array-based heap). For each node $p$, apart from
+the current value of $U(p)$, the most salient piece of information is
+its state, written $p$\texttt{.state}
 $\in \set{\texttt{valid}, \texttt{trial}, \texttt{far}}$. To fix
 ideas, consider the following high-level Dijkstra-like algorithm:
 
