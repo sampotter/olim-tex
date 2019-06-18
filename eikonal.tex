@@ -677,30 +677,6 @@ end of section\@ \ref{ssec:causality}.
 
 \subsection{Validation of \texttt{mp0}}\label{ssec:validation}
 
-If we consider an update simplex defined by the nodes
-$p_0, \hdots, p_{n-1}$, each subset of these nodes defines another,
-lower-dimensional update simplex, which lies on the boundary of the
-original simplex. For example, three triangle updates form the
-boundary of a single tetrahedron update. We expect the values of $F_i$
-to be the same on the surface of the neighborhood without regard to
-the simplex under consideration (note that the update simplexes share
-common lower-dimensional boundaries). Likewise, we expect $F_i$ to be
-continuous as we transfer between adjacent simplexes. For $F_1$ this
-is the case, but for $F_0$ with $\theta \neq 0$, the function $F_0$
-may not be well-defined or continuous at boundaries. This problem can
-lead to inconsistent and divergent solvers. A heuristic fix is to
-first minimize eq.\@ \ref{eq:constrained-minimization} for $F_0$
-with nonzero $\theta$ to obtain the minimizing argument $\lambda^*_0$,
-then set $\hat{U} = F_1(\lambda_0^*)$; i.e., to replace $F_0$ with
-$F_1$ for the purposes of evaluation, or to use $F_0$ as a surrogate
-when minimizing $F_1$.
-
-If we use Newton's method to minimize $F_1$, starting from
-$\lambda_0^*$ and letting $\lambda_1^*$ denote the optimum of eq.\@
-\ref{eq:constrained-minimization} for $F_1$, then we can use the
-convergence theory of Newton's method to bound the distance between
-$\lambda_0^*$ and $\lambda_1^*$, thereby bounding the error incurred
-by using \texttt{mp0} instead of \texttt{mp1}.
 \begin{figure}
   \centering
   \includegraphics[width=0.7\textwidth]{continuity.eps}
@@ -712,6 +688,28 @@ by using \texttt{mp0} instead of \texttt{mp1}.
     shown.}\label{fig:continuity}
 \end{figure}
 
+If we use $\Fmpzero$ directly, then we run into a situation where the
+cost function $\Fmpzero$ is not continuous between the bases of
+adjacent update simplices (see fig.\@ \ref{fig:continuity}. In
+general, we require $F$ to be continuous across simplex boundaries,
+otherwise this can lead to an inconsistent or divergent solver. Now,
+if we instead use $\Fmpzero$ to compute the minimizer of eq.\@
+\ref{eq:constrained-minimization} with $F = \Fmpzero$, and then set
+$\hat{U} = \Fmpone(\lambda_0^*)$, we will recover continuity, and
+indeed, as we will show, the scheme is convergent. The reason for
+doing this is that eq.\@ \ref{eq:constrained-minimization} can be
+solved exactly for the $\theta$-rule $F_0$ using a QR decomposition
+instead of an iterative solver, making it very cheap. In the next
+section, we will show how this can be done.
+
+Letting $\lambda_0^*$ and $\lambda_1^*$ now denote the optima of eq.\@
+\ref{eq:constrained-minimization} where $F = F_0$ and $F = F_1$ (the
+general $\theta$-rules), respectively, we could imagine using Newton's
+method to minimize $F_1$, starting from $\lambda_0^*$. This would
+allow us to use the convergence theory of Newton's method to bound the
+distance between $\lambda_0^*$ and $\lambda_1^*$, thereby bounding the
+error incurred by using \texttt{mp0} instead of \texttt{mp1}. We
+follow this idea now.
 
 \begin{theorem}\label{thm:mp0-newton}
   Using lemma \ref{lemma:F-strictly-convex}, let $h$ be sufficiently
@@ -746,9 +744,9 @@ can expect the maximum pointwise error between a solution to eq.\@
 \ref{eq:eikonal} computed by using \texttt{mp0} and \texttt{mp1} to be
 $O(h^2)$, which is dominated by the $O(h)$ discretization error coming
 from the linear convergence of the method itself. Hence, using
-\texttt{mp0} instead of \texttt{mp1} to find the parameter $\lambda$
-(i.e., determine the local characteristic) should introduce no
-significant error when evaluating $F_1$.
+\texttt{mp0} instead of \texttt{mp1} only to find the parameter
+$\lambda$, and then evaluate $\hat{U}$ using $F_1$, should introduce
+no significant extra error.
 
 % If we exchange the roles of $F_0$ and $F_1$ (if we start from
 % $\lambda_1^*$ and perform a Newton iteration on $\nabla F_0$) we can
