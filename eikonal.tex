@@ -432,7 +432,7 @@ equations~\cite{tsai2003fast,kao2008legendre}, and hybrid methods
 combining the fast sweeping method with a Dijkstra-like method have
 been introduced recently~\cite{chacon2012fast,chacon2015parallel}.
 
-\section{Ordered line integral methods for the eikonal equation}
+\section{Ordered line integral methods for the eikonal equation}\label{sec:olim}
 
 The fast marching method~\cite{sethian1996fast} discretizes the
 eikonal equation, eq.\@ \ref{eq:eikonal}, and solves this
@@ -470,29 +470,23 @@ results.
 
 \begin{figure}
   \centering
-  \begin{subfigure}{.5\textwidth}
-    \centering
-    \includegraphics[width=0.95\linewidth]{slowness-tetra.eps}
-    \caption{A depiction of the different quantities related to
-      $s^{\theta}$ and $s^{\theta}_\lambda$ for the case of $d = 2$, a
-      tetrahedron update. Both of $s^\theta$ and $s^\theta_\lambda$ live
-      on the $\theta$-section of the simplex
-      $\conv(\set{\hat{p}, p_0, p_1, p_2})$. The function
-      $s^\theta_\lambda$ is a linear combination of $\hat{s}, s_0, s_1$,
-      and $s_2$; the value $s^\theta$ is $s^\theta_\lambda$ evaluated at
-      the centroid of the $\theta$-section.}\label{fig:slowness-tetra}
-  \end{subfigure}%
-  \hspace{.05\linewidth}
-  \begin{subfigure}{.44\textwidth}
-    \centering
-    \includegraphics[width=0.95\linewidth]{simplex-diagram.eps}
-    \caption{An example showing an update interval for $d = 2$ (a
-      tetrahedron update).}\label{fig:tetra-diagram}
-  \end{subfigure}
-  \caption{Characteristics emanate from $p_0 + \delP \Delta^d$, which
-    approximates the front of the solution. These figures depict the
-    quantities involved in a tetrahedron
-    update.}\label{fig:simplex-diagrams}
+  \includegraphics[width=.39864\textwidth]{simplex-diagram-2.eps}
+  \hspace{3em}
+  \includegraphics[width=.43912\textwidth]{slowness-tetra-2.eps}
+  \caption{\emph{Overview of a tetrahedron update, showing the
+      notation in section\@ \ref{sec:olim}}. Left: a point being
+    updated, $\hat{p}$, which is identified with the origin, and three
+    neighboring points $p_0, p_1$, and $p_2$ that are assumed to be
+    \texttt{valid}. The grid $\mathcal{G}$, which contains other
+    points in the discretized domain, is highlighted. The domain of
+    the minimization problem eq.\@ \ref{eq:constrained-minimization}
+    is the convex hull of $p_0, p_1$, and $p_2$. The path minimizing
+    eq.\@ \ref{eq:action-functional} is assumed to be the line segment
+    connecting $\hat{p}$ and $p_\lambda$. Not pictured is the newly
+    \texttt{valid} point $\pnew$, although it is assumed that $\pnew$
+    equals one of $p_0, p_1$, or $p_2$. Right: the same update
+    tetrahedron, but this time with quantities related to the slowness
+    function depicted.}\label{fig:simplex-diagrams}
 \end{figure}
 
 \subsection{Notation}\label{ssec:notation}
@@ -583,7 +577,7 @@ $0 \leq \theta \leq 1$, we define:
   F_1(\lambda) = F_1^\theta(\lambda) &= U_\lambda + s^{\theta}_\lambda h l_\lambda := U_\lambda + \squareb{(1-\theta)\hat{s} + \theta s_\lambda} h l_\lambda, \label{eq:F1-definition}
 \end{align}
 where we omit the superscript in $F_i^\theta$ when the context is
-clear. See figure \ref{fig:slowness-tetra} for a depiction of this
+clear. See figure \ref{fig:simplex-diagrams} for a depiction of this
 setup. The geometric sense of $\theta$ and the aggregates in eqs.\@
 \ref{eq:f0-definition} and \ref{eq:F1-definition} is as follows:
 \begin{itemize}
@@ -1993,7 +1987,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   $\norm{\nabla F_1(\lambda_0^*)} = O(h^2)$. To this end, let
   $\underline{\lambda} = {(n + 1)}^{-1} \m{1}_{n \times 1}$ (i.e., the
   centroid of $\Delta^n$, where $s^\theta$ is evaluated). Then,
-  recalling figure \ref{fig:slowness-tetra},
+  recalling figure \ref{fig:simplex-diagrams},
   $s^\theta_\lambda = s^\theta + \dels^\top (\lambda -
   \underline{\lambda})$ so that, for a general $\lambda$:
   \begin{equation}\label{eq:grad-F1-in-terms-of-grad-F0}
