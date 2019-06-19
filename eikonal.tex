@@ -33,15 +33,12 @@
 \maketitle
 
 \begin{abstract}
-  The eikonal equation is used to model high-frequency wave
-  propagation and solve a variety of applied problems in computational
-  science. We present a family of fast and accurate Dijkstra-like
-  solvers for the eikonal equation and factored eikonal equation,
-  which compute solutions on a regular grid by solving local
-  variational minimization problems. Our methods converge linearly but
-  compute significantly more accurate solutions than competing linear
-  methods, due to improved directional coverage and the use of more
-  accurate quadrature rules. In 3D, we present two different families
+  We present a family of fast and accurate Dijkstra-like solvers for
+  the eikonal equation and factored eikonal equation which compute
+  solutions on a regular grid by solving local variational
+  minimization problems. Our methods converge linearly but compute
+  significantly more accurate solutions than competing first order
+  methods. In 3D, we present two different families
   of algorithms which significantly reduce the number of FLOPs needed
   to obtain an accurate solution to the eikonal equation. One method
   employs a fast search using local characteristic directions to prune
@@ -56,8 +53,7 @@
   implements the proposed solvers is available on GitHub.
   \keywords{ordered line integral method, eikonal equation, factored
     eikonal equation, simplified midpoint rule, semi-Lagrangian
-    method, fast marching method}
-  \subclass{65N99, 65Y20, 49M99}
+    method, fast marching method} \subclass{65N99, 65Y20, 49M99}
 \end{abstract}
 
 \section{Introduction}\label{sec:introduction}
@@ -95,7 +91,7 @@ extensive numerical studies are carried out. Both approaches are
 semi-Lagrangian and use information about local characteristics to
 reduce the work necessary to get an accurate result. These approaches
 are competitive with existing direct solvers for the eikonal equation
-and generalize higher dimensions, and related equations, such as the
+and generalize to higher dimensions and related equations, such as the
 static Hamilton-Jacobi equation. In fact, this research was done in
 tandem with research on the ordered line integral methods for the
 quasipotential of nongradient stochastic differential equations
@@ -122,6 +118,88 @@ theoretical results that justify our experimental findings.
   }\label{fig:classification}
 \end{figure}
 
+Different numerical methods have been proposed for the solution of the
+eikonal equation; generally, there are direct solvers and iterative
+solvers. The most popular direct solvers are based on Dijkstra's
+algorithm (``Dijkstra-like''
+solvers)~\cite{tsitsiklis1995efficient,sethian1996fast}, and the most
+popular iterative method is the fast sweeping
+method~\cite{tsai2003fast,zhao2005fast}. In this work, we develop a
+family of Dijkstra-like solvers for the eikonal equation in 2D and 3D,
+similar to the fast marching method (FMM) or ordered upwind
+methods~\cite{sethian1996fast,sethian2003ordered}. These solvers come
+about by discretizing and minimizing the action functional for the
+eikonal equation (see section\@
+\ref{sec:minimum-action-integral}). The family of algorithms is
+parameterized by a choice of update algorithm (\emph{bottom-up} or
+\emph{top-down}), quadrature rule (a righthand rule (\texttt{rhr}), a
+simplified midpoint rule (\texttt{mp0}), and a midpoint rule
+(\texttt{mp1})), and, in the case of \emph{bottom-up}, a neighborhood
+size (6, 18, or 26 points in 3D). See figure
+\ref{fig:classification}.
+
+Our \emph{bottom-up} and \emph{top-down} update algorithms
+represent two separate approaches to minimizing the number of triangle
+and tetrahedron updates that need to be done in 3D, while the
+quadrature rules represent a trade-off between speed and accuracy of
+the solver. The simplified midpoint rule (\texttt{mp0}) is a sweet
+spot that requires extra theoretical justification, which we
+provide. Overall, our goal is to explore the relevant algorithm design
+trade-offs in 3D and find which solver performs best. Our conclusion
+is that, in 3D, \texttt{olim3d\_mp0} is the best overall, and our
+results are oriented towards supporting this claim.
+
+Additionally, we modify our algorithm to solve the additively factored
+eikonal equation~\cite{luo2012fast}: to enhance accuracy, we solve the
+locally factored eikonal equation near point sources, which recovers
+the global $O(h)$ error convergence expected from a first-order
+method, where $h > 0$ is the uniform spacing between grid points. This
+fixes the degraded $O(h \log h^{-1})$ convergence often associated
+with point source eikonal problems~\cite{qi2018corner}
+(see~\cite{zhao2005fast} for a proof of this error bound).
+
+Our main results follow:
+\begin{itemize}
+\item \textbf{For 3D problems, we develop two separate update
+    algorithms:} a \emph{bottom-up} (\texttt{olim3d}) algorithm, and a
+  \emph{top-down} algorithm (\texttt{olim\emph{K}}, where
+  \texttt{\emph{K}} \hspace{-0.1em}$=6,18,26$ is the size of
+  neighborhood used). Each algorithm locally updates a grid point by
+  performing a minimal number of triangle or tetrahedron
+  updates. Depending on the quadrature rule, each update is calculated
+  by solving a system of nonlinear equations either directly
+  (\texttt{rhr} and \texttt{mp0}) or iteratively (\texttt{mp1}).
+\item \textbf{We prove theorems relating our quadrature rules,
+    rigorously justifying the \texttt{mp0} rule.} These results
+  support our case that it is superior to the \texttt{mp1} rule. We
+  note that this work was done in tandem with research on ordered line
+  integral methods for computing the quasipotential 3D for nongradient
+  SDEs~\cite{dahiya2017ordered,yang2019computing,dahiya2018ordered}. Unlike
+  the quasipotential, the eikonal equation is simple enough to allow
+  us to analyze and justify our algorithms. We are also able to obtain
+  simpler solution methods and established performance guarantees.
+\item \textbf{We conduct extensive numerical tests.} The test problems
+  include point source problems for different slowness (index of
+  refraction) functions, and multiple point source problems with a
+  linear speed function. All of these have analytical solutions, which
+  we use as a ground truth.
+\item \textbf{We show that a significant improvement in accuracy is
+    gained over the equivalent of the standard fast marching method in
+    3D, \texttt{olim6\_rhr}.} Only a modest slowdown is incurred using
+  our general framework, indicating that our approach is
+  competitive. See figure \ref{fig:intro} to see the improvement of
+  \texttt{olim3d\_mp0} over \texttt{olim6\_rhr}, and see section\@
+  \ref{sec:numerical-results} for more details.
+\item \textbf{We use Valgrind~\cite{nethercote2007valgrind} to profile
+    our implementation.} Our results indicate that the time spent
+  sorting the heap used to order nodes on the front is negligible for
+  all practical problem sizes. Since our solvers otherwise run in
+  $O(N^n)$ time, where $n$ is the dimension of the domain, we suggest
+  that the $O(N^n \log N)$ cost of the algorithm is
+  pessimistic. Memory access patterns play a significant role in
+  scaling.
+\end{itemize}
+
 \begin{figure}
   \centering
   \includegraphics[width=\linewidth]{intro.eps}
@@ -136,89 +214,9 @@ theoretical results that justify our experimental findings.
     errors.}\label{fig:intro}
 \end{figure}
 
-Different numerical methods have been proposed for the solution of the
-eikonal equation; generally, there are direct solvers and iterative
-solvers. The most popular direct solvers are based on Dijkstra's
-algorithm (``Dijkstra-like''
-solvers)~\cite{tsitsiklis1995efficient,sethian1996fast}, and the most
-popular iterative method is the fast sweeping
-method~\cite{tsai2003fast,zhao2005fast}. In this work, we develop a
-family of Dijkstra-like solvers for the eikonal equation in 2D and 3D,
-similar to the fast marching method (FMM) or ordered upwind
-methods~\cite{sethian1996fast,sethian2003ordered}. These solvers come
-about by discretizing and minimizing the action functional for the
-eikonal equation (see section\@ \ref{sec:minimum-action-integral}). The
-family of algorithms is parameterized by a choice of update algorithm
-(\emph{bottom-up} or \emph{top-down}), quadrature rule (a
-righthand rule (\texttt{rhr}), a simplified midpoint rule
-(\texttt{mp0}), and a midpoint rule (\texttt{mp1})), and a
-neighborhood size (6, 18, or 26 points in 3D). See figure
-\ref{fig:classification}. Additionally, we modify our algorithm to
-solve the additively factored eikonal equation~\cite{luo2012fast}: to
-enhance accuracy, we solve the locally factored eikonal equation near
-point sources, which recovers the global $O(h)$ error convergence
-expected from a first-order method, where $h > 0$ is the uniform
-spacing between grid points. This fixes the degraded
-$O(h \log h^{-1})$ convergence often associated with point source
-eikonal problems~\cite{qi2018corner} (see~\cite{zhao2005fast} for a
-proof of this error bound).
-
-Our \emph{bottom-up} and \emph{top-down} update algorithms
-represent two separate approaches to minimizing the number of triangle
-and tetrahedron updates that need to be done in 3D, while the
-quadrature rules represent a trade-off between speed and accuracy of
-the solver. The simplified midpoint rule (\texttt{mp0}) is a sweet
-spot that requires extra theoretical justification, which we
-provide. Overall, our goal is to explore the relevant algorithm design
-trade-offs in 3D and find which solver performs best. Our conclusion
-is that, in 3D, \texttt{olim3d\_mp0} is the best overall, and our
-results are oriented towards supporting this claim.
-
-Our main results follow:
-\begin{itemize}
-\item For 3D problems, we develop two separate algorithms: a
-  \emph{bottom-up} (\texttt{olim3d}) algorithm, and a \emph{top-down}
-  algorithm (\texttt{olim\emph{K}}, where \texttt{\emph{K}}
-  \hspace{-0.1em}$=6,18,26$ is the size of neighborhood used). Each
-  algorithm locally updates a grid point by performing a minimal
-  number of triangle or tetrahedron updates. Depending on the
-  quadrature rule, each update is calculated by solving a system of
-  nonlinear equations either directly (\texttt{rhr} and \texttt{mp0})
-  or iteratively (\texttt{mp1}).
-\item We note that this work was done in tandem with research on
-  ordered line integral methods for computing the quasipotential 3D
-  for nongradient
-  SDEs~\cite{dahiya2017ordered,yang2019computing,dahiya2018ordered}. Unlike
-  the quasipotential, the eikonal equation is simple enough to allow
-  us to analyze and justify our algorithms. We are also able to obtain
-  simpler solution methods and established performance guarantees. We
-  prove theorems relating our quadrature rules, rigorously justifying
-  the \texttt{mp0} rule, establishing it as superior to \texttt{mp1}.
-\item We conduct extensive numerical tests on a variety of problems,
-  including point source problems for different slowness (index of
-  refraction) functions, and multiple point source problems with a
-  linear speed function. These problems have analytical solutions,
-  which we use as a ground truth.
-\item We show that a significant improvement in accuracy is gained
-  over the equivalent of the standard fast marching method in 3D
-  (\texttt{olim6\_rhr}), and that only modest slowdown is incurred, so
-  that our algorithms with improved directional coverage and
-  quadrature rules are competitive. See figure \ref{fig:intro} to see
-  the improvement of \texttt{olim3d\_mp0} over \texttt{olim6\_rhr},
-  and see section\@ \ref{sec:numerical-results} for more details.
-\item We use Valgrind~\cite{nethercote2007valgrind} to profile our
-  implementation and show that the time spent sorting the heap used to
-  order nodes on the front is negligible for all practical problem
-  sizes. Since our solvers otherwise run in $O(N^n)$ time, where $n$
-  is the dimension of the domain, we suggest that the $O(N^n \log N)$
-  cost of the algorithm is pessimistic. Memory access patterns play a
-  significant role in scaling.
-\end{itemize}
-
-\subsection{Accessing our library} We carefully implement the
-algorithms described in this paper using the C++
-language~\cite{stroustrup2013c++}. A link to our library's project
-website on GitHub, \texttt{libolim}, can be accessed from S.\ Potter's
+\subsection{Accessing our library} Our implementation is in
+C++~\cite{stroustrup2013c++}. A link to a project website on GitHub
+can be accessed from S.\ Potter's
 website~\cite{sfp-umiacs-homepage}. The GitHub site includes
 instructions for downloading and running basic
 examples~\cite{libolim-github}. The code used to generate plots in
@@ -227,14 +225,10 @@ instructions~\cite{libolim-github-plotting}.
 
 \section{Background}\label{sec:background}
 
-We now provide a brief overview of the eikonal equation and its
-numerical solution on a regular grid. We then review the different
-algorithms available for its solution, and sketch a generic
+In this section we provide a brief overview of the eikonal equation
+and its numerical solution on a regular grid and sketch a generic
 Dijkstra-like algorithm which we will refer to throughout the paper to
-organize our results. Note that the FMM could be described by this
-generic algorithm equally well. Since we focus on Dijkstra-like
-algorithms here, our explanation of the fast sweeping and other
-iterative methods will be brief.
+organize our results.
 
 \subsection{The eikonal equation}
 
@@ -244,12 +238,13 @@ equation is:
   \norm{\nabla u(x)} = s(x), \qquad x \in \Omega,
 \end{equation}
 where $\|\cdot\|$ denotes the $\ell_2$ norm unless otherwise stated,
-and $s : \Omega \to (0, \infty)$ is a fixed, positive \emph{slowness
-  function}, which forms part of the data. Hence, we solve for
-$u : \Omega \to \R_+$. The rest of the boundary data is a subset
+and $s : \Omega \to (0, \infty)$ is a fixed, positive slowness
+function, which forms part of the data. We solve for
+$u : \Omega \to \R_+$. The boundary data is provided on a subset
 $D \subset \Omega$ where $u$ has been fixed; i.e.,
 $\left. u \right|_D = g$ for some $g : D \to \R_+$. As an example, if
-$s \equiv 1$ and $g \equiv 0$, then the solution of eq.\@ \ref{eq:eikonal} is:
+$s \equiv 1$ and $g \equiv 0$, then the solution of eq.\@
+\ref{eq:eikonal} is:
 \begin{equation}
   \label{eq:distance-to-Omega}
   u(x) = d(x, D) = \min_{y \in D} \norm{x - y}.
@@ -258,21 +253,20 @@ That is, $u$ is the distance to $D$ at each point in
 $\Omega$.
 
 To numerically solve eq.\@ \ref{eq:eikonal}, first let
-$\calG = \{p_i\} \subseteq \Omega$ be the set or grid of \emph{nodes}
-where we would like to approximate the true solution $u$ with a
-numerical solution $U : \calG \to \R_+$. Additionally, for each node
+$\calG = \{p_i\} \subseteq \Omega$ be the set or grid of nodes where
+we would like to approximate the true solution $u$ with a numerical
+solution $U : \calG \to \R_+$. Additionally, for each node
 $p \in \calG$, define a set of neighbors,
-$\neib(p) \subseteq \calG \backslash \set{p}$. Typically---for the FMM
-and \texttt{olim6}, for instance---$\calG$ is taken to be a subset of
-a lattice in $\R^n$ and $\neib(p)$ to be each node's $2n$ nearest
-neighbors. With $\calG$ defined, we also define the set of
-\emph{boundary nodes}, $\boundary \subseteq \calG$. It may happen that
-the set $\boundary$ and $D$ do not coincide (e.g., $D$ could be a
-curve which does not intersect $\calG$); to reconcile this difference,
-the initial value of $U(p)$ for each $p \in \boundary$ must take
-$g = \left. u \right|_D$ into account in the best way possible. This
-problem has been approached in different ways, and is not the focus of
-the present work~\cite{chopp2001some}.
+$\neib(p) \subseteq \calG \backslash \set{p}$. Typically---for the
+FMM, for instance---$\calG$ is taken to be a subset of a lattice in
+$\R^n$ and $\neib(p)$ to be each node's $2n$ nearest neighbors. We
+also define the set of boundary nodes, $\boundary \subseteq \calG$. It
+may happen that the set $\boundary$ and $D$ do not coincide (e.g., $D$
+could be a curve which does not intersect any points in $\calG$); to
+reconcile this difference, the initial value of $U(p)$ for each
+$p \in \boundary$ must take $g = \left. u \right|_D$ into account in
+the best way possible. This problem has been approached in different
+ways, and is not the focus of the present work~\cite{chopp2001some}.
 
 Throughout, we make several simplifying assumptions.
 \begin{itemize}
@@ -295,27 +289,28 @@ Throughout, we make several simplifying assumptions.
   \includegraphics[width=0.9\linewidth]{overview-2.eps}
   \caption{\emph{An overview of a Dijkstra-like algorithm for solving
       the eikonal equation (eq.\@ \ref{eq:eikonal}) in 2D.} See alg.\
-    \ref{alg:dijkstra-like} for details. In this diagram, the node
-    $\pnew$ has been removed from \texttt{front} and had its state set
-    to \texttt{valid}. All \texttt{far} nodes in $\neib(\pnew)$ are
-    set to \texttt{trial}, and then all \texttt{trial} nodes in
+    \ref{alg:dijkstra-like} for details. Nodes are labeled by state so
+    that $\circ = \mathtt{far}$, $\square = \mathtt{trial}$, and
+    $\times = \mathtt{valid}$. In this diagram, the node $\pnew$ has
+    been removed from \texttt{front} and had its state set to
+    \texttt{valid}. All \texttt{far} nodes in $\neib(\pnew)$ are set
+    to \texttt{trial}, and then all \texttt{trial} nodes in
     $\neib(\pnew)$ are updated. The updates are depicted: there are
     three line updates and three triangles, since it is only necessary
     to perform updates that involve $\pnew$. The OLIM shown here is
-    \texttt{olim8}.}
+    \texttt{olim8}. In 3D, there would also be tetrahedron updates.}
   \label{fig:overview}
 \end{figure}
 
 If we order nodes in $\mathcal{G}$ so that new solution values are
 only computed using upwind nodes, the eikonal equation can be solved
-directly; i.e., without the use of an iterative solver. This means
-that new values of the solution are only involve nodes that have fixed
-smaller values. This is done using a variant of Dijkstra's algorithm
-for finding shortest paths in a network. Other algorithms which solve
-similar network flow problems can also be used, but have different
-complexity guarantees~\cite{chacon2012fast}. In particular, Dijkstra's
-algorithm is a type of label-setting method for finding shortest paths
-in a network; there are also label-correcting
+directly; i.e., without the use of an iterative solver. This is done
+using a continuous version of Dijkstra's algorithm for finding
+shortest paths in a network. Other algorithms which solve similar
+network flow problems can also be used, but have different complexity
+guarantees~\cite{chacon2012fast}. In particular, Dijkstra's algorithm
+is a type of label-setting method for finding shortest paths in a
+network; there are also label-correcting
 methods~\cite{bertsekas1998network}.
 
 Using Dijkstra's algorithm to solve a ``continuous shortest path''
@@ -328,21 +323,21 @@ by Tsitsiklis who developed a first-order semi-Lagrangian method for
 solving isotropic optimal control problems on a uniform
 grid~\cite{tsitsiklis1995efficient}. Finally, the fast marching
 method, which uses a first-order upwind finite difference scheme was
-developed by Sethian for isotropic front
+developed by Sethian to model isotropic front
 propagation~\cite{sethian1996fast}. Many variations of these methods
 have since been
 developed~\cite{sethian2003ordered,kao2008legendre}. Our own
 development resembles Tsitsisklis's, but extends it past its original
-formulation. In particular, Tsitsiklis considers \texttt{olim8\_rhr}
-and \texttt{olim26\_rhr}, and does not treat the 3D case in depth. We
-generalize this approach, considering higher accuracy quadrature rules
-(\texttt{mp0} and \texttt{mp1}) and algorithms which make 3D solvers
-fast (our \emph{bottom-up} and \emph{top-down} algorithms). We also
-note that Bornemann also investigates the local variational approach
-in the vein of Tsitsiklis, and presents a full complement of
-theoretical results for the case considered there---this approach is
-complementary to our own but has a much different
-emphasis~\cite{bornemann2006finite}.
+formulation. In particular, Tsitsiklis considers what we call
+\texttt{olim8\_rhr} and \texttt{olim26\_rhr}, and does not treat the
+3D case in depth. We generalize this approach, considering higher
+accuracy quadrature rules (\texttt{mp0} and \texttt{mp1}) and
+algorithms which make 3D solvers fast (our \emph{bottom-up} and
+\emph{top-down} algorithms). We also note that Bornemann and Rasch
+have investigated the local variational approach (\`{a} la
+Tsitsiklis), and have presented a full complement of theoretical
+results---this approach is complementary to our own but has a much
+different emphasis~\cite{bornemann2006finite}.
 
 To write down a generic Dijkstra-like algorithm, there are several
 pieces of information which need to be kept track of. A data structure
@@ -380,21 +375,22 @@ ideas, consider the following high-level Dijkstra-like algorithm:
 
 Specifying how item \ref{enum:update-U} is to be performed is the crux
 of developing a Dijkstra-like algorithm and is left intentionally
-vague. This step involves indicating how nodes in $\neib(\hat{p})$ are
-used to compute $\hat{U}$, and how they are organized into the
-\texttt{front} data structure. The FMM uses an upwind finite
-difference scheme where only \texttt{valid} nodes are used to compute
-$\hat{U}$, and where nodes on the front are sorted using an
-array-based heap implementing a priority
+vague here. This step involves indicating how nodes in
+$\neib(\hat{p})$ are used to compute $\hat{U}$, and how they are
+organized into the \texttt{front} data structure. The FMM uses an
+upwind finite difference scheme where only \texttt{valid} nodes are
+used to compute $\hat{U}$, and where nodes on the front are sorted
+using an array-based heap implementing a priority
 queue~\cite{sethian1996fast}. As an example, Tsitsiklis's algorithm
 combines nodes in \texttt{valid} into sets whose convex hulls
 approximate the surface of the expanding wavefront and then solves
-local raytracing problems where rays emanate from these surfaces. The
-method presented here operates in the same way (see figure
+local functional minimization problems. The method presented here is
+more similar to Tsitsiklis's algorithm (see figure
 \ref{fig:overview}). For specific details, a general reference should
-be consulted~\cite{sethian1999level}. In addition to item
-\ref{enum:update-U}, algorithm \ref{alg:dijkstra-like} is generic in
-the following ways:
+be consulted~\cite{sethian1999level}.
+
+In addition to item \ref{enum:update-U}, algorithm
+\ref{alg:dijkstra-like} is generic in the following ways:
 \begin{itemize}
 \item As we mentioned before, there are different ways of initializing
   the boundary data $\boundary$ if only off-grid boundary data is
@@ -417,11 +413,11 @@ the following ways:
 Other problems can be solved using Dijkstra-like algorithms: the
 static Hamilton-Jacobi equation, an anisotropic generalization of the
 eikonal equation, can be solved using the ordered upwind
-method~\cite{sethian2003ordered} and other recently introduced
-methods~\cite{mirebeau2014efficient,mirebeau2014anisotropic}. Consequently,
-the quasipotential of a nongradient stochastic differential equation
-can be computed using the ordered line integral method, although the
-considerations may be more
+method~\cite{sethian2003ordered} or other recently introduced
+methods~\cite{mirebeau2014efficient,mirebeau2014anisotropic}.  The
+quasipotential of a nongradient stochastic differential equation can
+also be computed using the ordered line integral method, although the
+considerations are more
 involved~\cite{dahiya2017ordered,dahiya2018ordered,yang2019computing}.
 
 \subsection{Fast sweeping methods} Another approach to solving a
@@ -464,20 +460,23 @@ section\@ \ref{sec:minimum-action-integral} for a derivation of eq.\
 \ref{eq:action-functional}). By constrast, Lagrangian methods (i.e.,
 raytracing methods) trace a bundle of rays from a common locus by
 integrating Hamilton's equations for the eikonal equation for
-different initial conditions. In this section, we describe our
-approach to discretizing and approximately minimizing eq.\@
-\ref{eq:action-functional}. As we mentioned in section\@
-\ref{ssec:dijkstra-like}, to compute $\hat{U} = U(\hat{p})$ in item
-\ref{enum:update-U} of algorithm \ref{alg:dijkstra-like}, we need to
-approximately minimize several instances of eq.\@
-\ref{eq:action-functional}; details of this procedure will be
-discussed in section\@ \ref{sec:implementation}. In this section, we
-focus on a single instance of the discretized version of eq.\@
-\ref{eq:action-functional}, presenting our notation, deriving
-prelimary results, and describing the different quadrature rules we
-use, detailing useful exact solutions to the approximate minimization
-of eq.\@ \ref{eq:action-functional}. We then present theoretical
-results.
+different initial conditions.
+
+In this section, we describe our approach to discretizing and
+minimizing and approximation to eq.\@ \ref{eq:action-functional}. As
+we mentioned in section\@ \ref{ssec:dijkstra-like}, to compute
+$\hat{U} = U(\hat{p})$ in item \ref{enum:update-U} of algorithm
+\ref{alg:dijkstra-like}, we need to approximately minimize several
+instances of an approximation to eq.\@ \ref{eq:action-functional};
+details of this procedure are discussed in section\@
+\ref{sec:implementation}. In this section, we focus on a single
+instance of the discretized version of eq.\@
+\ref{eq:action-functional}. We present our notation, derive prelimary
+results, and describe the quadrature rules \texttt{mp0}, \texttt{mp1},
+and \texttt{rhr}. We also show how the functional minimization problem
+can be solved exactly using a QR decomposition for the \texttt{rhr}
+and \texttt{mp0} rules. Finally, we present theoretical results
+justifying our approach.
 
 \begin{figure}
   \centering
@@ -518,7 +517,7 @@ optimization problem that we will formulate.
 
 We assume that each update simplex is nondegenerate so that a simplex
 of dimension $d$ is the convex hull of the update point $\hat{p}$ and
-$d$ points $p_0, \hdots, p_{d} \in \neib(\hat{p})$. Since we assume
+$d+1$ points $p_0, \hdots, p_{d} \in \neib(\hat{p})$. Since we assume
 that our grid $\mathcal{G}$ is uniform and rectilinear, we scale and
 translate $\mathcal{G}$ so that $\hat{p} = 0$ and $\|p_i\|_\infty = 1$
 for $i = 0, \hdots, d$.
@@ -527,45 +526,40 @@ for $i = 0, \hdots, d$.
   segment.} To approximately minimize eq.\@ \ref{eq:action-functional}
 we assume that the minimizing path is a straight line segment
 connecting $\hat{p}$ and a point in the convex hull of
-$\{p_0, \hdots, p_d\}$, and numerically approximate the action
-integral with a quadrature rule. We discuss each part of this
-approximation in turn.
+$\{p_0, \hdots, p_d\}$, and numerically approximate the action over
+this integral path using quadrature. We discuss each part of this
+approximation in turn. First, some notation.
 
 We parametrize the ``base of the update simplex'' (the convex hull of
-$p_0, \hdots, p_d$), we let $\lambda \in \mathbb{R}^d$ over the set:
+$p_0, \hdots, p_d$) over the set:
 \begin{equation}
   \label{eq:lambda}
   \Delta^d = \set{\lambda_i \geq 0 \mbox{ for } i = 1, \hdots, d \mbox{ and } \sum_{i=1}^d \lambda_i \leq 1}.
 \end{equation}
-If we let $\lambda_0 = \sum_{i=1}^d \lambda_i$, then
+If we let $\lambda_0 = 1 - \sum_{i=1}^d \lambda_i$, then
 $(\lambda_0, \hdots, \lambda_d)$ is a vector of convex coefficients.
 Using $\lambda$, we let $\delp_i = p_i - p_0$, define:
 \begin{equation}
   \delP = \begin{bmatrix}
     \delp_1 & \cdots & \delp_d
-  \end{bmatrix} \in [-1, 1]^{n \times d} \subseteq \mathbb{R}^{n \times d}
+  \end{bmatrix} \in \mathbb{R}^{n \times d}.
 \end{equation}
-and write a point in the base of the update simplex as:
+We write a point in the base of the update simplex as:
 \begin{equation}
   p_\lambda = p_0 + \sum_{i=1}^d (p_i - p_0) \lambda_i = p_0 + \sum_{i=1}^d \delp_i \lambda_i = p_0 + \delP \lambda.
 \end{equation}
 
 We will use the ``$\delta$'' notation for differences and $\lambda$ as
 a subscript to denote convex combinations in other contexts, as
-well. Throughout, we assume that $U$ is the numerical solution
-computed so far at \texttt{valid} points $x \in \mathcal{G}$. Then,
-$\delU_i = U_i - U_0 = U(x_i) - U(x_0)$ and
+well. E.g., $\delU_i = U_i - U_0 = U(x_i) - U(x_0)$ and
 $U_\lambda = U_0 + \delU^\top \lambda$. Likewise,
 $\dels_i = s_i - s_0 = s(x_i) - s(x_0)$. By an abuse of notation, we
-will think of, e.g., $s_i$, $s(x_i)$, and $s(p_i)$ in the context of
-an update as ``the same'', only using the notation $s_i$.
+will think of, e.g., $s_i$ and $s(x_i)$ in the context of an update as
+``the same'', preferring the notation $s_i$.
 
-\paragraph{Quadrature rules.} We now turn to approximating the action
-integral with different quadrature rules. We consider three different
-quadrature rules: a righthand rule (\texttt{rhr}), a simplified
-midpoint rule (\texttt{mp0}), and a midpoint rule
-(\texttt{mp1}). Recall that we use the hat (\^{}) notation to denote a
-quantity evaluated at the update point $\hat{p}$:
+\paragraph{Quadrature rules.} We consider a righthand rule
+(\texttt{rhr}), a simplified midpoint rule (\texttt{mp0}), and a
+midpoint rule (\texttt{mp1}). Recall that $\hat{s} = s(\hat{x})$:
 \begin{align}
   \Frhr(\lambda) &= U_\lambda + \hat{s} h \|p_\lambda\|, \\
   \Fmpzero(\lambda) &= U_\lambda + \parens{\frac{\hat{s} + \tfrac{1}{d+1} \sum_{i=0}^d s_i}{2}} h \|p_\lambda\|, \\
@@ -573,15 +567,13 @@ quantity evaluated at the update point $\hat{p}$:
 \end{align}
 The difference in the quadrature rules, of course, lies in how we
 incorporate the slowness $s$. For $\Frhr$, we evaluate $s$ at the
-righthand side of the integral; namely, at $\hat{p}$, yielding
-$\hat{s}$. For $\Fmpone$, we evaluate $s$ at the midpoint of the
-integral, approximating $s$ linearly with the convex combination
-$s_\lambda$ on the base of the simplex. Finally, for $\Fmpzero$, we
-approximate $s_\lambda$ itself with $s$ evaluated at the centroid of
-the base of the update simplex, which is just the arithmetic mean of
-the $s_i$'s. It will turn out that $\Fmpzero$ will lead to an
-inconsistent numerical scheme unless extra care is taken, which is
-discussed in the rest of the work.
+righthand side of the integral, yielding $\hat{s}$. For $\Fmpone$, we
+evaluate $s$ at the midpoint of the integral, approximating $s$
+linearly with the convex combination $s_\lambda$ on the base of the
+simplex. Finally, for $\Fmpzero$, we approximate $s_\lambda$ itself
+with the arithmetic mean of the $s_i$'s. It will turn out that
+$\Fmpzero$ will lead to an inconsistent numerical scheme unless extra
+care is taken, which is discussed in the rest of the work.
 
 Note that in the above we use $s_\lambda$ and not $s(p_\lambda)$
 because we do not want to assume that we have access to a continuous
@@ -598,7 +590,17 @@ rules. With $\theta$ such that $0 \leq \theta \leq 1$, we define:
 \end{align}
 Then, $\Frhr = F_0 = F_1$ with $\theta = 0$, $\Fmpzero = F_0$ with
 $\theta = \tfrac{1}{2}$, and $\Fmpone = F_1$ with
-$\theta = \tfrac{1}{2}$. We introduce this more general
+$\theta = \tfrac{1}{2}$. To simplify notation in our proofs, we also
+define:
+\begin{equation}
+  s^\theta = {(1 - \theta)} + \frac{\theta}{d + 1} \sum_{i=0}^d s_i, \qquad s^\theta_\lambda = (1 - \theta) \hat{s} + \theta s_\lambda.
+\end{equation}
+Then, the $\theta$-rules can be written more compactly as:
+\begin{equation}
+  F_0(\theta) = U_\lambda + s^\theta h \|p_\lambda\|, \qquad F_1(\theta) = U_\lambda + s^\theta_\lambda h \|p_\lambda\|.
+\end{equation}
+
+We introduce this more general
 ``$\theta$-rule'' for two reasons:
 \begin{itemize}
 \item This is a natural geometric generalization, and we wish
@@ -637,7 +639,7 @@ orthogonally onto $\operatorname{span}(p)$, and $\proj_p^\perp$ onto
 its orthogonal complement.
 
 \begin{proposition}\label{prop:F0-grad-and-Hess}
-  The gradient and Hessian of $F_0(\lambda; \theta)$ are given by:
+  The gradient and Hessian of $F_0(\lambda)$ are given by:
   \begin{align}
     \nabla F_0(\lambda) &= \delU + s^{\theta} h \delP^\top \nu_\lambda,\label{eq:F0-grad} \\
     \nabla^2 F_0(\lambda) &= \frac{s^{\theta} h}{\|p_\lambda\|} \delP^\top \proj^\perp_{p_\lambda} \delP,
@@ -647,7 +649,7 @@ its orthogonal complement.
 \end{proposition}
 
 \begin{proposition}\label{prop:F1-grad-and-Hess}
-  The gradient and Hessian of $F_1(\lambda; \theta)$ satisfy:
+  The gradient and Hessian of $F_1(\lambda)$ satisfy:
   \begin{align}
     \nabla F_1(\lambda) &= \delU + \theta h \|p_\lambda\| \dels + s^{\theta}_\lambda h \delP^\top \nu_\lambda, \\
     \nabla^2 F_1(\lambda) &= \set{\delP^\top \nu_\lambda, \theta h \dels} + \frac{s^\theta_\lambda h}{\|p_\lambda\|} \delP^\top \proj^\perp_{p_\lambda} \delP, \label{eq:hess-F1}
@@ -695,23 +697,24 @@ end of section\@ \ref{ssec:causality}.
       boundaries of adjacent update simplexes.} In this case, two
     adjacent update simplies share a common boundary on their base,
     shown here as the line segment $[p_0, p_1]$. Two layers of
-    surrounding grid points from $\mathcal{G}$ are
-    shown.}\label{fig:continuity}
+    surrounding grid points from $\mathcal{G}$ are shown. The point
+    $\hat{p}$ is in the top layer and the points $p_0$, $p_1$, and
+    $p_2$ are in the bottom layer.}\label{fig:continuity}
 \end{figure}
 
 If we use $\Fmpzero$ directly, then we run into a situation where the
 cost function $\Fmpzero$ is not continuous between the bases of
-adjacent update simplices (see fig.\@ \ref{fig:continuity}. In
-general, we require $F$ to be continuous across simplex boundaries,
-otherwise this can lead to an inconsistent or divergent solver. Now,
-if we instead use $\Fmpzero$ to compute the minimizer of eq.\@
+adjacent update simplices (see fig.\@ \ref{fig:continuity}. We require
+$F$ to be continuous across simplex boundaries to avoid an
+inconsistent or divergent solver. Now, if we first use $\Fmpzero$ to
+compute the minimizer $\lambda_0^*$ of eq.\@
 \ref{eq:constrained-minimization} with $F = \Fmpzero$, and then set
 $\hat{U} = \Fmpone(\lambda_0^*)$, we will recover continuity, and
-indeed, as we will show, the scheme is convergent. The reason for
-doing this is that eq.\@ \ref{eq:constrained-minimization} can be
-solved exactly for the $\theta$-rule $F_0$ using a QR decomposition
-instead of an iterative solver, making it very cheap. In the next
-section, we will show how this can be done.
+indeed, as we will show, the scheme is convergent. The motivation this
+is that eq.\@ \ref{eq:constrained-minimization} can be solved exactly
+for the $\theta$-rule $F_0$ using a QR decomposition instead of an
+iterative solver, making it very cheap. In the next section, we will
+show how this can be done.
 
 Letting $\lambda_0^*$ and $\lambda_1^*$ now denote the optima of eq.\@
 \ref{eq:constrained-minimization} where $F = F_0$ and $F = F_1$ (the
@@ -719,7 +722,8 @@ general $\theta$-rules), respectively, we could imagine using Newton's
 method to minimize $F_1$, starting from $\lambda_0^*$. This would
 allow us to use the convergence theory of Newton's method to bound the
 distance between $\lambda_0^*$ and $\lambda_1^*$, thereby bounding the
-error incurred by using \texttt{mp0} instead of \texttt{mp1}. We
+error incurred by using \texttt{mp0} instead of \texttt{mp1} to find
+the minimizing argument of eq.\@ \ref{eq:constrained-minimization}. We
 follow this idea now.
 
 \begin{theorem}\label{thm:mp0-newton}
@@ -775,14 +779,14 @@ no significant extra error.
   QR decomposition}\label{ssec:exact-soln}
 
 Since $F_0$ is strictly convex, $\nabla F_0(\lambda) = 0$ is
-sufficient for the optimality of $\lambda$, if we ignore the
-constraint $\lambda \in \Delta^d$. The unconstrained system of
-nonlinear equations defined by $\nabla F_0(\lambda) = 0$ can be solved
-exactly without an iterative solver. We can compute the solution using
-the reduced QR decomposition of $\delP$ and by considering the
-problem's geometry (see figure \ref{fig:f0-exact}). This is captured
-in the following theorem. We will discuss how to use this theorem
-efficiently in a solver in section\@
+sufficient for the optimality of $\lambda$, ignoring the constraint
+$\lambda \in \Delta^d$. The unconstrained system of nonlinear
+equations defined by $\nabla F_0(\lambda) = 0$ can be solved exactly
+without an iterative solver. We can compute the solution using the
+reduced QR decomposition of $\delP$ and by considering the problem's
+geometry (see also figure \ref{fig:f0-exact}, in the appendix). This
+is captured in the following theorem. We will discuss how to use this
+theorem efficiently in a solver in section\@
 \ref{ssec:algorithms-and-skipping}.
 
 \begin{theorem}\label{thm:f0-exact}
@@ -792,11 +796,11 @@ efficiently in a solver in section\@
   Q^\top Q = I_d$, and with $R$ upper triangular. For $s^\theta, h$,
   and $U$ fixed, if
   $\lambda^* = \argmin_{\lambda \in \mathbb{R}^n}
-  F_0^\theta(\lambda)$, then:
+  F_0(\lambda)$, then:
   \begin{align}
-    l_{\lambda^*} &= \sqrt{\frac{p_0^\top {(I - QQ^\top)} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},\label{eq:l-star-expression} \\
-    \lambda^* &= -R^{-1} \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delU}{s^\theta h}},\label{eq:f0-exact-lambda} \\
-    \hat{U} &= U_0 + \frac{s^\theta h}{l_{\lambda^*}} p_0^\top p_{\lambda^*}.\label{eq:f0-exact}
+    \|p_{\lambda^*}\| &= \sqrt{\frac{p_0^\top {(I - QQ^\top)} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},\label{eq:l-star-expression} \\
+    \lambda^* &= -R^{-1} \parens{Q^\top p_0 + \|p_{\lambda^*}\| R^{-\top} \frac{\delU}{s^\theta h}},\label{eq:f0-exact-lambda} \\
+    \hat{U} &= U_0 + \frac{s^\theta h}{\|p_{\lambda^*}\|} p_0^\top p_{\lambda^*}.\label{eq:f0-exact}
   \end{align}
 \end{theorem}
 
@@ -822,7 +826,10 @@ using this approximation is equivalent to solving:
 \begin{equation}
   \hat{U} = \min_{\lambda \in \Delta^n} F_0(\lambda)
 \end{equation}
-in a sense made precise by the following theorem.
+in a sense made precise by the following theorem. As we have pointed
+out, this theorem is not new, but we present it here for the sake of
+continuity and because it dovetails with our other theorems, providing
+context.
 
 \begin{theorem}[Equivalence of upwind finite difference scheme and $F_0$]\label{thm:equivalence}
   Let $\hat{U}$ by the solution of eq.\@
@@ -845,7 +852,7 @@ in a sense made precise by the following theorem.
       \hat{U} = U_i + s^\theta h p_i^\top \nu_{\lambda^*},
     \end{equation}
     where $\lambda^* = \argmin_{\lambda \in \R^n} F_0(\lambda)$ and
-    $\nu_{\lambda^*} = p_{\lambda^*}/l_{\lambda^*}$.
+    $\nu_{\lambda^*} = p_{\lambda^*}/\|p_{\lambda^*}\|$.
   \item The characteristics found by solving the finite difference
     problem and minimizing $F_0$ coincide and are given by
     $[p_{\lambda^*}, \hat{p}] = [p_{\lambda^*}, 0]$.
@@ -891,11 +898,11 @@ Dijkstra's algorithm which runs in $O(N^n)$ time, where the constant
 depends on the bucket size~\cite{dial1969algorithm,kim2001calo}. In
 this case, the size of the buckets is determined by the update gap. It
 is unclear whether there is any real advantage of a Dial-like solver
-(see~\cite{jeong2008fast} for a discussion); indeed, we present
-numerical evidence suggesting that this is not the case in section\@
-\ref{ssec:impl-notes}. Despite this, the update gap is of fundamental
-importance and limits the number of nodes that can be processed in
-parallel without violating causality.
+(see~\cite{jeong2008fast} for a discussion), although a new numerical
+study suggests that there may indeed be some advantage in using a
+Dial-like solver~\cite{kim2001calo,gomez2019fast}. Despite this, the
+update gap is of fundamental importance and limits the number of nodes
+that can be processed in parallel without violating causality.
 
 \begin{theorem}\label{thm:causality}
   For $\nu_i = p_i/\|p_i\|$, an update simplex is causal for $F_0$ if
@@ -940,9 +947,9 @@ travel time tomography~\cite{qi2018corner,treister2016fast}.
 In this section, we show how the ordered line integral method can be
 easily adapted to additive factoring, and provide numerical tests that
 show that it recovers the expected linear rate of convergence for
-factored problems. Our focus is locally factored point sources, but
-this approach can be applied to the globally factored equation and
-other types of rarefaction fans occuring at corners or
+factored point source problems. Our focus is locally factored point
+sources, but this approach can be applied to the globally factored
+equation and other types of rarefaction fans occuring at corners or
 discontinuities~\cite{qi2018corner}.
 
 \begin{figure}
@@ -959,39 +966,36 @@ discontinuities~\cite{qi2018corner}.
     $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. However, for the
     factored solver, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we
     find that
-    $U_{0,1} \gets 0 + s^\circ l^\circ_{\nicefrac{1}{2}} + s^\theta h
-    l_{\nicefrac{1}{2}} = \nicefrac{\sqrt{2}}{2} +
-    \nicefrac{\sqrt{2}}{2} = \sqrt{2}$.}\label{fig:factoring-example}
+    $U_{0,1} \gets \nicefrac{\sqrt{2}}{2} + \nicefrac{\sqrt{2}}{2} =
+    \sqrt{2}$.}\label{fig:factoring-example}
 \end{figure}
 
 Let $x^\circ \in \Omega$ be the location of a point source so that
-$\boundary = \set{x^\circ}$ and let the grid
-$\calG \subseteq \mathbb{Z}^n$ be aligned so that
-$p^\circ \in \mathbb{Z}^n$; that is, we let $p^\circ$ be the image of
-$x^\circ$ in the update neighborhood, in the same way that each $p_i$
-is the image of a grid point $x \in \calG$ (hence, $p^\circ$ varies
-from update to update, but $x^\circ$ remains the same). For a point
-$p_\lambda$, define $l^\circ_\lambda = \norm{p_\lambda - p^\circ}$ and
-let $s^\circ = s(x^\circ)$. The additive factorization of $U$ around
-$x^\circ$ is~\cite{luo2012fast,qi2018corner}:
+$\boundary = \set{x^\circ}$, define $p^\circ$ to be the image of
+$x^\circ$ under the same transformation that takes $\hat{x}$ to
+$\hat{p}$, and let $s^\circ = s(x^\circ)$. The additive factorization
+of $U$ around $x^\circ$ is~\cite{luo2012fast,qi2018corner}:
 \begin{align}
   U(x) = T(x) + \tau(x), \qquad \text{where} \qquad T(x) = s^\circ \norm{x - x^\circ},
 \end{align}
 i.e.\ $u_\lambda = T_\lambda + \tau_\lambda$ where
-$T_\lambda = s^\circ h l^\circ_\lambda$. Our original definition of
-$F_i^\theta$ was such that $\hat{U} = F_i^\theta(\lambda^*)$. We will
-define $G_i^\theta$ analogously. Letting
+$T_\lambda = s^\circ h \|p_\lambda - p^\circ\|$. Our original definition of
+$F_i$ was such that $\hat{U} = F_i(\lambda^*)$. We will
+define $G_i$ analogously. Letting
 $\tau_\lambda = \tau_0 + \deltau^\top \lambda$, where $\tau_i$ and
 $T_i$ are the values of $\tau$ and $T$ at $p_i$ for each $i$, we
 define:
 \begin{align}
   \label{eq:Gi}
-  G_0(\lambda) = G_0^\theta(\lambda) &= \tau_\lambda + T_\lambda + s^\theta h \|p_\lambda\|, \\
-  G_1(\lambda) = G_1^\theta(\lambda) &= \tau_\lambda + T_\lambda + s^\theta_\lambda h \|p_\lambda\|.
+  G_0(\lambda) &= \tau_\lambda + T_\lambda + s^\theta h \|p_\lambda\|, \\
+  G_1(\lambda) &= \tau_\lambda + T_\lambda + s^\theta_\lambda h \|p_\lambda\|.
 \end{align}
-Like with $F_0$ and $F_1$, the only difference between
-$G_0$ and $G_1$ is between the terms containing
-$s^\theta$ and $s^\theta_\lambda$.
+Like with $F_0$ and $F_1$, the only difference between $G_0$ and $G_1$
+is between the terms containing $s^\theta$ and $s^\theta_\lambda$. We
+do not explicitly refer to them in the rest of paper, but the cost
+functions $G_{\texttt{rhr}}$, $G_{\texttt{mp0}}$, and
+$G_{\texttt{mp1}}$ are defined analogously to $\Frhr$, $\Fmpzero$, and
+$\Fmpone$ from the $\theta$-rules $G_0$ and $G_1$.
 
 To solve the factored eikonal equation, we choose a factoring radius
 $\rfac$, replacing $F_i$ with $G_i$ in eq.\@
@@ -1009,8 +1013,8 @@ modifications of the gradient and Hessian for $F_i$.
   by:
   \begin{align}
     \label{eq:G-grad-hess}
-    \nabla G_i(\lambda) &= \nabla F_i(\lambda) - \deltau + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top {(p_\lambda - p^\circ)}, \\
-    \nabla^2 G_i(\lambda) &= \nabla^2 F_i(\lambda) + \frac{s^\circ h}{l^\circ_\lambda} \delP^\top \proj^\perp_{p_\lambda - p^\circ} \delP.
+    \nabla G_i(\lambda) &= \nabla F_i(\lambda) - \deltau + \frac{s^\circ h}{\|p_\lambda - p^\circ\|} \delP^\top {(p_\lambda - p^\circ)}, \\
+    \nabla^2 G_i(\lambda) &= \nabla^2 F_i(\lambda) + \frac{s^\circ h}{\|p_\lambda - p^\circ\|} \delP^\top \proj^\perp_{p_\lambda - p^\circ} \delP.
   \end{align}
 \end{lemma}
 
@@ -1061,42 +1065,15 @@ modifications of the gradient and Hessian for $F_i$.
 \end{figure}
 
 In this section, we describe our \emph{bottom-up} and \emph{top-down}
-algorithms (see fig.\@ \ref{fig:classification}). We emphasize the 3D
-solver, since in 2D, the distinction between the two is less
+algorithms (see fig.\@ \ref{fig:classification}). We focus on 3D
+solvers, since in 2D the distinction between the two is less
 important. Each algorithm reduces the number of updates that are done
 without degrading solution accuracy by using an efficient enumeration
-or search of the neighboring simplexes. The difference between the
-algorithms is in how this is done.
-
-In section\@ \ref{ssec:simplex-enumeration}, we start by showing how
-to enumerate update tetrahedra and put them into separate groups of
-congruent tetrahedra. By only performing updates from these groups, we
-obtain \emph{top-down} algorithms with stencils of different sizes. Our
-numerical tests (section\@ \ref{sec:numerical-results}) will show how
-neighborhoods of different sizes lead to different patterns of
-directional coverage, which can significantly affect the error. We
-also discuss the update gaps attainable using these tetrahedron groups
-in section\@ \ref{ssec:update-gaps}.
-
-Following this, we describe our \emph{bottom-up} algorithm in section\@
-\ref{ssec:bottom-up-search}, which involves first finding the minimal
-update of smallest dimension ($d = 0$, a line update), then finding
-the minimal update of the next highest dimension ($d = 1$, a triangle
-update) which is incident to the original update, and so on. In 3D,
-this means finding the minimal line update, doing neighboring triangle
-updates which contain the minimal line update, and then neighboring
-tetrahedron updates which contain the minimal triangle update. We can
-think of this algorithm as a fast search for the first arrival
-characteristic.
-
-To minimize the number of updates that are done, it is important to
-take advantage of the structure of the underlying constrained
-optimization problems that are being solved in order to skip
-unnecessary lower or higher dimensional updates. We describe this
-procedure in section\@ \ref{ssec:algorithms-and-skipping}. How this
-is done varies depending on the choice of quadrature rule
-(\texttt{mp0}, \texttt{mp1}, or \texttt{rhr}) and type of algorithm
-(\emph{bottom-up} or \emph{top-down}).
+or search for update simplexes. The primary difference between the two
+algorithms is the ordering of the updates' dimensions: \emph{top-down}
+proceeds from $d = n - 1$ down to $d = 0$, skipping lower-dimensional
+updates when possible, and \emph{bottom-up} proceeds from $d = 0$ up
+to $d = n - 1$, skipping higher-dimensional updates when it can.
 
 \subsection{Simplex enumeration for the \emph{top-down}
   algorithm}\label{ssec:simplex-enumeration}
@@ -1107,21 +1084,20 @@ When a node is first removed from \texttt{front} and has just become
 involving, at the very least, the node's $2n$ nearest neighbors. We
 can use larger neighborhoods to improve the accuracy of the
 result. Doing so does not necessarily improve the order of convergence
-of the solver, but can significantly improve the accuracy of the
+of the solver, but can significantly improve the error constant of the
 solution. For all of the solvers considered in this paper, in 3D, we
-only ever consider neighborhoods with at most 26 neighbors.
+only consider neighborhoods with at most 26 neighbors. See fig.\@
+\ref{fig:neighborhoods} for neighborhoods for the \emph{top-down}
+solver.
 
 For the \emph{top-down} solver, we simplify things by only doing
-updates which have $p_i = \pnew$ for some $i$. To iterate over
-updates, we enumerate all update tetrahedra with vertices
-$p \in \{0, 1\}^3$ in a symmetric fashion. Since we assume our update
-tetrahedra have been translated so that $\hat{p} = 0 \in \mathbb{Z}^n$
-(see section\@ \ref{ssec:quadrature}), this means enumerating
-${7 \choose 3} = 35$ choices of vertices. Some choices lead to
-degenerate tetrahedra (i.e., such that $p_0, p_1$, and $p_2$ are
-linearly dependent), so the number of nondegenerate update tetrahedra
-is fewer than 35 per octant. This makes it reasonable to write out the
-update procedure as straight-line code.
+updates which have $p_i = \pnew$ for some $i$. To iterate over all
+update simplexes, by symmetry, we enumerate all simplexes in a single
+octant. This means enumerating, e.g., ${7 \choose 3} = 35$
+tetrahedra. Some choices lead to degenerate tetrahedra, so the number
+of nondegenerate update tetrahedra is fewer than 35 per octant. This
+makes it reasonable to write out the update procedure as straight-line
+code.
 
 We enumerate the tetrahedra in a type of ``shift-order'' (see, e.g.,
 \cite{arndt2010matters})---that is, we start with an unseen bit
@@ -1151,19 +1127,18 @@ enumerated in the same order as fig.\@ \ref{fig:octant-numbering}
     Group V & $\nicefrac{1}{\sqrt{3}}$ & Group VIa & 0 & Group VIb & $\boldsymbol{\nicefrac{2}{\sqrt{3}}}$ & Group IVb & $\nicefrac{1}{\sqrt{2}}$
   \end{tabular}
 \end{center}
-\vspace{0.5em} The idea of the update gap is first explored in
-Tsitsiklis's original paper~\cite{tsitsiklis1995efficient}; in this
-work, the fact that Group IVa has no update gap and that the update
-gap of Group V is $1/\sqrt{3}$ is noted and an $O(N^n)$ algorithm
-based on Dial's algorithm is presented using Group V for the update
-tetrahedra. This same observation is made in a more recent paper
-explicitly detailing a method based on Dial's
-algorithm~\cite{kim2001calo}. A method based on a combination of
-tetrahedra groups will have as its update gap the minima of each of
-the individual groups' update gaps. We note here that a solver based
-on a combination of Groups I and VIb has a larger update gap than a
-solver based on Group V. This should have a positive impact on the
-performance of any parallel Dijkstra-like method.
+\vspace{0.5em} The update gap is first explored in Tsitsiklis's
+original paper~\cite{tsitsiklis1995efficient}; in this work, the fact
+that Group IVa has no update gap and that the update gap of Group V is
+$1/\sqrt{3}$ is noted and an $O(N^n)$ algorithm based on Dial's
+algorithm is presented using Group V for the update tetrahedra. This
+same observation is made in a more recent paper about a method based
+on Dial's algorithm~\cite{kim2001calo}. A method based on a
+combination of tetrahedra groups will have an update gap that is the
+minimum of each of the individual groups' gaps. We note here that a
+solver based on a combination of Groups I and VIb has a larger update
+gap than a solver based on Group V. This should have a positive impact
+on the performance of any parallel Dijkstra-like method.
 
 \subsection{The search procedure used by the \emph{bottom-up}
   algorithm}\label{ssec:bottom-up-search}
@@ -1210,17 +1185,14 @@ minimum line update ($d = 0$), then we can avoid triangle updates
 perform updates for $d > 0$ that include the newly \texttt{valid} node
 $\pnew$, we can start our search with $d = 1$.
 
-For the \emph{top-down} algorithm, we require an efficient method of
-enumerating simpexes, starting with $d = n - 1$. On the other hand,
-for the \emph{bottom-up} algorithm, for a minimizing update of
-dimension $d$, we need a method of finding neighboring updates of
+After doing an update of dimension $d$, we find neighboring updates of
 dimension $d + 1$. For $n = 3$ and $d = 1$, for each $p_0$, we find
 points $p_1$ that satisfy $\|p_0 - p_1\|_1 \leq 1$. For $d = 2$, for
 each pair $(p_0, p_1)$, we find points $p_2$ that satisfy
 $\|p_0 - p_2\|_1 \leq 2$ and $\|p_1 - p_2\|_1 \leq 2$
 simultaneously. In practice, we only find these neighbors once and
 precompute an array of indices to be used later. The neighborhoods
-computed this way are shown in fig.\@ \ref{fig:hu-neighborhoods}.
+computed in this way are shown in fig.\@ \ref{fig:hu-neighborhoods}.
 
 
 \subsection{Minimization algorithms and skipping
@@ -1267,11 +1239,6 @@ quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
 
 \begin{algorithm}[t]
   \caption{The \emph{top-down} algorithm.}\label{alg:top-down}
-  \textbf{Input:} the neighboring update points $(p_0, \hdots, p_d)$,
-  and, for $i = 0, \hdots, d$, the downwind solution value
-  $U_i = U(p_i)$ and the slowness $s_i = s(p_i)$. \\
-  \textbf{Output:} a new solution value $\hat{U} = U(\hat{p})$, where
-  $\hat{U} > U_i$ for $i = 0, \hdots, d$.
   \begin{enumerate}[nolistsep]
   \item Set $\hat{U} \gets \infty$.
   \item Initialize $\calV_d$ according to eq.\@ \ref{eq:calU} for
@@ -1302,10 +1269,6 @@ quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
 
 \begin{algorithm}[t]
   \caption{The \emph{bottom-up} algorithm.}\label{alg:bottom-up}
-  \textbf{Input:} for $i = 0, \hdots, d$, the update point $p_i$, the
-  values
-  $U_i = U(p_i)$, and $s_i = s(p_i)$. \\
-  \textbf{Output:} the new solution value $\hat{U} = U(\hat{p})$.
   \begin{enumerate}[nolistsep]
   \item Set $\hat{U} \gets \infty$ and $p_0 \gets \pnew$.
   \item For $i = 1, \hdots, n - 1$:
@@ -1331,16 +1294,18 @@ quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
   \end{enumerate}
 \end{algorithm}
 
-In this section, we describe our \emph{bottom-up} and \emph{top-down} algorithms. We
-note for clarity that these algorithms correspond to item
-\ref{enum:update-U} of algorithm \ref{alg:dijkstra-like}.
+In this section, we describe our \emph{bottom-up} and \emph{top-down}
+algorithms. We note for clarity that these algorithms correspond to
+the ``compute $\hat{U}$'' part of item \ref{enum:update-U} of alg.\@
+\ref{alg:dijkstra-like}.
 
 To describe our \emph{top-down} algorithm (see algorithm
-\ref{alg:top-down}), we define the update set for $\hat{p}$ by:
+\ref{alg:top-down}), we define the set of admissible $d$-dimensional
+updates neighboring the point $\hat{p}$ by:
 \begin{equation}\label{eq:calU}
   \begin{aligned}
     \calV_d = \big\{\set{p_0, \hdots, p_d}: \; &p_i\texttt{.state}=\texttt{valid} \mbox{ for } i = 0, \hdots, d, \\
-    &\mbox{and} \set{p_0, \hdots, p_d} \mbox{belongs to the selected update group}, \\
+    &\mbox{and} \set{p_0, \hdots, p_d} \mbox{are in a selected update group}, \\
     &\mbox{and } \pnew \in \set{p_0, \hdots, p_d} \big\}
   \end{aligned}
 \end{equation}
@@ -1363,18 +1328,19 @@ setting $p_0 \gets \pnew$.
 
 \section{Numerical Results}\label{sec:numerical-results}
 
-We test on several different slowness functions with available exact
-solutions for point source data, and a linear speed function (i.e.,
-$1/s$) which has been shown to be amenable to local factoring. For
-each quadrature rule described in section\@ \ref{ssec:quadrature}
-(\texttt{mp0}, \texttt{mp1}, or \texttt{rhr}), we have two 2D
-algorithms, \texttt{olim4} and \texttt{olim8}, corresponding to 4-\
-and 8-point stencils, respectively. Since there is no advantage in 2D,
-we don't apply the \emph{top-down} or \emph{bottom-up} approaches. In
-3D, we have three \emph{top-down} algorithms: \texttt{olim6} (group
-IVa), \texttt{olim18} (groups I, IVa, and IVb), and \texttt{olim26}
-(group V). We also test the \emph{bottom-up} algorithm \texttt{olim3d}
-(see figure \ref{fig:hu-neighborhoods}).
+We do tests involving several different slowness functions with
+analytic solutions for point source data, and a linear speed function
+(i.e., $1/s$) which has been shown to be amenable to local
+factoring. For each quadrature rule described in section\@
+\ref{ssec:quadrature} (\texttt{mp0}, \texttt{mp1}, or \texttt{rhr}),
+we have two 2D algorithms, \texttt{olim4} and \texttt{olim8},
+corresponding to 4-\ and 8-point stencils, respectively. Since there
+is no advantage in 2D, we don't apply the \emph{top-down} or
+\emph{bottom-up} approaches. In 3D, we have three \emph{top-down}
+algorithms: \texttt{olim6} (group IVa), \texttt{olim18} (groups I,
+IVa, and IVb), and \texttt{olim26} (group V). We also test the
+\emph{bottom-up} algorithm \texttt{olim3d} (see figure
+\ref{fig:hu-neighborhoods}).
 
 \subsection{Implementation Notes}\label{ssec:impl-notes}
 
@@ -1423,8 +1389,8 @@ follows:
   provided as gridded data (consider, e.g., the shape from shading
   problem~\cite{kimmel2001optimal}, where the input data is an image).
 \item We maintain \texttt{front} using a priority queue implemented
-  using an array-based heap, which is updated using the \texttt{sink}
-  and \texttt{swim} functions described in Sedgewick and
+  using an array-based binary heap, which is updated using the
+  \texttt{sink} and \texttt{swim} functions described in Sedgewick and
   Wayne~\cite{sedgewick2011algorithms}.
 \item We store \texttt{front} as a dense grid of states: for each node
   in $p \in \calG$, we track $p$\texttt{.state} for all time for every
@@ -1455,9 +1421,10 @@ asymptotic complexity of the ``update'' and ``logic'' sections is
 $O(N^n)$, and since ``heap'' is $O(N^n \log N)$, we can see from
 figure \ref{fig:tasks} that since so little time is spent updating the
 heap, \emph{the algorithm's runtime is better thought of as $O(N^n)$
-  for practical problem sizes.} This is a consequence of using an
-array-based heap, which is cheap to update, and a dense grid of
-states, which can be read from and written to in $O(1)$ time.
+  for practical problem sizes (although this obviously not technically
+  correct!).} This is a consequence of using an array-based heap whose
+updates are cheap and cache friendly, and a dense grid of states,
+which can be read from and written to in $O(1)$ time.
 
 As an aside, we mention that thorough numerical studies of eikonal
 solvers in the literature have been scarce, but we can point out a
@@ -1494,14 +1461,14 @@ the same spirit as this work.
     overlap.}\label{fig:size-vs-error}
 \end{figure}
 
-Using eq.\@ \ref{eq:eikonal} directly, a simple recipe to create
-pairs of slowness functions and solutions is to prescribe a continuous
-function $u$ with level sets homeomorphic to balls and compute
-$s(x) = \norm{\nabla u(x)}_2$ analytically, which is valid for a
-single point source at the origin. Such tests allow us to observe the
-effect of local factoring, and to see how \texttt{mp0}, \texttt{mp1},
-and \texttt{rhr} compare. The following table lists our test
-functions: \vspace{0.5em}
+Using eq.\@ \ref{eq:eikonal} directly, a simple recipe to create pairs
+of slowness functions and solutions is to prescribe a continuous
+function $u$ whose level sets are each homeomorphic to a ball and
+compute $s(x) = \norm{\nabla u(x)}_2$ analytically, which is valid for
+a single point source at the origin. Such tests allow us to observe
+the effect of local factoring, and to see how \texttt{mp0},
+\texttt{mp1}, and \texttt{rhr} compare. The following table lists our
+test functions: \vspace{0.5em}
 \begin{center}
   \begin{tabular}{cccc}
     Name & $u(x)$ & $s(x)$ \\
@@ -1877,13 +1844,13 @@ one Lagrange multiplier.
 \begin{proof}[Proof of proposition \ref{prop:F0-grad-and-Hess}]
   For the gradient, we have:
   \begin{equation*}
-    \nabla F_0(\lambda; \theta) = \delU + \frac{s^{\theta} h}{2 \|p_\lambda\|} \nabla p_\lambda^\top p_\lambda = \delU + \frac{s^{\theta} h}{\|p_\lambda\|} \delP^\top p_\lambda,
+    \nabla F_0(\lambda) = \delU + \frac{s^{\theta} h}{2 \|p_\lambda\|} \nabla p_\lambda^\top p_\lambda = \delU + \frac{s^{\theta} h}{\|p_\lambda\|} \delP^\top p_\lambda,
   \end{equation*}
   since
   $\nabla p_\lambda^\top p_\lambda = 2 \delP^\top
   p_\lambda$. For the Hessian:
   \begin{align*}
-    \nabla^2_\lambda F_0(\lambda; \theta) &= \nabla \parens{\frac{s^{\theta} h}{\|p_\lambda\|} p_\lambda^\top \delP} = s^{\theta} h \parens{\nabla \frac{1}{\|p_\lambda\|} p_\lambda^\top \delP + \frac{1}{\|p_\lambda\|} \nabla p_\lambda^\top \delP} \\
+    \nabla^2_\lambda F_0(\lambda) &= \nabla \parens{\frac{s^{\theta} h}{\|p_\lambda\|} p_\lambda^\top \delP} = s^{\theta} h \parens{\nabla \frac{1}{\|p_\lambda\|} p_\lambda^\top \delP + \frac{1}{\|p_\lambda\|} \nabla p_\lambda^\top \delP} \\
     &= \frac{s^{\theta} h}{\|p_\lambda\|} \parens{\delP^\top \delP - \frac{\delP^\top p_\lambda p_\lambda^\top \delP}{p_\lambda^\top p_\lambda}} = \frac{s^{\theta} h}{\|p_\lambda\|} \delP^\top \parens{I - \frac{p_\lambda p_\lambda^\top}{p_\lambda^\top p_\lambda}} \delP,
   \end{align*}
   from which the result follows.
@@ -1891,15 +1858,15 @@ one Lagrange multiplier.
 
 \begin{proof}[Proof of proposition \ref{prop:F1-grad-and-Hess}]
   Since
-  $F_1(\lambda; \theta) = u_\lambda + h s^{\theta}_\lambda \|p_\lambda\|$,
+  $F_1(\lambda) = u_\lambda + h s^{\theta}_\lambda \|p_\lambda\|$,
   for the gradient we have:
   \begin{equation*}
-    \nabla F_1(\lambda; \theta) = \delU + h \parens{\theta \|p_\lambda\| \dels + \frac{s^{\theta}_\lambda}{2\|p_\lambda\|} \nabla p_\lambda^\top p_\lambda} = \delU + \frac{h}{\|p_\lambda\|} \parens{\theta p_\lambda^\top p_\lambda \dels + s^{\theta} \delP^\top p_\lambda},
+    \nabla F_1(\lambda) = \delU + h \parens{\theta \|p_\lambda\| \dels + \frac{s^{\theta}_\lambda}{2\|p_\lambda\|} \nabla p_\lambda^\top p_\lambda} = \delU + \frac{h}{\|p_\lambda\|} \parens{\theta p_\lambda^\top p_\lambda \dels + s^{\theta} \delP^\top p_\lambda},
   \end{equation*}
   and for the Hessian:
   \begin{equation*}
     \begin{aligned}
-      \nabla^2 F_1(\lambda; \theta) = \frac{h}{2 \|p_\lambda\|} \Bigg(\theta \Big(\nabla p_\lambda^\top p_\lambda \dels^\top &+\; \dels {(\nabla p_\lambda^\top p_\lambda)}^\top\Big) \;+ \\
+      \nabla^2 F_1(\lambda) = \frac{h}{2 \|p_\lambda\|} \Bigg(\theta \Big(\nabla p_\lambda^\top p_\lambda \dels^\top &+\; \dels {(\nabla p_\lambda^\top p_\lambda)}^\top\Big) \;+ \\
       &s^{\theta}_\lambda \parens{\frac{1}{2 p_\lambda^\top p_\lambda} \nabla p_\lambda^\top p_\lambda {(\nabla p_\lambda^\top p_\lambda)}^\top - \nabla^2_\lambda p_\lambda^\top p_\lambda} \Bigg).
     \end{aligned}
   \end{equation*}
@@ -2058,7 +2025,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   using eq.\@ \ref{eq:grad-F1-in-terms-of-grad-F0} and
   $\norm{\dels} = O(h)$ that:
   \begin{equation}
-    \norm{\nabla F_1(\lambda_0^*)} = h \norm{l_{\lambda_0^*} \dels + \frac{\dels^\top {(\lambda - \underline{\lambda})}}{l_{\lambda_0^*}} \delP^\top p_\lambda} = O(h^2),
+    \norm{\nabla F_1(\lambda_0^*)} = h \norm{\|p_{\lambda_0^*}\| \dels + \frac{\dels^\top {(\lambda - \underline{\lambda})}}{\|p_{\lambda_0^*}\|} \delP^\top p_\lambda} = O(h^2),
   \end{equation}
   which proves the result.
 \end{proof}
@@ -2076,7 +2043,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   If we restrict our attention to $\Delta^n$, we see that
   $\|p_\lambda\|^{-1} \delP^\top \proj_\lambda^\perp \delP$ is
   Lipschitz continuous function of $\lambda$ with $O(1)$ Lipschitz
-  constant and $\theta \{{\delP}^\top p_\lambda, \dels\} /l_{\lambda}$
+  constant and $\theta \{{\delP}^\top p_\lambda, \dels\} /\|p_{\lambda}\|$
   is Lipschitz continuous with $O(h)$ Lipschitz constant since
   $\|\delta s\| = O(h)$. Then, since $s^\theta_\lambda$ is $O(1)$
   Lipschitz, it follows that:
@@ -2186,7 +2153,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   We proceed by reasoning geometrically; figure \ref{fig:f0-exact}
   depicts the geometric setup. First, letting $\delP = QR$ be the
   reduced QR decomposition of $\delP$, and writing
-  $\nu_{\lambda^*} = p_{\lambda^*}/l_{\lambda^*}$, we note that since:
+  $\nu_{\lambda^*} = p_{\lambda^*}/\|p_{\lambda^*}\|$, we note that since:
   \begin{equation}
     \nabla F_0(\lambda^*) = \delU + s^\theta h \delP^\top \nu_{\lambda^*} = 0,
   \end{equation}
@@ -2231,11 +2198,11 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   \end{equation}
   At the same time, since:
   \begin{equation}
-    \nu_{\lambda^*}^\top \proj^\perp_{\delP} \nu_{\lambda^*} = \frac{{(\proj^\perp_{\delP} p_{\lambda^*})}^\top {(\proj^\perp_{\delP} p_{\lambda^*})}}{l_{\lambda_*}^2} = \frac{\pmin^\top \pmin}{l_{\lambda^*}^2} = \frac{p_0^\top \proj^\perp_{\delP} p_0}{l_{\lambda^*}^2}
+    \nu_{\lambda^*}^\top \proj^\perp_{\delP} \nu_{\lambda^*} = \frac{{(\proj^\perp_{\delP} p_{\lambda^*})}^\top {(\proj^\perp_{\delP} p_{\lambda^*})}}{\|p_{\lambda_*}\|^2} = \frac{\pmin^\top \pmin}{\|p_{\lambda^*}\|^2} = \frac{p_0^\top \proj^\perp_{\delP} p_0}{\|p_{\lambda^*}\|^2}
   \end{equation}
   we can conclude that:
   \begin{equation}
-    l_{\lambda^*} = \alpha = \sqrt{\frac{p_0^\top \proj^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},
+    \|p_{\lambda^*}\| = \alpha = \sqrt{\frac{p_0^\top \proj^\perp_{\delP} p_0}{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2}},
   \end{equation}
   giving us eq.\@ \ref{eq:l-star-expression}, proving the first
   part of theorem \ref{thm:f0-exact}.
@@ -2260,16 +2227,16 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   of $\lambda^*$, our expression for $\nabla F_0$ (eq.\@
   \ref{eq:F0-grad} of proposition \ref{prop:F0-grad-and-Hess}) gives:
   \begin{equation}
-    \delU = -s^\theta h \frac{\delP^\top p_{\lambda^*}}{l_{\lambda^*}}.
+    \delU = -s^\theta h \frac{\delP^\top p_{\lambda^*}}{\|p_{\lambda^*}\|}.
   \end{equation}
   This lets us write:
   \begin{equation}\label{eq:delta-U-dot-lambda-star}
-    \delU^\top \lambda^* = -\frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top \delP^\top \lambda^* = \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})}.
+    \delU^\top \lambda^* = -\frac{s^\theta h}{\|p_{\lambda^*}\|} p_{\lambda^*}^\top \delP^\top \lambda^* = \frac{s^\theta h}{\|p_{\lambda^*}\|} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})}.
   \end{equation}
   Combining eq.\@ \ref{eq:delta-U-dot-lambda-star} with our
   definition of $F_0$ yields:
   \begin{equation}
-    \hat{U} = F_0(\lambda^*) = U_0 + \delU^\top \lambda^* + s^\theta h l_{\lambda^*} = U_0 + \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})} + \frac{s^\theta h}{l_{\lambda^*}} p_{\lambda^*}^\top p_{\lambda^*},
+    \hat{U} = F_0(\lambda^*) = U_0 + \delU^\top \lambda^* + s^\theta h \|p_{\lambda^*}\| = U_0 + \frac{s^\theta h}{\|p_{\lambda^*}\|} p_{\lambda^*}^\top {(p_0 - p_{\lambda^*})} + \frac{s^\theta h}{\|p_{\lambda^*}\|} p_{\lambda^*}^\top p_{\lambda^*},
   \end{equation}
   which gives eq.\@ \ref{eq:f0-exact}, completing the final part of
   the proof.
@@ -2325,9 +2292,9 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   Next, to show that $\hat{U}' = \hat{U}$, we compute:
   \begin{align*}
     \hat{U}'
-    &= U_0 + \delU^\top \lambda^* + s^\theta h l_{\lambda^*} & \\
-    &= U_0 - \parens{Q^\top p_0 + l_{\lambda^*} R^{-\top} \frac{\delU}{s^\theta h}}^\top R^{-\top} \delU + s^\theta h l_{\lambda^*} & \mbox{(eq.\@ \ref{eq:f0-exact-lambda})} \\
-    &= U_0 - p_0^\top Q R^{-\top} \delU + s^\theta h l_{\lambda^*} \parens{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2} \\
+    &= U_0 + \delU^\top \lambda^* + s^\theta h \|p_{\lambda^*}\| & \\
+    &= U_0 - \parens{Q^\top p_0 + \|p_{\lambda^*}\| R^{-\top} \frac{\delU}{s^\theta h}}^\top R^{-\top} \delU + s^\theta h \|p_{\lambda^*}\| & \mbox{(eq.\@ \ref{eq:f0-exact-lambda})} \\
+    &= U_0 - p_0^\top Q R^{-\top} \delU + s^\theta h \|p_{\lambda^*}\| \parens{1 - \norm{R^{-\top} \frac{\delU}{s^\theta h}}^2} \\
     &= U_0 - p_0^\top Q R^{-\top} \delU + \norm{\pmin} \sqrt{\parens{s^\theta h}^2 - \norm{R^\top \delU}^2} = \hat{U}. & \mbox{(eq.\@ \ref{eq:l-star-expression})}
   \end{align*}
   To establish eq.\@ \ref{eq:U-from-Ui-exact}, first note that
@@ -2335,7 +2302,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   optimality. Substituting this into eq.\@ \ref{eq:U-finite-diff},
   we first obtain:
   \begin{equation}
-    \hat{U} = U_i + \frac{s^\theta h}{l_{\lambda^*}} \parens{p_i^\top \proj_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \proj^\perp_{\delP} p_{\lambda^*}}}.
+    \hat{U} = U_i + \frac{s^\theta h}{\|p_{\lambda^*}\|} \parens{p_i^\top \proj_{\delP} p_{\lambda^*} + \norm{\pmin} \sqrt{p_{\lambda^*}^\top \proj^\perp_{\delP} p_{\lambda^*}}}.
   \end{equation}
   Now, using the notation for weighted norms and inner products, we have:
   \begin{equation}\label{eq:weighted-norms}
@@ -2423,19 +2390,19 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   for $F_0$ and $F_1$, respectively, and if
   $\dellam^* = \lambda_1^* - \lambda_0^*$, then we have:
   \begin{equation}\label{eq:F1-in-terms-of-F0}
-    F_1^\theta(\lambda_1^*) = F_0^\theta(\lambda_1^*) + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^\star}.
+    F_1(\lambda_1^*) = F_0(\lambda_1^*) + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h \|p_{\lambda_1^\star}\|.
   \end{equation}
   By the optimality of $\lambda_0^*$ and strict convexity of
-  $F_0^\theta$ (lemma \ref{lemma:F-strictly-convex}), we can Taylor
+  $F_0$ (lemma \ref{lemma:F-strictly-convex}), we can Taylor
   expand and write:
   \begin{equation}
-    F_0^\theta(\lambda_1^*) = F_0^\theta(\lambda_0^*) + \nabla F_0^\theta(\lambda_0^*)^\top \dellam^* + \frac{1}{2} {\dellam^*}^\top \nabla^2 F_0^\theta(\lambda_0^*) \dellam^* + R \geq R,
+    F_0(\lambda_1^*) = F_0(\lambda_0^*) + \nabla F_0(\lambda_0^*)^\top \dellam^* + \frac{1}{2} {\dellam^*}^\top \nabla^2 F_0(\lambda_0^*) \dellam^* + R \geq R,
   \end{equation}
   where $\abs{R} = O(h^3)$ by theorem \ref{thm:mp0-newton}. Let
-  $\hat{U} = F_1^\theta(\lambda_1^*)$. Since $F_0^\theta$ is causal,
+  $\hat{U} = F_1(\lambda_1^*)$. Since $F_0$ is causal,
   we can write:
   \begin{equation}
-    \hat{U} \geq \max_i U_i + R + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h l_{\lambda_1^*}.
+    \hat{U} \geq \max_i U_i + R + \theta \parens{s_0 + \dels^\top \lambda_1^* - \overline{s}} h \|p_{\lambda_1^*}\|.
   \end{equation}
   Since $s$ is Lipschitz, the last term is $O(h^2)$---in particular,
   $\norm{\dels} = O(h)$ and $\norm{s_0 - \overline{s}} = O(h)$ since
