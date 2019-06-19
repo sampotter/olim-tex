@@ -1,0 +1,291 @@
+\documentclass{article}
+
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage[parfill]{parskip}
+
+\begin{document}
+
+\includegraphics[width=0.3\linewidth]{logo_umd.pdf}
+
+\vspace{5em}
+
+Dear Editor,
+
+Thank you very much for considering our manuscript:
+\begin{center}
+  ``Ordered Line Integral Methods for Solving the Eikonal Equation.''
+\end{center}
+We are grateful to the reviewers for their valuable feedback and and
+for pointing out key references that we have overlooked.  We have
+addressed all points raised in the revision, and believe that the
+revised manuscript is clearer and easier to follow, and that the
+updated bibliography is more complete.
+
+\section*{Summary of Changes}
+
+\section*{Response to Reviewer \#1: \texttt{review\_JOMP\_Eikonal.pdf}}
+
+We address the detailed comments first:
+
+\begin{itemize}
+
+\item \textbf{Reviewer:} Overall, there is no precise algorithm
+  explaining the proposed method, and the description is a bit hard to
+  follow. Section 3.2 is the key, and is not written clearly. Where do
+  Eq. (7) and Eq. (8) come from? What is $\ell_\lambda$? What is
+  $\hat{s}$? The explanation later regarding $\theta$ is a bit
+  vague. Please revise and write the method more clearly, and consider
+  complementing the description with an algorithm. It may be that
+  Algorithms 2 and 3 are the algorithms, but they appear much
+  later. Please try to clarify.
+
+  \textbf{Response:} There is no precise algorithm, because in the
+  paper we study a family of algorithms, which involve choosing
+  different algorithms for each substep. We have added a figure to
+  emphasize this point, and hope it is helpful.
+
+  Regarding notation confusion, we rewrote and combined sections 3.1
+  and 3.2 in a manner which we hope is easier to understand: see the
+  new section 3.1. We also made some notational changes which we
+  believe are improvements. In particular, regarding specific
+  notational confusion:
+  \begin{itemize}
+  \item We used the notation
+    $l_\lambda = \|\hat{p} - p_\lambda\| = \|p_\lambda\|$. We have
+    chosen to remove this notation and replace it with $\|p_\lambda\|$
+    to reduce confusion.
+  \item We use the notation $\hat{s}$ for the $s$ evaluated at the
+    grid point in $\mathcal{G}$ associated with $\hat{p}$. We use the
+    hat (\^{}) notation in several places ($\hat{p}$ and $\hat{U}$)
+    and believe it is more helpful than confusing, so have decided to
+    keep it. We have added a few more reminders explaining the meaning
+    of the hat.
+  \end{itemize}
+
+\item \textbf{Reviewer:} I'm trying to figure out the differences
+  between the proposed methods: rhr is equivalent to the standard FMM
+  - that is using a 1st order upwind scheme for the integration. mp1
+  applies the same, only with a midpoint rule. mp1 requires a few
+  iterations. mp0 starts like mp1, but only one Newton's iteration is
+  applied for minimization. Is that correct? In any case, please try
+  to further clarify that in the text.
+
+  \textbf{And:} Is mp1 similar to Fast Marching in a way?
+
+  \textbf{And:} I did not understand the algorithms: top-down and
+  bottom-up. Please try to make this cleaer. In what sense is it
+  top-down or bottom-up? The order in which the grid points are
+  approached?
+
+  \textbf{Response:} To answer the question, the \texttt{rhr} and
+  \texttt{mp0} methods both use a QR decomposition to solve the
+  system---neither use any iterative scheme. The \texttt{mp1} method
+  uses an iterative solver for each update. Since \texttt{mp0} is
+  inconsistent normally, it is necessary to use the QR solver to
+  compute the minimizing $\lambda^*$ and then set
+  $\hat{U} \gets F_{\mathtt{mp1}}(\lambda^*)$. This idea is what
+  allows \texttt{mp0} to combine the speed and efficiency of
+  \texttt{rhr} and \texttt{mp0}. However, this is only one half of
+  what the paper presents, the other half being the \emph{top-down}
+  and \emph{bottom-up} algorithms, which make it possible to solve the
+  eikonal equation quickly in 3D.
+
+  To address this criticism, we have tried to make this idea (and the
+  two separate parts of the paper) more pronounced. We have included
+  Figure 1 and have placed greater emphasis more the roles of the
+  quadrature rules and \emph{top-down}/\emph{bottom-up} algorithms.
+
+  Additionally, we added Figure 5, which illustrates the problem with
+  \texttt{mp0} ``before it has been fixed'' (by using \texttt{mp1} for
+  evaluation). We hope this figure draws more attention to the problem
+  the paper is solving and makes the trade-offs between the quadrature
+  roles both more intuitive and explicit.
+
+\item \textbf{Reviewer:} Numerical Results: what does olim stand for?
+
+  \textbf{Response:} OLIM stands for Ordered Line Integral Methods.
+
+\item \textbf{Reviewer:} Numerical Results: It seems that the
+  integration approach itself (in rhr) is slower than FMM) but the
+  variant mp0, which is comparable in speed to rhr, is more accurate
+  than FMM, even though we do not solve the minimization exactly. Is
+  that right? So the real method this paper is trying to sell is
+  mp0. It will be better if the authors make this clearer.
+
+  \textbf{Response:} This interpretation is correct, but only part of
+  the story (see above about the contribution of
+  \emph{top-down}/\emph{bottom-up}). We have already addressed most of
+  this in previous responses, but additionally, we have chosen to
+  reorder the presentation of the summary of our numerical results to
+  place more emphasis on the superiority of the quadrature rule
+  \texttt{mp0}.
+
+\item \textbf{Reviewer:} Missing literature: there are a few works on
+  high order approaches in Fast Sweeping based on third order ENO and
+  WENO schemes - these can reduce the computational grid
+  dramatically. Also missing are works on parallel Fast Sweeping
+  Approaches. In addition, the paper ``A fast marching algorithm for
+  the factored eikonal equation'' seems very relevant here.
+
+  \textbf{Response:} We apprecriate the reviewer suggesting these
+  references; we were unaware of the referenced paper, and have
+  included it. Additionally, we have included one of the main papers
+  on higher-order WENO/ENO schemes combined with the fast sweeping
+  method~\cite{zhang2006high}.
+
+  We would also like to point out that \cite{treister2016fast} uses a
+  fast marching method based on a finite difference discretization of
+  the \emph{multiplicatively} factored eikonal equation; by contrast,
+  we use a semi-Lagrangian Dijkstra-like algorithm more similar to
+  Tsitsiklis's algorithm~\cite{tsitsiklis1995efficient} and apply it
+  to the \emph{additively} factored eikonal equation.
+
+\end{itemize}
+
+Additionally, some minor comments were presented:
+
+\begin{itemize}
+
+\item \textbf{Reviewer:} Section 3: First sentence: ``The fast
+  marching method [42] discretizes the eikonal equation,''. This is
+  not an accurate sentence. The method does not discretize the
+  equation... Please revised.
+
+  \textbf{Response:} Fixed.
+
+\item \textbf{Reviewer:} Some figures (e.g., figure 1) are presented
+  way too early in the paper and are not informative there. Figure 2
+  is presented in page 3 but first referenced in page 6.
+
+  \textbf{Response:} These figures have been moved to more appropriate
+  places.
+
+\item \textbf{Reviewer:} Page 8: ``In this work, we only use uniform
+  square or cubic grids;'' Figure 3 is a bit misleading, showing
+  tetrahedra. How this fit together with the sentence? Please try to
+  clarify.
+
+  \textbf{Response:} We found that this comment reflected a major
+  misunderstanding of the work, so we have tried to improve the paper
+  to help readers avoid this problem.
+
+  The domain $\Omega$ is discretized into uniform grid of points
+  $\mathcal{G}$. In finite difference-based methods such as the FMM or
+  WENO/ENO-style FSMs, there is a stencil of points surrounding each
+  updated point.
+
+  In semi-Lagrangian methods it is necessary to think of update
+  simplexes that contain locally parametrized characteristics instead
+  of stencils. This idea is in Tsitsiklis's original
+  paper~\cite{tsitsiklis1995efficient}. We have tried to emphasize
+  this contrast throughout the paper.
+
+  To improve understanding, we have modified our figures to show the
+  grid of points $\mathcal{G}$ surrounding update simplexes (update
+  triangles and tetrahedra). See Figures 3, 4, 5, 8, and 10. Figures 3
+  and 4 have been updated, and Figure 5 is new.
+
+\end{itemize}
+
+\section*{Response to Reviewer \#2: \texttt{review.pdf}}
+
+\begin{itemize}
+
+\item \textbf{Reviewer:} The local variational minimization approach
+  has been proposed and used before, see [...]. So the idea is not
+  new.
+
+  \textbf{Response:} In the paper, we do not claim that using the
+  local variational minimization approach is new. In fact, it has been
+  present since Tsitsiklis's original
+  work~\cite{tsitsiklis1995efficient} on Dijkstra-like algorithms, so
+  it in fact predates Sethian's work on the fast marching
+  method~\cite{sethian1996fast}. That is, the idea predates the
+  referenced paper~\cite{bornemann2006finite} by at least 21 years.
+
+  However, the paper by Bornemann \& Rasch is of particular interest
+  to us, and we thank the reviewer for bringing it to our
+  attention. We have added a citation in an appropriate place.
+
+  We note that Bornemann \& Rasch presents complementary results which
+  \emph{do not} significantly overlap with our own. Our emphasis is on
+  fast solvers and the attendant numerical developments. E.g., the
+  referenced paper only shows how to do the Hopf-Lox update in 2D for
+  an equivalent of our \texttt{rhr} quadrature rule, and uses an
+  abundance of trigonometry to do so. We show in detail how to do the
+  Hopf-Lax update in any dimension using linear algebra or numerical
+  optimization, and for three quadrature rules (\texttt{rhr},
+  \texttt{mp0}, \texttt{mp1}). We also prove results showing the
+  interrelation of these quadrature results, and provide fast
+  algorithms (``top-down''/``bottom-up'') that allow one to
+  efficiently perform \emph{all} updates for a newly \texttt{valid}
+  point.
+
+  As an aside, we also point out that the numerical results presented
+  in Bornemann \& Rasch are unimpressive. Figures 3 and 4 in this
+  paper clearly indicate that for moderate to large problem sizes,
+  Vladimirsky's ordered upwind method is faster and more
+  accurate~\cite{sethian2003ordered}.
+
+\item \textbf{Reviewer:} The equivalence of the local variational
+  minimization approach and the upwind finite difference scheme, as
+  well as the convexity of the local functional under piecewise linear
+  approximation has been proved previously, see [...]. So part of the
+  theoretical support is not new.
+
+  \textbf{Response:} The equivalence of the variational approach and
+  the finite difference scheme is an old result,
+  see~\cite{sethian1999level}. The convexity of the local functional
+  as it is approximated is a minor result in our overall work and we
+  do not claim that it is our central result.
+
+\item \textbf{Reviewer:} The authors must show new/novel contributions
+  other than existing formulations/ideas in the framework of the fast
+  marching method.
+
+  \textbf{Response:} In addressing Reviewer \#1's comments, we hope
+  that we have made it more obvious that we have already done so.
+
+\end{itemize}
+
+Enclosed is the revised manuscript. We look forward to hearing from you.
+
+Sincerely,
+
+\begin{minipage}{.5\linewidth}
+  \includegraphics[width=.6\linewidth]{sig.pdf}
+\end{minipage}%
+\begin{minipage}{.5\linewidth}
+\end{minipage}
+
+
+\begin{minipage}[t]{.5\linewidth}
+  Samuel Potter \\
+  Graduate Student \\
+  Department of Computer Science \\
+  University of Maryland \\
+  Brendan Iribe Center \\
+  College Park, MD, 20742 \\
+  \texttt{sfp@umiacs.umd.edu}
+\end{minipage}%
+\begin{minipage}[t]{.5\linewidth}
+  Maria Cameron \\
+  Associate Professor \\
+  Department of Mathematics \\
+  University of Maryland \\
+  Kirwan Hall \\
+  College Park, MD, 20742 \\
+  \texttt{cameron@math.umd.edu}
+\end{minipage}
+
+\bibliographystyle{plain}
+\bibliography{eikonal}{}
+
+\end{document}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
