@@ -1,5 +1,6 @@
 \documentclass{article}
 
+\usepackage{eikonal}
 \usepackage{fullpage}
 \usepackage{graphicx}
 \usepackage[parfill]{parskip}
@@ -8,21 +9,95 @@
 
 \includegraphics[width=0.3\linewidth]{logo_umd.pdf}
 
-\vspace{5em}
+\vspace{5.5em}
 
 Dear Editor,
 
-Thank you very much for considering our manuscript:
+\vspace{1.5em}
+
+Thank you for considering our manuscript:
+\vspace{1em}
 \begin{center}
   ``Ordered Line Integral Methods for Solving the Eikonal Equation.''
 \end{center}
-We are grateful to the reviewers for their valuable feedback and and
-for pointing out key references that we have overlooked.  We have
-addressed all points raised in the revision, and believe that the
-revised manuscript is clearer and easier to follow, and that the
-updated bibliography is more complete.
+\vspace{1em} We are grateful to the reviewers for their valuable
+feedback and and for pointing out key references that we have
+overlooked.  We have addressed all points raised by the reviewers, and
+believe that the revised manuscript is clearer and easier to follow,
+and that the updated bibliography is more complete.
+
+\vspace{1em}
 
 \section*{Summary of Changes}
+
+We have made a major revision of our manuscript that simplifies and
+streamlines the presentation, and highlights our contributions more
+clearly and prominently.
+
+We list a summary of the main changes in the new version of our paper
+here:
+
+\begin{itemize}
+
+\item References suggested by the reviewers were added in appropriate
+  places with
+  commentary~\cite{treister2016fast,zhang2006high,bornemann2006finite,luo2012fast}. These
+  references were very interesting and relevant, and we appreciate the
+  reviewers recommending them to us.
+
+\item We added a new figure (fig. 1) that presents the family of
+  algorithms studied in the paper as a decision tree, which we hope
+  will focus readers' attention on the main contributions and focus of
+  the paper. This addresses misunderstandings in the two reviews we
+  received.
+
+\item We improved the wording and organization of our ``Results''
+  section to focus it and frontload our results, making them more
+  obvious.
+
+\item The position of Figures 1 and 2 were adjusted to better match
+  the flow of the text.
+
+\item We remade Figure 2 (now 3) to make it more comprehensible and
+  useful.
+
+\item We remade Figure 3 (now 4) to make it easier for the reader to
+  understand how the update simplexes relate to the grid of nodes
+  $\mathcal{G}$ by adding some grid lines.
+
+\item We rewrote sections 3.1 and 3.2 and combined them into a new
+  section (``Approximating the action functional'').
+
+\item We changed our presentation of the cost functions and separated
+  our presentation of the $\theta$-rules to make a clear distinction
+  between the cost functions $\Frhr, \Fmpzero$, and $\Fmpone$, which
+  are used in our solvers, and the $\theta$-rules, which generalize
+  the cost functions, and are used to simplify our proofs.
+
+\item We deleted some paragraphs that we felt were unnecessary and
+  could be omitted since they did not contribute anything to the flow
+  of ideas in the paper.
+
+\item We have made a number of small fixes and notational changes to
+  ``debug'' typos and otherwise improve the readability of the paper.
+
+\item We added a new figure (Figure 5) that we believe addresses a
+  central point about the \texttt{mp0} quadrature rule that is not
+  made well enough in the text, and is easiest to convey graphically.
+
+\item We made minor improvements to Figure 4 (now 6).
+
+\item We simplified the presentation of neighborhood selection for the
+  \emph{bottom-up} algorithm.
+
+\item We moved the section on skipping updates using the KKT
+  conditions to an appendix. We believe the idea is not too
+  complicated, and that the reader interested in implementing the
+  method should find the details in the appendix sufficient.
+
+\end{itemize}
+
+\vspace{1em}
 
 \section*{Response to Reviewer \#1: \texttt{review\_JOMP\_Eikonal.pdf}}
 
@@ -40,18 +115,22 @@ We address the detailed comments first:
   Algorithms 2 and 3 are the algorithms, but they appear much
   later. Please try to clarify.
 
-  \textbf{Response:} There is no precise algorithm, because in the
-  paper we study a family of algorithms, which involve choosing
-  different algorithms for each substep. We have added a figure to
-  emphasize this point, and hope it is helpful.
+  \textbf{Response:} The precise algorithm is Algorithm 1 (the generic
+  Dijkstra-like algorithm) whose Step 3d is done as described in
+  either Algorithm 2 (\emph{top-down}) or Algorithm 3
+  (\emph{bottom-up}). Individual updates are done according to the
+  quadrature rule selected (either \texttt{mp0}, \texttt{mp1}, or
+  \texttt{rhr})---that is, either using a QR decomposition in the of
+  \texttt{rhr} and \texttt{mp0}, or an iterative solver in the case of
+  \texttt{mp1}. We have added a figure (Figure 1) to emphasize this
+  point.
 
-  Regarding notation confusion, we rewrote and combined sections 3.1
+  Regarding notational confusion, we rewrote and combined sections 3.1
   and 3.2 in a manner which we hope is easier to understand: see the
   new section 3.1. We also made some notational changes which we
-  believe are improvements. In particular, regarding specific
-  notational confusion:
+  believe are improvements. In particular, regarding specific issues:
   \begin{itemize}
-  \item We used the notation
+  \item Previously, we used the notation
     $l_\lambda = \|\hat{p} - p_\lambda\| = \|p_\lambda\|$. We have
     chosen to remove this notation and replace it with $\|p_\lambda\|$
     to reduce confusion.
@@ -74,33 +153,29 @@ We address the detailed comments first:
   \textbf{And:} Is mp1 similar to Fast Marching in a way?
 
   \textbf{And:} I did not understand the algorithms: top-down and
-  bottom-up. Please try to make this cleaer. In what sense is it
+  bottom-up. Please try to make this clearer. In what sense is it
   top-down or bottom-up? The order in which the grid points are
   approached?
 
   \textbf{Response:} To answer the question, the \texttt{rhr} and
-  \texttt{mp0} methods both use a QR decomposition to solve the
-  system---neither use any iterative scheme. The \texttt{mp1} method
-  uses an iterative solver for each update. Since \texttt{mp0} is
-  inconsistent normally, it is necessary to use the QR solver to
-  compute the minimizing $\lambda^*$ and then set
-  $\hat{U} \gets F_{\mathtt{mp1}}(\lambda^*)$. This idea is what
-  allows \texttt{mp0} to combine the speed and efficiency of
-  \texttt{rhr} and \texttt{mp0}. However, this is only one half of
-  what the paper presents, the other half being the \emph{top-down}
-  and \emph{bottom-up} algorithms, which make it possible to solve the
-  eikonal equation quickly in 3D.
+  \texttt{mp0} methods both use a QR decomposition to find the
+  minimizing arguments of local functional minimization problems
+  (Theorem 2). Neither use any iterative scheme. Then, \texttt{mp0}
+  uses $\Fmpone$ for the ultimate function evaluation to compute
+  $\hat{U}$, which makes it fast, accurate, and consistent
+  (\texttt{rhr} does \emph{not} do this). This is justified by Theorem
+  1. By contrast, the \texttt{mp1} method uses an iterative solver for
+  each update. This idea is what allows \texttt{mp0} to combine the
+  speed of \texttt{rhr} with the accuracy of \texttt{mp1}. The choice
+  of quadrature rule is one of three splits in our OLIM family of
+  eikonal solvers. The other two are the choice of \emph{top-down} or
+  \emph{bottom-up} update algorithm, and the neighborhood size (in the
+  case of \emph{top-down}).
 
-  To address this criticism, we have tried to make this idea (and the
-  two separate parts of the paper) more pronounced. We have included
-  Figure 1 and have placed greater emphasis more the roles of the
-  quadrature rules and \emph{top-down}/\emph{bottom-up} algorithms.
-
-  Additionally, we added Figure 5, which illustrates the problem with
-  \texttt{mp0} ``before it has been fixed'' (by using \texttt{mp1} for
-  evaluation). We hope this figure draws more attention to the problem
-  the paper is solving and makes the trade-offs between the quadrature
-  roles both more intuitive and explicit.
+  To address this criticism, we have tried to make this ideas more
+  pronounced. We have included Figure 1 and have placed greater
+  emphasis more the roles of the quadrature rules and
+  \emph{top-down}/\emph{bottom-up} algorithms.
 
 \item \textbf{Reviewer:} Numerical Results: what does olim stand for?
 
@@ -113,13 +188,13 @@ We address the detailed comments first:
   that right? So the real method this paper is trying to sell is
   mp0. It will be better if the authors make this clearer.
 
-  \textbf{Response:} This interpretation is correct, but only part of
-  the story (see above about the contribution of
-  \emph{top-down}/\emph{bottom-up}). We have already addressed most of
-  this in previous responses, but additionally, we have chosen to
-  reorder the presentation of the summary of our numerical results to
-  place more emphasis on the superiority of the quadrature rule
-  \texttt{mp0}.
+  \textbf{Response:} Yes, \texttt{mp0} is the best quadrature rule. To
+  clarify the difference between the FMM and our solvers, we have
+  added some additional explanation. The comparison is made explicit
+  in Theorems 2 and 3.
+
+  In addition, we have attempted to restructure our paper to feature
+  our main results more prominently.
 
 \item \textbf{Reviewer:} Missing literature: there are a few works on
   high order approaches in Fast Sweeping based on third order ENO and
@@ -130,9 +205,9 @@ We address the detailed comments first:
 
   \textbf{Response:} We apprecriate the reviewer suggesting these
   references; we were unaware of the referenced paper, and have
-  included it. Additionally, we have included one of the main papers
-  on higher-order WENO/ENO schemes combined with the fast sweeping
-  method~\cite{zhang2006high}.
+  included it~\cite{treister2016fast}. Additionally, we have included
+  one of the main papers on higher-order WENO/ENO schemes combined
+  with the fast sweeping method~\cite{zhang2006high}.
 
   We would also like to point out that \cite{treister2016fast} uses a
   fast marching method based on a finite difference discretization of
@@ -166,11 +241,11 @@ Additionally, some minor comments were presented:
   tetrahedra. How this fit together with the sentence? Please try to
   clarify.
 
-  \textbf{Response:} We found that this comment reflected a major
-  misunderstanding of the work, so we have tried to improve the paper
-  to help readers avoid this problem.
+  \textbf{Response:} We have modified Figure 3 (now 4) to make it
+  explicit how the simplexes arise and relate to the underlying cubic
+  grid.
 
-  The domain $\Omega$ is discretized into uniform grid of points
+  The domain $\Omega$ is discretized into a uniform grid of points
   $\mathcal{G}$. In finite difference-based methods such as the FMM or
   WENO/ENO-style FSMs, there is a stencil of points surrounding each
   updated point.
@@ -181,20 +256,22 @@ Additionally, some minor comments were presented:
   paper~\cite{tsitsiklis1995efficient}. We have tried to emphasize
   this contrast throughout the paper.
 
-  To improve understanding, we have modified our figures to show the
-  grid of points $\mathcal{G}$ surrounding update simplexes (update
-  triangles and tetrahedra). See Figures 3, 4, 5, 8, and 10. Figures 3
-  and 4 have been updated, and Figure 5 is new.
+  We have modified our figures to show the grid of points
+  $\mathcal{G}$ surrounding update simplexes (update triangles and
+  tetrahedra). See Figures 3, 4, 5, 8, and 10. Figures 3 and 4 have
+  been updated, and Figure 5 is new.
 
 \end{itemize}
+
+\vspace{1em}
 
 \section*{Response to Reviewer \#2: \texttt{review.pdf}}
 
 \begin{itemize}
 
 \item \textbf{Reviewer:} The local variational minimization approach
-  has been proposed and used before, see [...]. So the idea is not
-  new.
+  has been proposed and used before, see [\emph{Bornemann \&
+    Rasch}]. So the idea is not new.
 
   \textbf{Response:} In the paper, we do not claim that using the
   local variational minimization approach is new. In fact, it has been
@@ -202,16 +279,19 @@ Additionally, some minor comments were presented:
   work~\cite{tsitsiklis1995efficient} on Dijkstra-like algorithms, so
   it in fact predates Sethian's work on the fast marching
   method~\cite{sethian1996fast}. That is, the idea predates the
-  referenced paper~\cite{bornemann2006finite} by at least 21 years.
+  referenced paper~\cite{bornemann2006finite} by at least 21 years. We
+  explain this point in the introduction (see the first paragraph of
+  Section 1.1).
 
   However, the paper by Bornemann \& Rasch is of particular interest
   to us, and we thank the reviewer for bringing it to our
-  attention. We have added a citation in an appropriate place.
+  attention~\cite{bornemann2006finite}. We have added a citation in an
+  appropriate place.
 
   We note that Bornemann \& Rasch presents complementary results which
   \emph{do not} significantly overlap with our own. Our emphasis is on
   fast solvers and the attendant numerical developments. E.g., the
-  referenced paper only shows how to do the Hopf-Lox update in 2D for
+  referenced paper only shows how to do the Hopf-Lax update in 2D for
   an equivalent of our \texttt{rhr} quadrature rule, and uses an
   abundance of trigonometry to do so. We show in detail how to do the
   Hopf-Lax update in any dimension using linear algebra or numerical
@@ -223,7 +303,7 @@ Additionally, some minor comments were presented:
   point.
 
   As an aside, we also point out that the numerical results presented
-  in Bornemann \& Rasch are unimpressive. Figures 3 and 4 in this
+  in Bornemann \& Rasch are unimpressive. Figures 3 and 4 in their
   paper clearly indicate that for moderate to large problem sizes,
   Vladimirsky's ordered upwind method is faster and more
   accurate~\cite{sethian2003ordered}.
@@ -236,20 +316,26 @@ Additionally, some minor comments were presented:
 
   \textbf{Response:} The equivalence of the variational approach and
   the finite difference scheme is an old result,
-  see~\cite{sethian1999level}. The convexity of the local functional
-  as it is approximated is a minor result in our overall work and we
-  do not claim that it is our central result.
+  see~\cite{sethian1999level}. We do comment on this in the revision:
+  see the paragraph preceding Theorem 3. The convexity of the local
+  functional as it is approximated is a minor result in our overall
+  work and we do not claim that it is our central result. Since we use
+  it, we include it for completeness and context.
 
 \item \textbf{Reviewer:} The authors must show new/novel contributions
   other than existing formulations/ideas in the framework of the fast
   marching method.
 
-  \textbf{Response:} In addressing Reviewer \#1's comments, we hope
-  that we have made it more obvious that we have already done so.
+  \textbf{Response:} We have made a major revision of our presentation
+  that, we hope, highlights our contributions clearly.
 
 \end{itemize}
 
+\vspace{2em}
+
 Enclosed is the revised manuscript. We look forward to hearing from you.
+
+\vspace{1em}
 
 Sincerely,
 

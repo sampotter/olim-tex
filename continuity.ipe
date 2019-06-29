@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!DOCTYPE ipe SYSTEM "ipe.dtd">
 <ipe version="70206" creator="Ipe 7.2.10">
-<info created="D:20190618132423" modified="D:20190618132423"/>
+<info created="D:20190618132423" modified="D:20190621092943"/>
 <ipestyle name="basic">
 <symbol name="arrow/arc(spx)">
 <path stroke="sym-stroke" fill="sym-stroke" pen="sym-pen">
@@ -437,5 +437,9 @@ h
 232.948 674.852 c
 </path>
 <text matrix="1 0 0 1 0 2.23438" transformations="translations" pos="158.602 625.218" stroke="black" type="minipage" width="161.835" height="7.473" depth="2.49" valign="top">Require continuity of $F$ along $[p_0, p_1]$</text>
+<path stroke="lightgray" arrow="normal/small">
+160 720 m
+160 656 l
+</path>
 </page>
 </ipe>

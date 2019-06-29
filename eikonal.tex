@@ -87,11 +87,11 @@ In this work, we develop direct solvers for the eikonal equation which
 are fast and accurate, particularly in 3D. We develop a family of
 algorithms which approach the problem of efficiently computing updates
 in 3D in different ways. This family of algorithms is analyzed and
-extensive numerical studies are carried out. Both approaches are
-semi-Lagrangian and use information about local characteristics to
-reduce the work necessary to get an accurate result. These approaches
-are competitive with existing direct solvers for the eikonal equation
-and generalize to higher dimensions and related equations, such as the
+extensive numerical studies are carried out. Our algorithms are
+semi-Lagrangian, using information about local characteristics to
+reduce the work necessary to get an accurate result. They are
+competitive with existing direct solvers for the eikonal equation and
+generalize to higher dimensions and related equations, such as the
 static Hamilton-Jacobi equation. In fact, this research was done in
 tandem with research on the ordered line integral methods for the
 quasipotential of nongradient stochastic differential equations
@@ -106,15 +106,16 @@ theoretical results that justify our experimental findings.
   \centering
   \includegraphics[width=\linewidth]{classification.eps}
   \caption{
-    \emph{The family of Dijkstra-like solvers studied in this work.}
-    We refer to these as ordered line integral methods (OLIMs).  There
-    are three ways of parametrizing the family: by selecting an update
-    algorithm, by selecting a quadrature rule, and by (in the case of
-    the \emph{top-down} update algorithm, by selecting a neighborhood
-    size. Sections in the text that explain these choices in detail
-    are indicated. A shorthand notation for referring to each
-    parametrized algorithms is listed for each algorithm that is
-    involved in numerical tests (e.g., \texttt{olim3d\_mp0}).
+    \emph{The family of Dijkstra-like solvers designed and studied in
+      this work.}  We refer to these as ordered line integral methods
+    (OLIMs).  There are three ways of parametrizing the family: by
+    selecting an update algorithm, by selecting a quadrature rule, and
+    by (in the case of the \emph{top-down} update algorithm, by
+    selecting a neighborhood size. Sections in the text that explain
+    these choices in detail are indicated. A shorthand notation for
+    referring to each parametrized algorithms is listed for each
+    algorithm that is involved in numerical tests (e.g.,
+    \texttt{olim3d\_mp0}).
   }\label{fig:classification}
 \end{figure}
 
@@ -126,17 +127,17 @@ solvers)~\cite{tsitsiklis1995efficient,sethian1996fast}, and the most
 popular iterative method is the fast sweeping
 method~\cite{tsai2003fast,zhao2005fast}. In this work, we develop a
 family of Dijkstra-like solvers for the eikonal equation in 2D and 3D,
-similar to the fast marching method (FMM) or ordered upwind
-methods~\cite{sethian1996fast,sethian2003ordered}. These solvers come
+similar to the fast marching method (FMM) or ordered upwind methods
+(OUMs)~\cite{sethian1996fast,sethian2003ordered}. In constrast to the
+FMM and OUMs that use finite difference schemes, our solvers come
 about by discretizing and minimizing the action functional for the
 eikonal equation (see section\@
-\ref{sec:minimum-action-integral}). The family of algorithms is
-parameterized by a choice of update algorithm (\emph{bottom-up} or
+\ref{sec:minimum-action-integral}). The proposed family of algorithms
+is parameterized by a choice of update algorithm (\emph{bottom-up} or
 \emph{top-down}), quadrature rule (a righthand rule (\texttt{rhr}), a
 simplified midpoint rule (\texttt{mp0}), and a midpoint rule
 (\texttt{mp1})), and, in the case of \emph{bottom-up}, a neighborhood
-size (6, 18, or 26 points in 3D). See figure
-\ref{fig:classification}.
+size (6, 18, or 26 points in 3D). See figure \ref{fig:classification}.
 
 Our \emph{bottom-up} and \emph{top-down} update algorithms
 represent two separate approaches to minimizing the number of triangle
@@ -149,13 +150,13 @@ trade-offs in 3D and find which solver performs best. Our conclusion
 is that, in 3D, \texttt{olim3d\_mp0} is the best overall, and our
 results are oriented towards supporting this claim.
 
-Additionally, we modify our algorithm to solve the additively factored
-eikonal equation~\cite{luo2012fast}: to enhance accuracy, we solve the
-locally factored eikonal equation near point sources, which recovers
-the global $O(h)$ error convergence expected from a first-order
-method, where $h > 0$ is the uniform spacing between grid points. This
-fixes the degraded $O(h \log h^{-1})$ convergence often associated
-with point source eikonal problems~\cite{qi2018corner}
+Additionally, we modify our algorithms to solve the additively
+factored eikonal equation~\cite{luo2012fast}: to enhance accuracy, we
+solve the locally factored eikonal equation near point sources, which
+recovers the global $O(h)$ error convergence expected from a
+first-order method, where $h > 0$ is the uniform spacing between grid
+points. This fixes the degraded $O(h \log h^{-1})$ convergence often
+associated with point source eikonal problems~\cite{qi2018corner}
 (see~\cite{zhao2005fast} for a proof of this error bound).
 
 Our main results follow:
@@ -196,22 +197,19 @@ Our main results follow:
   all practical problem sizes. Since our solvers otherwise run in
   $O(N^n)$ time, where $n$ is the dimension of the domain, we suggest
   that the $O(N^n \log N)$ cost of the algorithm is
-  pessimistic. Memory access patterns play a significant role in
-  scaling.
+  pessimistic. Memory access patterns play a much more significant
+  role in scaling.
 \end{itemize}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\linewidth]{intro.eps}
-  \caption{\emph{Comparing \texttt{olim3d\_mp0} and
-      \texttt{olim6\_rhr}.} For the multiple point source problem in
-    section\@ \ref{ssec:slotnick} with the domain $\Omega = [0, 1]^3$
-    discretized in each direction into $N = 2^p + 1$ (where
-    $p = 4, 5, \hdots, 9$); the total number of grid points is
-    $N^3$. The plots show from left to right: 1) the relative
-    $\ell_\infty$ error plotted vs.\ CPU runtime in seconds, 2)
-    quotient of CPU times, 3) quotient of $\ell_\infty$
-    errors.}\label{fig:intro}
+  \includegraphics[width=\linewidth]{intro-new.eps}
+  \caption{\emph{Comparing the relative $\ell_\infty$ errors of
+      \texttt{olim3d\_mp0} and \texttt{olim6\_rhr}.} For the multiple
+    point source problem in section\@ \ref{ssec:slotnick} with the
+    domain $\Omega = [0, 1]^3$ discretized in each direction into
+    $N = 2^p + 1$ (where $p = 5, \hdots, 9$), the total number of grid
+    points is $N^3$.}\label{fig:intro}
 \end{figure}
 
 \subsection{Accessing our library} Our implementation is in
@@ -335,9 +333,9 @@ accuracy quadrature rules (\texttt{mp0} and \texttt{mp1}) and
 algorithms which make 3D solvers fast (our \emph{bottom-up} and
 \emph{top-down} algorithms). We also note that Bornemann and Rasch
 have investigated the local variational approach (\`{a} la
-Tsitsiklis), and have presented a full complement of theoretical
-results---this approach is complementary to our own but has a much
-different emphasis~\cite{bornemann2006finite}.
+Tsitsiklis), and have present detailed theoretical results---their
+approach is complementary to our own, but has a much different
+emphasis~\cite{bornemann2006finite}.
 
 To write down a generic Dijkstra-like algorithm, there are several
 pieces of information which need to be kept track of. A data structure
@@ -424,12 +422,11 @@ involved~\cite{dahiya2017ordered,dahiya2018ordered,yang2019computing}.
 discretized version of eq.\@ \ref{eq:eikonal} is the fast sweeping
 method~\cite{tsai2003fast,zhao2005fast}. Unlike Dijkstra-like methods,
 which are direct solvers, the fast sweeping method is an iterative
-solver using an upwind scheme and rotating sweep directions. For
-problems where the characteristics of the solution change direction
-infrequently, the algorithm obtains $O(N^n)$ complexity. A drawback of
-the method is that the constant cannot be bound a priori and depends
-heavily on the geometry of the problem. Fast sweeping methods have
-been extended to Hamilton-Jacobi
+solver using an upwind scheme and rotating sweep directions, which
+obtains $O(N^n)$ complexity---however, the constant in this asymptotic
+estimate depends heavily on how frequently the characteristics change
+direction, and how complicated the geometry of the domain is. Fast
+sweeping methods have been extended to Hamilton-Jacobi
 equations~\cite{tsai2003fast,kao2008legendre}, and hybrid methods
 combining the fast sweeping method with a Dijkstra-like method have
 been introduced
@@ -462,15 +459,14 @@ raytracing methods) trace a bundle of rays from a common locus by
 integrating Hamilton's equations for the eikonal equation for
 different initial conditions.
 
-In this section, we describe our approach to discretizing and
-minimizing and approximation to eq.\@ \ref{eq:action-functional}. As
-we mentioned in section\@ \ref{ssec:dijkstra-like}, to compute
-$\hat{U} = U(\hat{p})$ in item \ref{enum:update-U} of algorithm
-\ref{alg:dijkstra-like}, we need to approximately minimize several
-instances of an approximation to eq.\@ \ref{eq:action-functional};
-details of this procedure are discussed in section\@
-\ref{sec:implementation}. In this section, we focus on a single
-instance of the discretized version of eq.\@
+In this section, we describe how we discretize and minimize an
+approximation of eq.\@ \ref{eq:action-functional}. As we mentioned in
+section\@ \ref{ssec:dijkstra-like}, to compute $\hat{U} = U(\hat{p})$
+in item \ref{enum:update-U} of algorithm \ref{alg:dijkstra-like}, we
+need to approximately minimize several instances of an approximation
+to eq.\@ \ref{eq:action-functional}; details of this procedure are
+discussed in section\@ \ref{sec:implementation}. In this section, we
+focus on a single instance of the discretized version of eq.\@
 \ref{eq:action-functional}. We present our notation, derive prelimary
 results, and describe the quadrature rules \texttt{mp0}, \texttt{mp1},
 and \texttt{rhr}. We also show how the functional minimization problem
@@ -488,10 +484,11 @@ justifying our approach.
     updated, $\hat{p}$, which is identified with the origin, and three
     neighboring points $p_0, p_1$, and $p_2$ that are assumed to be
     \texttt{valid}. The grid $\mathcal{G}$, which contains other
-    points in the discretized domain, is highlighted. The domain of
-    the minimization problem eq.\@ \ref{eq:constrained-minimization}
-    is the convex hull of $p_0, p_1$, and $p_2$. The path minimizing
-    eq.\@ \ref{eq:action-functional} is assumed to be the line segment
+    points in the discretized domain, is sketched in light grey. The
+    domain of the minimization problem eq.\@
+    \ref{eq:constrained-minimization} is the convex hull of
+    $p_0, p_1$, and $p_2$. The path minimizing eq.\@
+    \ref{eq:action-functional} is assumed to be the line segment
     connecting $\hat{p}$ and $p_\lambda$. Not pictured is the newly
     \texttt{valid} point $\pnew$, although it is assumed that $\pnew$
     equals one of $p_0, p_1$, or $p_2$. Right: the same update
@@ -504,7 +501,7 @@ justifying our approach.
 In this section we describe how we approximate eq.\@
 \ref{eq:action-functional} and reformulate it as a constrained
 optimization problem which we solve to update the \texttt{trial} nodes
-surrounding a newly \texttt{valid} node $\pnew$.
+surrounding a node $\pnew$ which has just become \texttt{valid}.
 
 First, we assume that $\Omega \subseteq \mathbb{R}^n$, where
 $n = 2, 3$. The methods presented here work for general $n$. We refer
@@ -515,12 +512,14 @@ and tetrahedron updates ($d = 2$). So, $d$ refers to the dimension of
 the base of each simplex, which is the dimension of the domain of the
 optimization problem that we will formulate.
 
-We assume that each update simplex is nondegenerate so that a simplex
-of dimension $d$ is the convex hull of the update point $\hat{p}$ and
-$d+1$ points $p_0, \hdots, p_{d} \in \neib(\hat{p})$. Since we assume
-that our grid $\mathcal{G}$ is uniform and rectilinear, we scale and
-translate $\mathcal{G}$ so that $\hat{p} = 0$ and $\|p_i\|_\infty = 1$
-for $i = 0, \hdots, d$.
+We assume that each update simplex is nondegenerate and that the
+convex hull of the update point $\hat{p}$ and $d+1$ points
+$p_0, \hdots, p_{d} \in \neib(\hat{p})$. Since we assume that our grid
+$\mathcal{G}$ is uniform and rectilinear, we scale and translate
+$\mathcal{G}$ so that $\hat{p} = 0$ and $\|p_i\|_\infty = 1$ for
+$i = 0, \hdots, d$. \emph{Throughout the rest of the paper, we always
+  shift the node $\hat{p}$ to the origin, as this simplifies our
+  calculations.}
 
 \paragraph{Approximating the integration path with a straight line
   segment.} To approximately minimize eq.\@ \ref{eq:action-functional}
@@ -538,7 +537,7 @@ $p_0, \hdots, p_d$) over the set:
 \end{equation}
 If we let $\lambda_0 = 1 - \sum_{i=1}^d \lambda_i$, then
 $(\lambda_0, \hdots, \lambda_d)$ is a vector of convex coefficients.
-Using $\lambda$, we let $\delp_i = p_i - p_0$, define:
+We let $\delp_i = p_i - p_0$ and define:
 \begin{equation}
   \delP = \begin{bmatrix}
     \delp_1 & \cdots & \delp_d
@@ -559,7 +558,9 @@ will think of, e.g., $s_i$ and $s(x_i)$ in the context of an update as
 
 \paragraph{Quadrature rules.} We consider a righthand rule
 (\texttt{rhr}), a simplified midpoint rule (\texttt{mp0}), and a
-midpoint rule (\texttt{mp1}). Recall that $\hat{s} = s(\hat{x})$:
+midpoint rule (\texttt{mp1}). Recall that $\hat{s} = s(\hat{x})$. The
+cost functions being minimized in eq.\@ \ref{eq:action-functional}
+are:
 \begin{align}
   \Frhr(\lambda) &= U_\lambda + \hat{s} h \|p_\lambda\|, \\
   \Fmpzero(\lambda) &= U_\lambda + \parens{\frac{\hat{s} + \tfrac{1}{d+1} \sum_{i=0}^d s_i}{2}} h \|p_\lambda\|, \\
@@ -597,7 +598,7 @@ define:
 \end{equation}
 Then, the $\theta$-rules can be written more compactly as:
 \begin{equation}
-  F_0(\theta) = U_\lambda + s^\theta h \|p_\lambda\|, \qquad F_1(\theta) = U_\lambda + s^\theta_\lambda h \|p_\lambda\|.
+  F_0(\lambda) = U_\lambda + s^\theta h \|p_\lambda\|, \qquad F_1(\lambda) = U_\lambda + s^\theta_\lambda h \|p_\lambda\|.
 \end{equation}
 
 We introduce this more general
@@ -672,7 +673,7 @@ convex functions. The next two lemmas address this point.
 For $F_1$, we can only obtain convexity (let alone strict convexity)
 for $h$ sufficiently small. For large enough $h$, we will encounter
 nonconvex updates. To obtain convexity, we need to stipulate that the
-slowness function $s$ be Lipschitz continuous on $\Omega$ with a
+slowness function $s$ is Lipschitz continuous on $\Omega$ with a
 Lipschitz constant that is independent of $h$. In practice, we have
 not found this to be a particularly stringent restriction.
 
@@ -693,19 +694,23 @@ end of section\@ \ref{ssec:causality}.
 \begin{figure}
   \centering
   \includegraphics[width=0.7\textwidth]{continuity.eps}
-  \caption{\emph{The cost function $F$ must be continuous across the
-      boundaries of adjacent update simplexes.} In this case, two
-    adjacent update simplies share a common boundary on their base,
-    shown here as the line segment $[p_0, p_1]$. Two layers of
-    surrounding grid points from $\mathcal{G}$ are shown. The point
-    $\hat{p}$ is in the top layer and the points $p_0$, $p_1$, and
-    $p_2$ are in the bottom layer.}\label{fig:continuity}
+  \caption{\emph{A problem with \texttt{mp0} for which we provide a
+      simple solution.} The cost function $F$ must be continuous
+    across the boundaries of adjacent update simplexes, otherwise an
+    inconsistent solver can come about. Here, the colorered level sets
+    depict the discontinuity of $\Fmpzero$ across the bases of the
+    update simplexes. In this case, two adjacent update simplexes
+    share a common boundary on their base, shown here as the line
+    segment $[p_0, p_1]$. Two layers of surrounding grid points from
+    $\mathcal{G}$ are shown. The point $\hat{p}$ is in the top layer
+    and the points $p_0$, $p_1$, and $p_2$ are in the bottom
+    layer.}\label{fig:continuity}
 \end{figure}
 
 If we use $\Fmpzero$ directly, then we run into a situation where the
 cost function $\Fmpzero$ is not continuous between the bases of
-adjacent update simplices (see fig.\@ \ref{fig:continuity}. We require
-$F$ to be continuous across simplex boundaries to avoid an
+adjacent update simplices (see fig.\@ \ref{fig:continuity}). We
+require $F$ to be continuous across simplex boundaries to avoid an
 inconsistent or divergent solver. Now, if we first use $\Fmpzero$ to
 compute the minimizer $\lambda_0^*$ of eq.\@
 \ref{eq:constrained-minimization} with $F = \Fmpzero$, and then set
@@ -716,15 +721,16 @@ for the $\theta$-rule $F_0$ using a QR decomposition instead of an
 iterative solver, making it very cheap. In the next section, we will
 show how this can be done.
 
-Letting $\lambda_0^*$ and $\lambda_1^*$ now denote the optima of eq.\@
-\ref{eq:constrained-minimization} where $F = F_0$ and $F = F_1$ (the
-general $\theta$-rules), respectively, we could imagine using Newton's
-method to minimize $F_1$, starting from $\lambda_0^*$. This would
-allow us to use the convergence theory of Newton's method to bound the
-distance between $\lambda_0^*$ and $\lambda_1^*$, thereby bounding the
-error incurred by using \texttt{mp0} instead of \texttt{mp1} to find
-the minimizing argument of eq.\@ \ref{eq:constrained-minimization}. We
-follow this idea now.
+Let $\lambda_0^*$ and $\lambda_1^*$, denote the optima of eq.\@
+\ref{eq:constrained-minimization}, where $F = F_0$ and $F = F_1$ (the
+general $\theta$-rules), respectively. We could imagine using Newton's
+method to minimize $F_1$, starting from $\lambda_0^*$ (to be clear,
+this is not the approach we will ultimately take numerically). This
+would allow us to use the convergence theory of Newton's method to
+bound the distance between $\lambda_0^*$ and $\lambda_1^*$, thereby
+bounding the error incurred by using \texttt{mp0} instead of
+\texttt{mp1} to find the minimizing argument of eq.\@
+\ref{eq:constrained-minimization}. We follow this idea now.
 
 \begin{theorem}\label{thm:mp0-newton}
   Using lemma \ref{lemma:F-strictly-convex}, let $h$ be sufficiently
@@ -749,6 +755,10 @@ follow this idea now.
   The proof of theorem \ref{thm:mp0-newton} is detailed in appendix
   \ref{app:validation-proofs}.
 \end{proof}
+
+We will show in the next section how $\lambda_0^*$ can be computed
+directly using a QR decomposition and without using an iterative
+solver.
 
 We can provide some intuition for why this bound is satisfactory. If
 we assume that our domain is spanned along a diameter by $O(N)$ nodes,
@@ -812,15 +822,14 @@ theorem efficiently in a solver in section\@
   $F_0$}\label{ssec:equivalence}
 
 If we linearly approximate $U$ near $\hat{p}$, then for
-$i = 0, \hdots, n - 1$, we find that $\hat{U}$ approximately
-satisfies:
+$i = 0, \hdots, n - 1$, we find that $\hat{U}$ satisfies:
 \begin{equation}
   \label{eq:finite-differences}
   U_i - \hat{U} = \nabla \hat{U}^\top p_i.
 \end{equation}
-This finite difference approximation to eq.\@ \ref{eq:eikonal} can
-be solved exactly and is a known generalization of the upwind finite
-difference scheme used by the fast marching method to an unstructured
+This finite difference approximation to eq.\@ \ref{eq:eikonal} can be
+solved exactly and is a known generalization of the upwind finite
+difference scheme used in the fast marching method on an unstructured
 mesh~\cite{kimmel1998computing,sethian2000fast}. Computing $\hat{U}$
 using this approximation is equivalent to solving:
 \begin{equation}
@@ -907,14 +916,15 @@ that can be processed in parallel without violating causality.
 \begin{theorem}\label{thm:causality}
   For $\nu_i = p_i/\|p_i\|$, an update simplex is causal for $F_0$ if
   and only if $\nu_i^\top \nu_j \geq 0$ for all $i$ and $j$ such that
-  $0 \leq i < n$ and $0 \leq j < n$. If we assume that $s$ is
-  Lipschitz continuous, for $h$ small enough, the simplex is also
-  causal for $F_1$, and the term in $F_1$ which prevents an update
-  from being causal decays with order $O(h^2)$. Furthermore, the
-  update gap is given explicitly by:
+  $0 \leq i < n$ and $0 \leq j < n$. The update gap is given
+  explicitly by:
   \begin{equation}
     \hat{U} - \max_i U_i = s^\theta h \min_{i, j} \frac{\nu_i^\top \nu_j}{\norm{p_i}}.
   \end{equation}
+  If we assume that $s$ is Lipschitz continuous, then for $h$ small
+  enough, the simplex is also causal for $F_1$, and the term in $F_1$
+  which prevents an update from being causal decays with order
+  $O(h^2)$.
 \end{theorem}
 
 \begin{proof}
@@ -964,8 +974,7 @@ discontinuities~\cite{qi2018corner}.
     source nodes and the updated nodes lie along characteristics. In
     the third step, the unfactored method would set
     $U_{0,1} \gets 1 + \nicefrac{\sqrt{2}}{2}$. However, for the
-    factored solver, since $\tau_{0,1} = 1 - 1 = 0 = \tau_{1,0}$, we
-    find that
+    factored solver, we find that
     $U_{0,1} \gets \nicefrac{\sqrt{2}}{2} + \nicefrac{\sqrt{2}}{2} =
     \sqrt{2}$.}\label{fig:factoring-example}
 \end{figure}
@@ -992,8 +1001,8 @@ define:
 \end{align}
 Like with $F_0$ and $F_1$, the only difference between $G_0$ and $G_1$
 is between the terms containing $s^\theta$ and $s^\theta_\lambda$. We
-do not explicitly refer to them in the rest of paper, but the cost
-functions $G_{\texttt{rhr}}$, $G_{\texttt{mp0}}$, and
+do not explicitly refer to them in the rest of this paper, but the
+cost functions $G_{\texttt{rhr}}$, $G_{\texttt{mp0}}$, and
 $G_{\texttt{mp1}}$ are defined analogously to $\Frhr$, $\Fmpzero$, and
 $\Fmpone$ from the $\theta$-rules $G_0$ and $G_1$.
 
@@ -1232,7 +1241,7 @@ determine if the minimizer on the boundary is also a global minimizer
 for the constrained minimization problem given by eq.\@
 \ref{eq:constrained-minimization}. See appendix\@
 \ref{sec:kkt-skipping}. We note that a modified version of this
-strategy for skipping updates was used in our work on computing the
+strategy for skipping updates was used in the work on computing the
 quasipotential for nongradient SDEs in 3D~\cite{yang2019computing}.
 
 \subsection{The \emph{bottom-up} and \emph{top-down} algorithms}\label{ssec:top-down-and-bottom-up}
@@ -1408,7 +1417,9 @@ method which it is equivalent to, \texttt{olim6\_rhr} (see figure
 \ref{fig:speed-comparison}). We have found that only a modest slowdown
 is incurred by using \texttt{olim6\_rhr} for problems of moderate
 size. The disparity between the two is greater for smaller problem
-sizes, which is due to cache effects.
+sizes, which is due to cache effects. In general, the difference in
+speed is due to the fact that the FMM's update is extremely simple
+since it requires only the solution of quadratic equations.
 
 Using Valgrind~\cite{nethercote2007valgrind}, we profiled running our
 solver on the numerical tests below for different problem sizes and
@@ -1493,12 +1504,14 @@ are:\begin{equation} A_{\texttt{s3}} = \begin{bmatrix}
 \end{equation}
 
 Our results are displayed in figures \ref{fig:time-vs-error} and
-\ref{fig:size-vs-error}. We include plots of relative $\ell_\infty$
-error plotted versus problem size and time, as well as $\ell_\infty$
-error plotted versus $N$. We summarize our observations:
+\ref{fig:size-vs-error}. We include the relative $\ell_\infty$ error
+versus problem size and time, as well as the $\ell_\infty$ error
+versus $N$. We summarize our observations:
 \begin{itemize}
-\item Using one of the midpoint rules allows improved directional
-  coverage to translate into an improved error constant.
+\item Using either of the midpoint rules (\texttt{mp0} or
+  \texttt{mp1}) allows improved directional coverage to translate into
+  an improved error constant. See figs.\@ \ref{fig:size-vs-error}
+  and\@ \ref{fig:time-vs-error}.
 \item For \texttt{rhr}, increased directional coverage
   (\texttt{olim6\_rhr} $\to$ \texttt{olim18\_rhr} $\to$
   \texttt{olim26\_rhr}) does not lead to an improved error. In fact,
@@ -1507,29 +1520,32 @@ error plotted versus $N$. We summarize our observations:
   \ref{fig:size-vs-error}). This may be due to the fact that
   quadrature error and linear interpolation error have different
   signs, and may partially compensate each other (e.g., in
-  \texttt{olim6}). This compensated effect may get worse with
-  increased directional coverage.
+  \texttt{olim6}). This effect may get worse with increased
+  directional coverage.
 \item If we scan each graph horizontally, focusing on the plot
   markers, we can see that the difference in error between
   \texttt{mp0} and \texttt{mp1} is minimal. For each \texttt{mp1}
   graph, the corresponding \texttt{mp0} graph has the same error, but
   is shifted to the left, reflecting the fact that the \texttt{mp0}
   OLIMs are substantially faster. This is consistent with theorem
-  \ref{thm:mp0-newton}, which justifies the use of \texttt{mp0}.
+  \ref{thm:mp0-newton}, which justifies the use of \texttt{mp0}. See
+  fig.\@ \ref{fig:time-vs-error}.
 \item With respect to the choice of neighborhood, \texttt{olim6} is
   the fastest; and, for each choice of neighborhood, \texttt{mp0}
-  provides the best combination of speed and accuracy. If we are
-  willing to pay somewhat in speed, we can dramatically improve the
-  error constant by improving the directional coverage and using a
-  solver like \texttt{olim3d\_mp0}. This tradeoff is more pronounced
-  for smaller problem sizes. A theme running through this work is
-  that, as the problem size increases, memory access patterns come to
-  dominate the runtime, and the disparity between the faster and
-  slower neighborhoods becomes less pronounced. To see this, compare
-  the start of each graph in the top-left of the plots, and their ends
-  in the bottom-right. We can observe, e.g., that the maximum
-  horizontal distance between starting points and ending points has
-  decreased significantly, which confirms this observation.
+  provides the best combination of speed and accuracy. See fig.\@
+  \ref{fig:time-vs-error}. If we are willing to pay somewhat in speed,
+  we can dramatically improve the error constant by improving the
+  directional coverage and using a solver like
+  \texttt{olim3d\_mp0}. This tradeoff is more pronounced for smaller
+  problem sizes. A theme running through this work is that, as the
+  problem size increases, memory access patterns come to dominate the
+  runtime, and the disparity in runtimes between the faster and slower
+  neighborhoods becomes less pronounced. To see this, compare the
+  start of each graph in the top-left of the plots, and their ends in
+  the bottom-right (again, see fig.\@ \ref{fig:time-vs-error}). We can
+  observe, e.g., that the maximum horizontal distance between starting
+  points and ending points has decreased significantly, which confirms
+  this observation.
 \item Our high accuracy algorithms allow us to obtain a better
   solution on rough grids: this is helpful since opportunities to
   refine the mesh are limited in 3D. Discretizing $\Omega = [-1, 1]^2$
@@ -1601,8 +1617,8 @@ rewritten with respect to a different source.
     (left) and 3D (right).}\label{fig:slotnick-plots}
 \end{figure}
 
-If $\set{x_i}$ is a set of point sources and $u_i$ is the solution of
-the eikonal equation for the single point source problem with point
+If $\set{x_i}$ is a set of point sources and $u_i(x)$ is the solution
+of the eikonal equation for the single point source problem with point
 source given by $x_i$, then the solution for the multiple point source
 problem with sources $\set{x_i}$ is:
 \begin{equation}
@@ -1625,13 +1641,14 @@ plots to get an overall sense of the accuracy and speed (see
 
 We can see that our conclusions from section\@
 \ref{ssec:point-source-problems} also hold for the multiple point
-source problem. Additionally, our least-squares fits indicate to us
-that our algorithms' runtimes are accurately described by the fit
-$T_N \sim C_T N^{\alpha}$ with $\alpha \approx n$, and the error by
-$E_N \sim C_E h^{\beta}$, with $\beta \approx 1$ (here, $E_N$ is the
-relative $\ell_\infty$ error). In fact, for \texttt{olim26} and
-\texttt{olim3d} with \texttt{mp0} or \texttt{mp1}, the power $\beta$
-is improved beyond $1$ to $\beta \approx 1.3$.
+source problem. Additionally, our least-squares fits (table\@
+\ref{table:qv-least-squares}) indicate to us that our algorithms'
+runtimes are accurately described by the fit $T_N \sim C_T N^{\alpha}$
+with $\alpha \approx n$, and the error by $E_N \sim C_E h^{\beta}$,
+with $\beta \approx 1$ (here, $E_N$ is the relative $\ell_\infty$
+error). In fact, for \texttt{olim26} and \texttt{olim3d} with
+\texttt{mp0} or \texttt{mp1}, the power $\beta$ is improved beyond $1$
+to $\beta \approx 1.3$.
 
 \begin{table}
   \begin{subtable}{0.5\textwidth}
@@ -1689,12 +1706,13 @@ is improved beyond $1$ to $\beta \approx 1.3$.
 
 \section{Conclusion}
 
-We have presented two families of fast and accurate direct solvers for
-the eikonal equation. One of these relies on enumerating valid update
-simplexes, while the other employs a fast search for the first arrival
-characteristic. These methods use different quadrature rules: a
-simplified midpoint rule (\texttt{mp0}), a midpoint rule
-(\texttt{mp1}), and a righthand rule (\texttt{rhr}).
+We have presented a family of fast and accurate direct solvers for the
+eikonal equation. The \emph{top-down} algorithm relies on enumerating
+valid update simplexes, while the \emph{bottom-up} algorithm employs a
+fast search for the first arrival characteristic. For each of these
+solvers, one can use different quadrature rules: a simplified midpoint
+rule (\texttt{mp0}), a midpoint rule (\texttt{mp1}), and a righthand
+rule (\texttt{rhr}).
 
 We have analyzed the relationship between these quadrature rules,
 showing that the \texttt{mp0} rule can be used to compute an
@@ -1786,11 +1804,11 @@ Our update procedure is based on eq.\@
 local minima---$\hat{u}$ above corresponds to the first arrival, which
 is what interests us primarily in this work.
 
-\section{Skipping updates in the \emph{top-down} family of
+\section{Skipping updates in the \emph{bottom-up} family of
   algorithms}\label{sec:kkt-skipping}
 
 In this section, we describe how to use the KKT conditions to skip
-updates in the \emph{top-down} algorithms. In this section, we write:
+updates in the \emph{bottom-up} algorithms. In this section, we write:
 \begin{equation}
   A = \begin{bmatrix}
     -1 & & \\
@@ -2407,7 +2425,7 @@ Bulirsch~\cite{stoer2013introduction}, from which theorem
   Since $s$ is Lipschitz, the last term is $O(h^2)$---in particular,
   $\norm{\dels} = O(h)$ and $\norm{s_0 - \overline{s}} = O(h)$ since
   $s_0$ and $\overline{s}$ lie in the same simplex. So, because the
-  gap $\min_i(\hat{U} - U_i)$ is $O(h^2)$, we can see that
+  gap $\min_i(\hat{U} - U_i)$ is $O(h)$, we can see that
   $\hat{U} \geq \max_i U_i$ for $h$ sufficiently small.
 \end{proof}
 
